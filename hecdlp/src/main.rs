@@ -30,7 +30,7 @@ fn inv(a:BigInt, n:BigInt)->BigInt{
 }
 
 fn g2add(u11:BigInt, u10:BigInt, v11:BigInt,v10:BigInt,u21:BigInt,u20:BigInt, v21:BigInt, v20:BigInt, f4:BigInt, f3:BigInt, f2:BigInt, f1:BigInt, f0:BigInt, p:BigInt)->BigInt{
-let mut a0; let mut a1; let mut ue1; let mut ul; let mut ul0; let mut uu0; let mut uu1; let mut u20; let mut u21; let mut u30; let mut u31; let mut b0; let mut b1; let mut e0; let mut e1; let mut c0; let mut c1; let mut d0; let mut d1; let mut c0; let mut c1; let mut ss2; let mut ss3; let mut s1; let mut s2; let mut s3; let mut v30; let mut v31;
+  let mut a0; let mut a1; let mut ue1; let mut ul; let mut ul0; let mut uu0; let mut uu1; let mut u20; let mut u21; let mut u30; let mut u31; let mut b0; let mut b1; let mut e0; let mut e1; let mut c0; let mut c1; let mut d0; let mut d1; let mut c0; let mut c1; let mut ss2; let mut ss3; let mut s1; let mut s2; let mut s3; let mut v30; let mut v31;
   a0 = u11 * u10; a1 = u21 * u20; d0 = u10 - u20; d1 = u11 - u21;
   b0 = u11 * u11; b1 = u21 * u21; c0 = v20 - v10; c1 = v21 - v11;
   e0 = -u20 + u10; s1 = a1 - a0; s2 = b1 - b0; s3 = s2 + e0;
@@ -47,7 +47,7 @@ let mut a0; let mut a1; let mut ue1; let mut ul; let mut ul0; let mut uu0; let m
 }
 
 fn g2dbl(u1:BigInt, u0:BigInt, v1:BigInt, v0:BigInt, f3:BigInt, f2:BigInt, f1:BigInt, f0:BigInt, p:BigInt){
-let mut uu1; let mut uu0; let mut uv01; let mut uv00; let mut uv10; let mut uv11; let mut d0; let mut d1; let mut d2; let mut d3; let mut d4; let mut d5; let mut uue0; let mut uue1; let mut s1; let mut s2; let mut s3; let mut ss2; let mut ss3; let mut v10; let mut v11; let mut v20; let mut v21; let mut v30; let mut v31; let mut ve0; let mut ve1; let mut l0; let mut l1; let mut l2; let mut l3; let mut iv; let mut e0; let mut e1; let mut m0; let mut m1; let mut m3; let mut m4; let mut ue0; let mut ue1;
+  let mut uu1; let mut uu0; let mut uv01; let mut uv00; let mut uv10; let mut uv11; let mut d0; let mut d1; let mut d2; let mut d3; let mut d4; let mut d5; let mut uue0; let mut uue1; let mut s1; let mut s2; let mut s3; let mut ss2; let mut ss3; let mut v10; let mut v11; let mut v20; let mut v21; let mut v30; let mut v31; let mut ve0; let mut ve1; let mut l0; let mut l1; let mut l2; let mut l3; let mut iv; let mut e0; let mut e1; let mut m0; let mut m1; let mut m3; let mut m4; let mut ue0; let mut ue1;
   uu1 = u1 * u1; uu0 = u1 * u0; uv01 = u0 * v1; uv10 = u1 * v0; uv11 = u1 * v1;
   uv00 = u0 * v0;
   d0 = 6 * v1 * uu1 - uv10; d1 = -4 * uv11 + 4 * v0; d2 = 2 * v1;
