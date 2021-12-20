@@ -511,7 +511,7 @@ end
 
 def tr1e(x,f4,f3,f2,f1,f0,p)
   
-  b=f4*x**4+f3*x**3+f2*x*x+f1*x+f0
+  b=x**5+f4*x**4+f3*x**3+f2*x*x+f1*x+f0
   c=root(b%p,p)
   a=c*c
   if(a%p==b%p)
