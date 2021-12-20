@@ -42,7 +42,7 @@ for(int i=0;i<3;i++){
 for(int i=0;i<2;i++){
     for(int j=0;j<2;j++){
         tmp1[i+j]+=(a1[i]*a2[j])%p;
-        tmp2[i+j]+=(b1[i]*b2[i])%q;
+        tmp2[i+j]+=(b1[i]*b2[j])%q;
     }
 }
 for(int i=0;i<3;i++){
@@ -54,6 +54,12 @@ for(int i=0;i<3;i++)
 cout << tmp1[i] << endl;
 for(int i=0;i<3;i++)
 cout << tmp2[i] << endl;
+/*
+cout << (b2[0]*b1[0])%q << endl;
+cout << (b2[1]*b1[0]+b1[1]*b2[0])%q << endl;
+cout << (a2[0]*a1[0])%p << endl;
+cout << (a2[1]*a1[0]+a1[1]*a2[0])%p << endl;
+*/
 
 return 0;
 }
