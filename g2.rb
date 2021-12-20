@@ -8,32 +8,6 @@ N = 256
 
 # /* definition of a curve */
 def HEC()
-  #find by Smart
-  #y^2+xy=x^3+b1B^2+b2B^4+b3B^8
-  @pa = 1208925819614311295169073
-  @b1 = 1127280
-  @b2 = 171398
-  @b3 = 1370436
-
-  #y^2+(x^4+a1x^3+a2x^2+a3x+a4)y+(x^9+a5x^6+a6x^4+a7x^3+a8x^2+a9x+e)
-  @pb = 1208925819614311295169073
-  @a1 = 624429
-  @a2 = 1248858
-  @a3 = 1442662
-  @a4 = 386860
-  @a5 = 1859582
-  @a6 = 293124
-  @a7 = 1783647
-  @a8 = 1541982
-  @a9 = 1370912
-  @e = 1888298
-
-  @pc = 584600649323611672814739995379292203636332479268
-  #y^2+(x^2+c1x)y=x^5+x^4+c2x^2+c3x+c4
-  c1 = 2012013793551629036365609
-  c2 = 1586464037343056940725724
-  c3 = 43334222987849600951547
-  c4 = 774788345987798314632240
 
   #find by Harley
   @q = 10 ** 19 + 51
@@ -102,6 +76,14 @@ def HEC()
   @vg0 = [0, 138905579055173741542118]
   @ug1 = [1738366273424896804842766, 3184841659043138633535652]
   @vg1 = [2931056213155642836850986, 402980510097415333052905]
+
+  @p2=2**128-173
+  @r2 = 115792089237316195429342203801033554170931615651881657307308068079702089951781
+  @f23 = 318258242717201709453901384328569236653
+  @f22 = 75380722035796344355219475510170298006
+  @f21 = 129416082603460579272847694630998099237 
+  @f20 = 143864072772599444046778416709082679388
+  
 end
 
 # invert of integer
@@ -123,42 +105,248 @@ def inv(a, n)
   return ((x + n) % (n / d))
 end
 
-def g2add(u11, u10, v11, v10, u21, u20, v21, v20, f4, f3, f2, f1, f0, p)
-  a0 = u11 * u10; a1 = u21 * u20; d0 = u10 - u20; d1 = u11 - u21
-  b0 = u11 * u11; b1 = u21 * u21; c0 = v20 - v10; c1 = v21 - v11
-  e0 = -u20 + u10; s1 = a1 - a0; s2 = b1 - b0; s3 = s2 + e0
-  iv = inv(d0 * s3 - d1 * s1, p)
-  ss2 = u20 + u11 * u21 + u10; ss3 = u21 + u11
-  l3 = inv(d0 * c1 - d1 * c0, p); l2 = inv(c0 * s3 - c1 * s1, p)
-  l1 = u11 * l2 + v11 + (b0 - u10) * l3
-  u31 = 2 * l2 * l3 + 1 - ss3
-  u30 = 2 * l1 * l3 + l2 * l2 + 1 - f4 - u31 * ss3 - ss2
-  ul0 = u30 * l3; ul = -u31 * l2 + l1
-  v31 = -(u31 * u31 - ul0 + ul); v30 = -(u31 * ul0 + ul)
 
-  return u31, u30, v31, v30
+def j2add(u11,u10,u21,u20,v11,v10,v21,v20,h2,h1,h0,f4,f3,f2,f1,f0,p)
+  z1=(u11-u21)%p; z2=(u20-u10)%p; z3=(u11*z1+z2)%p;
+  r=(z2*z3+(z1**2)*u10)%p
+  
+  inv1=z1; inv0=z2;
+  w1=(v10-v20)%p; w2=(v11-v21)%p; w3=inv0*w1%p; w4=inv1*w2%p;
+  s1_=((inv0+inv1)*(w1+w2)-w3-w4*(1+u11))%p; s0_=(w3-u10*w4)%p;
+  
+  
+  w1=inv(r*s1_,p)
+  w2=r*w1%p
+  w3=(s1_**2)*w1%p
+  w4=r*w2%p
+  w5=(w4**2)%p
+  s0__=s0_*w2%p
+  
+  l2_=(u21+s0__)%p
+  l1_=(u21*s0__+u20)%p
+  l0_=u20*s0__%p
+  
+  u0_=((s0__-u11)*(s0__-z1+h2*w4)-u10+l1_+(h1+2*v21)*w4+(2*u21-z1-f4)*w5)%p
+  u1_=(2*s0__-z1-w5+h2*w4)%p
+  @U=[u1_,u0_]
+  
+  w1=(l2_-u1_)%p
+  w2=(u1_*w1+u0_-l1_)%p
+  v1_=(w2*w3-v21-h1+h2*u1_)%p
+  w2=(u0_*w1-l0_)%p
+  v0_=(w2*w3-v20-h0+h2*u0_)%p
+  @V=[v1_,v0_]
+  print "diva (s^2+",u1_,"*s+",u0_,",",v1_,"*s+",v0_,")\n"
+  
+  end
+  
+  
+  def g2ads(u11,u10,u21,u20,v11,v10,v21,v20,h2,h1,h0,f4,f3,f2,f1,f0,p)
+  
+  r=(u21-(u21*u10)*u10)%p
+  
+  inb=inv(r,@p3)
+  
+  s0=inb*(v10-v20-v21*u10)%p
+  
+  l1=s0*u21%p
+  l0=s0*u20%p
+  
+  k2=(f4-u21)%p
+  k1=(f3-(f4-u21)*u21-u20-v21*h2)%p
+  
+  u1_=(k2-s0**2-u10-s0*h2)%p
+  u0_=(k1-s0*(l1+2*v21+h1)-u10*u1_)%p
+  
+  v1_=((h2+s0)*u1_-(h1+l1+v21))%p
+  v0_=((h2+s0)*u0_-(h0+l0+v20))%p
+  
+  end
+  
+  
+  def j2dbl(u1,u0,v1,v0,h2,h1,h0,f4,f3,f2,f1,f0,p)
+  
+  v1goal=(h1+2*v1-h2*u1)%p
+  v0goal=(h0+2*v0-h2*u0)%p
+  
+  w0=v1**2%p
+  w1=u1**2%p
+  w2=v1goal**2%p
+  w3=u1*v1goal%p
+  r=(u0*w2+v0goal*(v0goal-w3))%p
+  
+  inv1_=-v1goal%p
+  inv0_=(v0goal-w3)%p
+  
+  w3=(f3+w1)%p
+  w4=2*u0%p
+  k1_=(2*(w1-f4*u1)+w3-w4-v1*h2)%p
+  k0_=(u1*(2*w4-w3+f4*u1+v1*h2)+f2-w0-2*f4*u0-v1*h1-v0*h2)%p
+  
+  w0=k0_*inv0_%p
+  w1=k1_*inv1_%p
+  s1_=((inv0_+inv1_)*(k0_+k1_)-w0-w1*(1+u1))%p
+  s0_=(w0-u0*w1)%p
+  
+  
+  w1=inv(r*s1_,p)
+  w2=r*w1%p
+  w3=s1_**2*w1%p
+  w4=r*w2%p
+  w5=w4**2%p
+  s0__=s0_*w2%p
+  
+  l2_=(u1+s0__)%p
+  l1_=(u1*s0__+u0)%p
+  l0_=u0*s0__%p
+  
+  u0_=(s0__**2+w4*(2*v1+h1+h2*(s0__+u1))+w5*(2*u1-f4))%p
+  u1_=(2*s0__-w5+w4*h2)%p
+  @uu=[u1_,u0_]
+  
+  w1=(l2_-u1_)%p
+  w2=(u1_*w1+u0_-l1_)%p
+  v1_=(w2*w3-v1-h1-u1_*h2)%p
+  w2=(u0_*w1-l0_)%p
+  v0_=(w2*w3-v0-h0)%p
+  @vv=[v1_,v0_]
+  print "div (s^2+",u1_,"*s+",u0_,",",v1_,"*s+",v0_,")\n"
+  
+  end
+  
+  
+  def chao(u11,u10,v11,v10,f4,f3,f2,p)
+  
+  w1=v11**2%p
+  w2=u11*v11%p
+  r=(u10*w1+v10*(v10-w2))%p
+  
+  if r==0
+   print "r=0\n"
+   u11=(v10*inv(v11,p)-u11)%p
+   v11=-v10*inv(v11,p)%p
+   w1=v11**2%p
+   w2=u11*v11%p
+   r=(u10*w1+v10*(v10-w2))%p
+  end
+  
+  w3=inv(2*r,p)
+  i11=-v11*w3%p
+  i10=(v10-w2)*w3%p
+  #print "I=",i11,"x+",i10,"\n"
+  
+  w2=(u11-f4)%p; w3=2*u10%p;
+  t10=(u11*(2*w3-u11*w2-f3)-f4*w3+f2-w1)%p;
+  t11=(u11*(2*w2+u11)+f3-w3)%p;
+  
+  w1=i10*t10%p; w2=i11*t11%p;
+  w3=((i10+i11)*(t10+t11)-w1-w2)%p;
+  s1=(w3-u11*w2)%p
+  s0=(-u10*w2+w1)%p
+  
+  if s1==0
+   print "s1=0\n"
+   exit();
+  end
+  
+  w1=inv(s1,p)
+  u20=(w1*(w1*(s0**2+2*u11*-f4)+2*v11))%p;
+  u21=w1*(2*s0-w1)%p; u22=1;
+  @uu=[u21,u20]
+  print "factormod(s^2+",u21,"*s+",u20,",",p,")\n"
+  
+  w1=(u11-u21)%p
+  v20=(u20*(s1*w1+s0)-s0*u10-v10)%p;
+  v21=(s1*(u21*w1+u20-u10)-s0*w1-v11)%p;
+  @vv=[v21,v20]
+  print "v'=",v21,"s",v20,"\n";
+  
+  if(v20==0 || v21==0)
+   print "infinity!\n"
+   exit()
+  end
+  
+  end
+  
+  
+  
+  def kotehan(u21,u20,u11,u10,v21,v20,v11,v10,f4,p)
+  
+  w1=(u21-u11)%p; w2=(u21*w1+u10-u20)%p;
+  r=(u10*(w2-u20)+u20*(u20-u11*w1))%p
+  if r==0
+   print "r=0!\n"
+   exit();
+  end
+  
+  w3=inv(r,p); i11=w1*w3%p; i10=w2*w3%p;
+  
+  w3=(v20-v10)%p; w4=(v21-v11)%p;
+  w5=i10*w3%p; w6=i11*w4%p;
+  w7=((i10+i11)*(w3+w4)-w5-w6)%p;
+  s1=(w7-u21*w6)%p; s0=(-u20*w6+w5)%p;
+  
+  if s1==0
+   print "s1=0!\n"
+   exit();
+  end
+  
+  w3=inv(s1,p)
+  u30=(w3*(w3*(s0**2+u11+u21-f4)+2*(v11-s0*w1))+w2)%p;
+  u31=(w3*(2*s0-w3)-w1)%p; u32=1;
+  
+  w1=(u30-u10)%p; w2=(u11-u31)%p;
+  v30=(s1*u30*w2+s0*w1-v10)%p;
+  v31=(s1*(u31*w2+w1)-s0*w2-v11)%p;
+  @U=[u31,u30]
+  @V=[v31,v30]
+  print "divk (s^2+",u31,"*s+",u30,",",v31,"*s+",v30,")\n"
+  
+  end
+  
+
+def g2add(u11, u10, v11, v10, u21, u20, v21, v20, f4, f3, f2, f1, f0, p)
+  a0 = (u11 * u10)%p; a1 = (u21 * u20)%p; d0 = (u10 - u20)%p; d1 = (u11 - u21)%p;
+  b0 = (u11 * u11)%p; b1 = (u21 * u21)%p; c0 = (v20 - v10)%p; c1 = (v21 - v11)%p;
+  e0 = (-u20 + u10)%p; s1 = (a1 - a0)%p; s2 = (b1 - b0)%p; s3 = (s2 + e0)%p;
+  iv = inv(d0 * s3 - d1 * s1, p)
+  ss2 = (u20 + u11 * u21 + u10)%p; ss3 = (u21 + u11)%p;
+  l3 = inv(d0 * c1 - d1 * c0, p); l2 = inv(c0 * s3 - c1 * s1, p)
+  l1 = (u11 * l2 + v11 + (b0 - u10) * l3)%p;
+  u31 = (2 * l2 * l3 + 1 - ss3)%p;
+  u30 = (2 * l1 * l3 + l2 * l2 + 1 - f4 - u31 * ss3 - ss2)%p;
+  ul0 = (u30 * l3; ul = -u31 * l2 + l1)%p;
+  v31 = -(u31 * u31 - ul0 + ul)%p; v30 = -(u31 * ul0 + ul)%p;
+
+  @U=[u31,u30]
+  @V=[v31,v30]
+
+  #  return u31, u30, v31, v30
 end
 
 def g2dbl(u1, u0, v1, v0, f3, f2, f1, f0, p)
-  uu1 = u1 * u1; uu0 = u1 * u0; uv01 = u0 * v1; uv10 = u1 * v0; uv11 = u1 * v1
-  uv00 = u0 * v0
-  d0 = 6 * v1 * uu1 - uv10; d1 = -4 * uv11 + 4 * v0; d2 = 2 * v1
-  d3 = 6 * v1 * uu0 - 6 * uv00; d4 = -4 * uv01; d5 = 2 * v0
-  e0 = 5 * (-u1 * uu1 + 2 * uu0) - 3 * f3 * u1 + 2 * f2
-  e1 = 5 * (-u0 * uu0 + u0 * u0) - 3 * f3 * u0 + f1
-  m0 = d3 - d5 * (uu1 - u0); m1 = d4 - d5 * (-u1)
-  m3 = d0 - d2 * (uu1 - u0); m4 = d1 - d2 * (-u1)
-  s1 = e1 - d5 * v1; s2 = e0 - d2 * v1
+  uu1 = (u1 * u1)%p; uu0 = (u1 * u0)%p; uv01 = (u0 * v1)%p; uv10 = (u1 * v0)%p; uv11 = (u1 * v1)%p;
+  uv00 = (u0 * v0)%p;
+  d0 = (6 * v1 * uu1 - uv10)%p; d1 = (-4 * uv11 + 4 * v0)%p; d2 = (2 * v1)%p;
+  d3 = (6 * v1 * uu0 - 6 * uv00)%p; d4 = (-4 * uv01)%p; d5 = (2 * v0)%p;
+  e0 = (5 * (-u1 * uu1 + 2 * uu0) - 3 * f3 * u1 + 2 * f2)%p;
+  e1 = (5 * (-u0 * uu0 + u0 * u0) - 3 * f3 * u0 + f1)%p;
+  m0 = (d3 - d5 * (uu1 - u0))%p; m1 = (d4 - d5 * (-u1))%p;
+  m3 = (d0 - d2 * (uu1 - u0))%p; m4 = (d1 - d2 * (-u1))%p;
+  s1 = (e1 - d5 * v1)%p; s2 = (e0 - d2 * v1)%p;
   iv = inv(m0 * m4 - m1 * m3, p)
   l3 = inv(m4 * s1 - m1 * s2, p); l2 = inv(m0 * s2 - m3 * s1, p)
-  l1 = v1 + u1 * l2 - (uu1 - u0) * l3; l0 = v0 + u0 * l2 - (uu0) * l3
-  ue1 = 2 * l3 * l2 - 2 * u1 - 1
-  ue0 = 2 * l3 * l1 + l2 * l2 - 2 * u0 - uu0 - 2 * ue1 * u1
-  uue1 = ue1 * ue1; uue0 = ue1 * ue0
-  ve1 = (uu1 - ue0) * l3 - ue1 * l2 + l1
-  ve0 = uue0 * l3 - ue0 * l2 + l0
+  l1 = (v1 + u1 * l2 - (uu1 - u0) * l3)%p; l0 = (v0 + u0 * l2 - (uu0) * l3)%p;
+  ue1 = (2 * l3 * l2 - 2 * u1 - 1)%p;
+  ue0 = (2 * l3 * l1 + l2 * l2 - 2 * u0 - uu0 - 2 * ue1 * u1)%p;
+  uue1 = (ue1 * ue1)%p; uue0 = (ue1 * ue0)%p;
+  ve1 = ((uu1 - ue0) * l3 - ue1 * l2 + l1)%p;
+  ve0 = (uue0 * l3 - ue0 * l2 + l0)%p;
 
-  return ue1, ue0, ve1, ve0
+  @uu=[ue1,ue0]
+  @vv=[ve1,ve0]
+
+#  return ue1, ue0, ve1, ve0
 end
 
 def mktable(u, v)
@@ -180,7 +368,7 @@ def mktable(u, v)
   print @vv, " l674\n"
 
   for i in 1..N - 1 #begin Pub_key at plain
-    g2dbl(@uu[1], @uu[0], @vv[1], @vv[0], @FF[0], @FF[1], @FF[2], @FF[3], @q)
+    g2dbl(@uu[0], @uu[1], @vv[0], @vv[1], @FF[0], @FF[1], @FF[2], @FF[3], @q)
     @le_u[i] = @uu
     @le_v[i] = @vv
     #print i,"=",@le_u[i],"\n"
@@ -216,7 +404,7 @@ def jac(kk, p)
   #exit();
   for i in 1..j - 1
     if (@U != @le_u[ki[i]])
-      g2add(@U[0], @U[1], @le_u[ki[i]][0], @le_u[ki[i]][1], @V[0], @V[1], @le_v[ki[i]][0], @le_v[ki[i]][1], 0, 0, 0, @FF[0], @FF[1], @FF[2], @FF[3], @FF[4], p)
+      g2add(@U[0], @U[1], @le_u[ki[i]][0], @le_u[ki[i]][1], @V[0], @V[1], @le_v[ki[i]][0], @le_v[ki[i]][1], @FF[0], @FF[1], @FF[2], @FF[3], @FF[4], p)
       #print "i=",i," ",@le_u[ki[i]][0],"\n"
     end
 
@@ -228,7 +416,130 @@ def jac(kk, p)
   end #of for
 end
 
+
+#jj=aa^bb mod oo
+def exp(aa, bb, oo)
+kk=[8192];
+c=[8192]
+
+
+ii=oo;
+  j=0;
+  jj=0;
+  count=0;
+
+  for i in 0..8192-1
+    kk[i]=0;
+end
+  while(ii>0)
+    ii = (ii>>1);
+    j=j+1;
+  end
+
+
+  kk[0]=aa;
+
+#  cout << j << "\n";
+  
+#ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
+  for i in 0..j
+    if(((bb^(1<<i))>>i)%2 == 0) #testbit(kk,i)
+        c[count]=i
+        count=count+1
+       #print i,"L704\n" 
+      end
+    end
+ 
+#    cout << bb << endl;
+#    cout << count << "\n";
+#exit(1);
+    for i in 1..c[count-1]
+      kk[i] = kk[i-1]*kk[i-1]%oo;
+    end
+
+    jj=1;
+    for i in 0..count-1
+      jj=kk[c[i]]*jj%oo;
+      if (jj==0)
+#	print i,"\n"
+      end
+    end
+
+    return jj;
+end
+
+
+def root(a, p)
+
+  if(p%4==3)
+    b=(p+1)/4;
+  c=exp(a,b,p);
+  if(c*c%p!=a)
+    print "baka1\n"
+    #exit()
+  end 
+  if(c*c%p==a)
+    print "good\n"
+    print "c=",c,"\n"
+  end
+  end
+  if(p%8==5)
+    c=exp(a,(p+3)/8,p)
+    if(c*c%p!=a)
+      print "baka\n"
+    end
+    if(c*c%p==a)
+      print "good\n"
+      print c,"\n"
+    end
+
+  end
+  if(p%8==5)
+    c=2*a*exp(4*a,(p-5)/8,p)
+    if(c*c%p!=a)
+      print "dangerous\n"
+    end
+    if(c*c%p==a)
+      print "good\n"
+      print c, "\n"
+    end
+
+  end
+  #print a ,"\n";
+  #print c*c%p , "\n";
+
+  return c;
+end
+
+
+p1=2**127-1
+r1=28948022309329048848169239995659025138451177973091551374101475732892580332259
+f13 = 34744234758245218589390329770704207149
+f12 = 132713617209345335075125059444256188021
+f11 = 90907655901711006083734360528442376758
+f10 = 6667986622173728337823560857179992816
+
+
+f00=17
+p127=(2**63-27443)*2**64+1
+r127=28948022309328876595115567994214488524823328209723866335483563634241778912751
+
+p128=2**128-24935
+f_0=3**7
+r128=115792089237316195401210495125503591471546519982099914586091636775415022457661
+
+
 HEC()
+#root(f10,p1)
+root(@f20,@p2)
+Jx=0
+Jy=194748000917607189990017085266394730231
+#root(@F1[4],@p3)
+#root(f00,p127)
+#root(f_0,p128)
+exit()
+
+
 
 mktable(@ug0, @vg0)
 jac(@Jga, @P)
