@@ -574,6 +574,45 @@ v22=(vt2-u22*vt3)%p; v21=(vt1-u21*vt3)%p; v20=(vt0-u20*vt3)%p;
 
 end
 
+def j2add(u11, u10, v11, v10, u21, u20, v21, v20, f4, f3, f2, f1, f0, p)
+  a0 = u11 * u10; a1 = u21 * u20; d0 = u10 - u20; d1 = u11 - u21
+  b0 = u11 * u11; b1 = u21 * u21; c0 = v20 - v10; c1 = v21 - v11
+  e0 = -u20 + u10; s1 = a1 - a0; s2 = b1 - b0; s3 = s2 + e0
+  iv = inv(d0 * s3 - d1 * s1, p)
+  ss2 = u20 + u11 * u21 + u10; ss3 = u21 + u11
+  l3 = inv(d0 * c1 - d1 * c0, p); l2 = inv(c0 * s3 - c1 * s1, p)
+  l1 = u11 * l2 + v11 + (b0 - u10) * l3
+  u31 = 2 * l2 * l3 + 1 - ss3
+  u30 = 2 * l1 * l3 + l2 * l2 + 1 - f4 - u31 * ss3 - ss2
+  ul0 = u30 * l3; ul = -u31 * l2 + l1
+  v31 = -(u31 * u31 - ul0 + ul); v30 = -(u31 * ul0 + ul)
+  @U=[u31,u30]
+  @V=[v31,v30]
+  #return u31, u30, v31, v30
+end
+
+def j2dbl(u1, u0, v1, v0, f3, f2, f1, f0, p)
+  uu1 = u1 * u1; uu0 = u1 * u0; uv01 = u0 * v1; uv10 = u1 * v0; uv11 = u1 * v1
+  uv00 = u0 * v0
+  d0 = 6 * v1 * uu1 - uv10; d1 = -4 * uv11 + 4 * v0; d2 = 2 * v1
+  d3 = 6 * v1 * uu0 - 6 * uv00; d4 = -4 * uv01; d5 = 2 * v0
+  e0 = 5 * (-u1 * uu1 + 2 * uu0) - 3 * f3 * u1 + 2 * f2
+  e1 = 5 * (-u0 * uu0 + u0 * u0) - 3 * f3 * u0 + f1
+  m0 = d3 - d5 * (uu1 - u0); m1 = d4 - d5 * (-u1)
+  m3 = d0 - d2 * (uu1 - u0); m4 = d1 - d2 * (-u1)
+  s1 = e1 - d5 * v1; s2 = e0 - d2 * v1
+  iv = inv(m0 * m4 - m1 * m3, p)
+  l3 = inv(m4 * s1 - m1 * s2, p); l2 = inv(m0 * s2 - m3 * s1, p)
+  l1 = v1 + u1 * l2 - (uu1 - u0) * l3; l0 = v0 + u0 * l2 - (uu0) * l3
+  ue1 = 2 * l3 * l2 - 2 * u1 - 1
+  ue0 = 2 * l3 * l1 + l2 * l2 - 2 * u0 - uu0 - 2 * ue1 * u1
+  uue1 = ue1 * ue1; uue0 = ue1 * ue0
+  ve1 = (uu1 - ue0) * l3 - ue1 * l2 + l1
+  ve0 = uue0 * l3 - ue0 * l2 + l0
+  @uu=[ue1,ue0];
+  @vv=[ve1,ve0];
+  #return ue1, ue0, ve1, ve0
+end
 
 def g4add(a1,a2,b1,b2)
 
@@ -695,7 +734,7 @@ print @vv," l674\n"
 for i in 1..N-1 #begin Pub_key at plain
 
    #chao(@uu[0],@uu[1],@vv[0],@vv[1],@FF[0],@FF[1],@FF[2],@P)
-   #g2dbl(@uu[0],@uu[1],@vv[0],@vv[1],0,0,0,@FF[0],@FF[1],@FF[2],@FF[3],@FF[4],@P)
+   #j2dbl(@uu[0],@uu[1],@vv[0],@vv[1],@FF[1],@FF[2],@FF[3],@FF[4],@P)
    #g4dbl(@uu[0],@uu[1],@uu[2],@uu[3],@vv[0],@vv[1],@vv[2],@vv[3],0,0,0,0,0,0,29,0,@g4p)
     g3dbl(@uu[0],@uu[1],@uu[2],@vv[0],@vv[1],@vv[2],0,0,0,0,0,157788440085147827,@p3)
    @le_u[i]=@uu
@@ -736,8 +775,9 @@ ki=[N]
 #print @le_u[ki[2]],"\n"
 #exit();
 for i in 1..j-1
+print j,",",i,"\n"
  if(@U != @le_u[ki[i]])
-    #g2add(@U[0],@U[1],@le_u[ki[i]][0],@le_u[ki[i]][1],@V[0],@V[1],@le_v[ki[i]][0],@le_v[ki[i]][1],0,0,0,@FF[0],@FF[1],@FF[2],@FF[3],@FF[4],p)
+    #j2add(@U[0],@U[1],@le_u[ki[i]][0],@le_u[ki[i]][1],@V[0],@V[1],@le_v[ki[i]][0],@le_v[ki[i]][1],@FF[0],@FF[1],@FF[2],@FF[3],@FF[4],p)
 #print "i=",i," ",@le_u[ki[i]][0],"\n"
     #kotehan(@U[0],@U[1],@le_u[ki[i]][0],@le_u[ki[i]][1],@V[0],@V[1],@le_v[ki[i]][0],@le_v[ki[i]][1],@FF[0],p)
 	g3add(@U[0],@U[1],@U[2],@le_u[ki[i]][0],@le_u[ki[i]][1],@le_u[ki[i]][2],@V[0],@V[1],@V[2],@le_v[ki[i]][0],@le_v[ki[i]][1],@le_v[ki[i]][2],0,0,0,0,0,157788440085147827,p)
@@ -857,6 +897,7 @@ HEC()
 mktable(@wu,@wv)
 #exit()
 jac(@J3,@p3)
+#jac(@Jga,@P)
 print "debug\n"
 exit()
 jac(6,@g4p)
