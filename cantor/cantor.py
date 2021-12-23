@@ -191,6 +191,7 @@ if __name__ == '__main__':
         print("n = %d p = %d" % (n, p), end=' ')
         print("roots : %d %d" % (r, p - r))
 
+# ここが動かない！
 def inv(a, n):
   a=np.array(a)
   n=np.array(n)
