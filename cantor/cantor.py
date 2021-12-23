@@ -7,7 +7,9 @@ import numpy as np
 import functools
 import itertools
 import math
-from fractions import Fraction
+import galois
+import sage
+
 
 # 拡張ユークリッドの互除法
 def ext_euclid(a, b):
@@ -112,24 +114,6 @@ class GF:
 def polyval(xs, n):
     return functools.reduce(lambda x, y: x * n + y, xs)
 
-def inv(a, n):
-  gf=GF(5)
-  d = n;
-  x = 0;
-  s = 1;
-  while (a != 0):
-    q = (d // a);
-    r = (d % a);
-    d = a;
-    a = r;
-    t = (x - q * s)%n;
-    x = s;
-    s = t;
-  
-  gcd = d;
-
-  return ((x + n) % (n / d));
-
 
 def xgcd(a, b):
     x0, y0, x1, y1 = 1, 0, 0, 1
@@ -147,17 +131,6 @@ def modinv(a, m):
         return x % m
     
 
-
-def test(p, xs, ys):
-    xs = np.array(xs)
-    ys = np.array(ys)
-    gf = GF(p)
-    for x, y in [(xs, xs), (xs, ys), (ys, xs), (ys, ys)]:
-        print(x, "+", y, "=", gf.polyadd(x, y))
-        print(x, "-", y, "=", gf.polysub(x, y))
-        print(x, "*", y, "=", gf.polymul(x, y))
-        p, q = gf.polydiv(x, y)
-        print(x, "/", y, "=", p, q)
 
 def legendre(a, p):
     return pow(a, (p - 1) // 2, p)
@@ -218,16 +191,86 @@ if __name__ == '__main__':
         print("n = %d p = %d" % (n, p), end=' ')
         print("roots : %d %d" % (r, p - r))
 
-def inverse(self):
-       x,y,d = extendedEuclideanAlgorithm(self.n, self.p)
-       return IntegerModP(x)
+def inv(a, n):
+  a=np.array(a)
+  n=np.array(n)
+  f=np.array([0,0,0,0])
+  gf=GF(11)
+
+  d = n;
+  x = np.array([0,0,0,0]);
+  s = np.array([0,0,0,1]);
+  print(f)
+  r=np.array([0,0,0,0])
+  q=np.array([0,0,0,0])
+  while (a.all() != 0):
+    q, r = gf.polydiv(d , a);
+    d = a;
+    a = r;
+    tt = gf.polymul(q , s)
+    t = gf.polysub(x, tt)
+    x = s;
+    s = t;
+  
+  gcd = d;
+  print(r)
+  exit()
+  f,g = gf.polydiv(n,d)
+  o=gf.polyadd(x,n)
+  h,e =gf.polydiv(o,f)
+  return q, r
+
+
+
+def test(p, xs, ys):
+    xs = np.array(xs)
+    ys = np.array(ys)
+    gf = GF(p)
+    for x, y in [(xs, xs), (xs, ys), (ys, xs), (ys, ys)]:
+        print(x, "+", y, "=", gf.polyadd(x, y))
+        print(x, "-", y, "=", gf.polysub(x, y))
+        print(x, "*", y, "=", gf.polymul(x, y))
+        p, q = gf.polydiv(x, y)
+        print(x, "/", y, "=", p, q)
+
+        
 
 test(2, [1,0,1,1], [1,0,1])
 test(3, [2,1,0,2], [2,0,1])
 test(5, [4,3,2,1], [3,2,1])
+gf=GF(11)
+f=[1,0,3,7,1,2]
+v1=[1,9]
+u1=[1,7,10]
+u2=[1,0,10]
+v2=[7,9]
+t1=np.array(v2)
+t2=np.array(v1)
+ff=np.array(f)
+uu2=np.array(u2)
+uu1=np.array(u1)
+a=gf.polymul(t1,t1)
+c=gf.polysub(ff,a)
+p,q=gf.polydiv(c,uu2)
+print(p)
+print(q)
+#exit()
 
-a=inv(12,5)
+k=p
+a=gf.polysub(t2,t1)
+print(inv(uu2,uu1))
 print(a)
+#print(b)
+exit()
+
+a,b=gf.polydiv(p1,p2)
+#inv([2,1,0,2],[3,2,1])
+print(p1)
+
+exit()
+
+#a=inv(12,5)
+#print(a)
 m = 24999999999994130438600999402209463966197516075699
 
 a = 12
