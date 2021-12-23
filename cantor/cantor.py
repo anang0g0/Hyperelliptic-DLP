@@ -259,7 +259,7 @@ print(q)
 
 k=p
 a=gf.polysub(t2,t1)
-print(inv(uu2,uu1))
+print(inv(uu2,uu1)) # 答えは 3x+10
 print(a)
 #print(b)
 exit()
