@@ -146,7 +146,7 @@ def j2add(u11,u10,u21,u20,v11,v10,v21,v20,h2,h1,h0,f4,f3,f2,f1,f0,p)
   
   r=(u21-(u21*u10)*u10)%p
   
-  inb=inv(r,@p3)
+  inb=inv(r,p)
   
   s0=inb*(v10-v20-v21*u10)%p
   
@@ -161,7 +161,11 @@ def j2add(u11,u10,u21,u20,v11,v10,v21,v20,h2,h1,h0,f4,f3,f2,f1,f0,p)
   
   v1_=((h2+s0)*u1_-(h1+l1+v21))%p
   v0_=((h2+s0)*u0_-(h0+l0+v20))%p
-  
+
+  @uu=[u1_,u0_]
+  @vv=[v1_,v0_]
+  print @uu,",",@vv,"\n"
+
   end
   
   
@@ -313,12 +317,13 @@ iv=inv(d0*s3-d1*s1,p);
 s2=(u20+u11*u21+u10)%p; s3=(u21+u11)%p;
 l3= (iv*(d0*c1-d1*c0))%p;l2=(iv*(c0*s3-c1*s1))%p;
 l1=(u11*l2+v11+(b0-u10)*l3)%p;
-u31=(2*l2*l3+1-s3)%p; u30=(2*l2*l3+l2*l2-u31*s3-s2)%p;
-ul0=(u31*l3)%p;ul= (-u31*l2+l1)%p;
-v31= (-(u31*u31*l3-ul0+ul))%p; v30= (-(u31*ul0+ul))%p;
+u31=(2*l2*l3+1-s3)%p; u30=(2*l1*l3+l2*l2-u31*s3-s2)%p;
+ul0=(u30*l3)%p;ul= (-u31*l2+l1)%p;
+v31= (-(u31*u31*l3-ul0+ul))%p; v30= -(u31*ul0+ul)%p;
 
 @uu=[u31,u30]
 @vv=[v31,v30]
+print @uu,",",@vv,"\n"
 end
 
 def a2add(u11, u10, v11, v10, u21, u20, v21, v20, f4, f3, f2, f1, f0, p)
@@ -336,6 +341,7 @@ def a2add(u11, u10, v11, v10, u21, u20, v21, v20, f4, f3, f2, f1, f0, p)
 
   @U=[u31,u30]
   @V=[v31,v30]
+  print @U, ",",@V,"\n"
 
   #  return u31, u30, v31, v30
 end
@@ -707,12 +713,41 @@ exit()
 exit()
 =end
 
-HEC()
+def ladd(u11,u10,u21,u20,v11,v10,v21,v20,po)
+  z1=(u11-u21)%po; z2=(u20-u10)%po;z3=(u11*z1+z2)%po;
+  r=(z2*z3+z1*z2*u10)%po;
+  inv1=z1; inv0=z3;
+  w0=(v10-v20)%po;w1=(v11-v21)%po;w2=(inv0*w0)%po;w3=(inv1*w1)%po;
+  s1=(inv0+inv1)*(w0+w1)-w2-w3*(1+u11);s0=w2-u10*w3;
+  w1=inv(r*s1,po); w2=(r*w1)%po;w3=(s1*s1*w1)%po;
+  w4=(r*w2)%po; w5=(w4*w4)%po; ss0=(s0*w2)%po;
+  l2=(u21+ss0)%po; l1=(u21*ss0+u20)%po;l0=(u20*ss0)%po;
+  ue0=((ss0-u11)*(ss0-z1)-u10+l1+2*v21*w4+(2*u21+z1)*w5)%po;
+  ue1=(2*ss0-z1+w5)%po;
+  w1=(l2-ue1)%po;w2=(ue1*w1+ue0-l1)%po;ve1=(w2*w3-v21)%po;
+  w2=(ue0*w1-l0)%po;ve0=(w2*w3-v20)%po;
+  @uu=[ue1,ue0]
+  @vv=[ve1,ve0]
+  print @uu,",",@vv,"\n"
+
+end
+
+#HEC()
+@op=11
+@z=[0,3,7,1,2]
+@ua1=[7,10]
+@ua2=[0,10]
+@va1=[1,9]
+@va2=[7,9]
+
+#print @ua1[0],",",@ua1[1],"\n"
+g2add(@ua1[0],@ua1[1],@ua2[0],@ua2[1],@va1[0],@va1[1],@va2[0],@va2[1],@z[1],@z[2],@z[3],@z[4],@op)
+#g2dbl(@ua1[0],@ua1[1],@va1[0],@va1[1],@z[1],@z[2],@z[3],@z[4],@op)
 
 un=[5027116586,829298331860060713]
 vn=[8402287361,293048739936698113783226667142139285987]
 #un2=[4479815356,4309010080141014784]
 
 
-mktable(@ug0, @vg0)
-jac(@Jga, @P)
+#mktable(@ug0, @vg0)
+#jac(@Jga, @P)
