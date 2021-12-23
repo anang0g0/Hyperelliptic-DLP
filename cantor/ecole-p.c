@@ -2,10 +2,9 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-//#include "global-p.h"
 #include "struct.h"
 #include "chash-p.c"
-//#include "debug.c"
+
 
 #define O 6859 //1331 //2197,4913,6859
 #define K 5
@@ -1021,6 +1020,18 @@ for(int i=0;i<P;i++){
 return t;
 }
 
+OP scr(unsigned short d,OP f){
+  int i,n;
+  vec v={0};
+
+  n=deg(o2v(f));
+  v=o2v(f);
+  for(i=0;i<n;i++)
+  v.x[i]=(v.x[i]*d)%P;
+  f=v2o(v);
+
+  return f;
+}
 
 
 int main(){
@@ -1096,6 +1107,16 @@ v3=omod(minus(oadd(l,vv2)),u3);
 printpol(o2v(v3));
 printf(" =========v3\n");
 
+//undercondtruction
+k=odiv(oadd(ff,minus(omul(vv1,vv1))),uu1);
+s=omod(odiv(k,scr(2,vv1)),uu1);
+l=omul(s,uu1);
+u3=omod(oadd(omul(s,s),minus(oadd(scr(2,omul(vv1,s)),minus(k)))),uu1);
+v3=omod(minus(oadd(l,vv1)),u3);
+printpol(o2v(u3));
+printf("======du3\n");
+printpol(o2v(v3));
+printf("======dv3\n");
 exit(1);
 
 
