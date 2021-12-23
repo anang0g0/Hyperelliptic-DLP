@@ -620,8 +620,6 @@ unsigned short inv(unsigned short a,unsigned short n)
 
 
 
-
-
 //多項式を単行式で割る
 oterm LTdiv(OP f, oterm t)
 {
@@ -667,7 +665,8 @@ OP omod(OP f, OP g)
     oterm a, b = {0}, c = {0};
 
     n = LT(g).n;
-
+if(LT(g).n==0 || LT(f).n==0)
+exit(1);
     //  assert (("baka^\n", LT (f).n != 0));
 
     //  assert (("baka(A)\n", LT (g).n != 0));
@@ -685,7 +684,7 @@ OP omod(OP f, OP g)
     b = LT(g);
     OP ll;
 
-    assert(("double baka\n", b.a != 0 && b.n != 0));
+    assert(("double baka\n", b.a > 0 && b.n > 0));
     while (LT(f).n > 0 && LT(g).n > 0)
     {
 
@@ -852,6 +851,27 @@ printf("\n");
   return ret;
 }
 
+//nを法とする逆数
+OP inv2(OP a,OP n)
+{
+  OP d,x={0},s={0},q,r,t,gcd;
+  d = n;
+  //x = 0;
+  s.t[0].a = 1;
+  while (odeg(a)>0 && LT(a).a > 0){
+    q = odiv(d , a);
+    r = omod(d , a);
+    d = a;
+    a = r;
+    t = osub(x , (omul(q , s)));
+    x = s;
+    s = t;
+  }
+  gcd = d;
+
+  return omod(oadd(x , n) , odiv(n , d));
+}
+
 
 // invert of polynomial
 OP pinv(OP a, OP n)
@@ -910,7 +930,9 @@ OP pinv(OP a, OP n)
 
         d = a;
         a = r;
-        t = osub(x, (omul(q, s)));
+        t = oadd(x, minus(omul(q, s)));
+        printpol(o2v(t));
+        printf("\n");
         ////printpol (o2v (a));
         //printf ("\nin roop a==================%d\n", odeg ((a)));
         //printf ("\n");
@@ -1079,12 +1101,13 @@ printf("=======mod\n");
 //exit(1);
 OP tt={0};
 
-tt=muri(uu2,uu1);
-//tt=pinv(uu2,uu1);
+//tt=muri(uu2,uu1);
+tt=inv2(uu2,uu1);
 printpol(o2v(tt));
 //omod(omul(t,uu2),uu1);
 printf(" ===inv\n");
-//exit(1);
+exit(1);
+
 ll=oadd(vv1,minus(vv2));
 printpol(o2v(ll));
 printf("\n");
@@ -1107,7 +1130,7 @@ v3=omod(minus(oadd(l,vv2)),u3);
 printpol(o2v(v3));
 printf(" =========v3\n");
 
-//undercondtruction
+//below undercondtruction
 k=odiv(oadd(ff,minus(omul(vv1,vv1))),uu1);
 s=omod(odiv(k,scr(2,vv1)),uu1);
 l=omul(s,uu1);
