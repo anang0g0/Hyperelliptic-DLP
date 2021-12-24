@@ -598,9 +598,9 @@ printf("\n");
 }
 
 //nを法とする逆数
-unsigned short inv(unsigned short a,unsigned short n)
+unsigned int inv(unsigned int a,unsigned int n)
 {
-  unsigned short d,x,s,q,r,t,gcd;
+  unsigned int d,x,s,q,r,t,gcd;
   d = n;
   x = 0;
   s = 1;
@@ -1353,8 +1353,8 @@ printpol(o2v(tt.u));
 printf("\n");
 printpol(o2v(tt.d));
 printf("\n");
-e=equ(tt.d.t[0].a,1);
-printf("%d %d\n",(e*10)%11,e);
+e=inv(LT(tt.d).a,P);
+//printf("%d %d\n",(e*10)%11,e);
 //printf("%d\n",tt.d.t[0].a);
 //exit(1);
 v=scr(e,tt.v);
@@ -1362,55 +1362,12 @@ v=scr(e,tt.v);
 return v;
 }
 
-int main(){
-unsigned int i,count=0,c2=0;
-unsigned short aaa[O]={0};
-unsigned short f[K+1]={1,0,3,7,1,2};
-unsigned short u1[K+1]={0,0,0,1,7,10};
-unsigned short u2[K+1]={0,0,0,1,0,10};
-unsigned short v1[K+1]={0,0,0,0,1,9};
-unsigned short v2[K+1]={0,0,0,0,7,9};
-OP ff,k,uu1,uu2,vv1,vv2,s,l,u3,v3,u,ll,t,m,o,d,c;
-unsigned short test[K+1]={0,0,0,0,7,0};
+EX gadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
+OP ll,u;
+OP v,s,l,k,v3,u3;
+EX X;
 
-ff=setpol(f,K+1);
-uu1=setpol(u1,K+1);
-uu2=setpol(u2,K+1);
-vv1=setpol(v1,K+1);
-vv2=setpol(v2,K+1);
-d=setpol(test,K+1);
-/*
-for(i=0;i<3;i++)
-{
-  
-c=odiv(uu1,uu2);
-d=omod(uu1,uu2);
-printpol(o2v(uu1));
-printf("==========@divu2\n");
-printpol(o2v(uu2));
-printf("==========@modu2\n");
-printpol(o2v(c));
-printf("==========@div\n");
-printpol(o2v(d));
-printf("==========@mod\n");
-
-uu1=uu2;
-uu2=d;
-}
-//exit(1);
-*/
-printpol(o2v(ff));
-printf("\n");
-printpol(o2v(uu1));
-printf("\n");
-printpol(o2v(uu2));
-printf("\n");
-printpol(o2v(vv1));
-printf("\n");
-printpol(o2v(vv2));
-printf("\n");
-
-ll=(omul(vv2,vv2));
+  ll=(omul(vv2,vv2));
 printpol(o2v(ll));
 printf("\n");
 ll=(osub(ff,(ll)));
@@ -1428,7 +1385,7 @@ printf("=======mod\n");
 //exit(1);
 //EX tt={0};
 
-OP v;
+
 //tt=muri(uu2,uu1);
 v=qinv(uu1,uu2);
 
@@ -1457,7 +1414,52 @@ printf(" =======u3\n");
 v3=omod(minus(oadd(l,vv2)),u3);
 printpol(o2v(v3));
 printf(" =========v3\n");
-exit(1);
+//exit(1);
+
+X.u=u3;
+X.v=v3;
+
+return X;
+}
+
+int main(){
+unsigned int i,count=0,c2=0;
+unsigned short aaa[O]={0};
+unsigned short f[K+1]={1,0,3,7,1,2};
+unsigned short u1[K+1]={0,0,0,1,7,10};
+unsigned short u2[K+1]={0,0,0,1,0,10};
+unsigned short v1[K+1]={0,0,0,0,1,9};
+unsigned short v2[K+1]={0,0,0,0,7,9};
+OP ff,k,uu1,uu2,vv1,vv2,s,l,u3,v3,u,ll,t,m,o,d,c;
+unsigned short test[K+1]={0,0,0,0,7,0};
+EX V;
+
+ff=setpol(f,K+1);
+uu1=setpol(u1,K+1);
+uu2=setpol(u2,K+1);
+vv1=setpol(v1,K+1);
+vv2=setpol(v2,K+1);
+d=setpol(test,K+1);
+
+printf("%d\n",inv(10,11));
+V=gadd(ff,uu1,uu2,vv1,vv2);
+printpol(o2v(V.u));
+printf(" =====u3\n");
+printpol(o2v(V.v));
+printf(" =====v3\n");
+//exit(1);
+
+printpol(o2v(ff));
+printf("\n");
+printpol(o2v(uu1));
+printf("\n");
+printpol(o2v(uu2));
+printf("\n");
+printpol(o2v(vv1));
+printf("\n");
+printpol(o2v(vv2));
+printf("\n");
+
 //below undercondtruction
 k=odiv(oadd(ff,minus(omul(vv1,vv1))),uu1);
 s=omod(odiv(k,scr(2,vv1)),uu1);
