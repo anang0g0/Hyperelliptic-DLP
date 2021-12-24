@@ -1,3 +1,4 @@
+#include <NTL/ZZ.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -18,6 +19,8 @@ unsigned short pp[4][4] = {{0, 0, 9, 2}, {0, 0, 11, 2}, {0, 0, 16, 3}, {0, 0, 15
 unsigned short gf[O] = {0}, fg[O] = {0};
 // int N =0,M=0;
 unsigned short c[K + 1] = {0};
+
+NTL_CLIENT
 
 // OP型からベクトル型への変換
 vec o2v(OP f)
@@ -214,7 +217,7 @@ int odeg(OP f)
   return j;
 }
 
-OP minus(OP f)
+OP mins(OP f)
 {
   unsigned int i, j;
 
@@ -667,7 +670,7 @@ OP omod(OP f, OP g)
     printf("======h_before_omod\n");
     f = osub(f, (h));
     printpol(o2v((h)));
-    printf(" =====h_minus_omod\n");
+    printf(" =====h_mins_omod\n");
     printpol(o2v(f));
     printf(" =====f_after_omod\n");
     // exit(1);
@@ -992,7 +995,7 @@ EX xgcd(OP f, OP g)
     // if (LT(g).a > 0)
     ww[i] = odiv(f, g);
 
-    v[i + 1] = oadd(v[i - 1], minus(omul(ww[i], v[i])));
+    v[i + 1] = oadd(v[i - 1], mins(omul(ww[i], v[i])));
     printpol(o2v(v[i]));
     printf(" ==v[%d]\n", i);
     printpol(o2v(v[i + 1]));
@@ -1290,8 +1293,8 @@ OP extGCD(OP a, OP b)
   while (odeg(b) > 0)
   {
     k = odiv(a, b);
-    x = oadd(x, minus(omul(k, u)));
-    y = oadd(y, minus(omul(k, v)));
+    x = oadd(x, mins(omul(k, u)));
+    y = oadd(y, mins(omul(k, v)));
     x = u;
     u = x;
     y = v;
@@ -1369,13 +1372,13 @@ EX gadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   l = omul(s, uu2);
   printpol(o2v(l));
   printf("\n");
-  u = odiv(oadd(k, minus(omul(s, oadd(l, omul(s, vv2))))), uu1);
+  u = odiv(oadd(k, mins(omul(s, oadd(l, omul(s, vv2))))), uu1);
   printpol(o2v(u));
   printf("\n");
   u3 = coeff(u);
   printpol(o2v(u3));
   printf(" =======u3\n");
-  v3 = omod(minus(oadd(l, vv2)), u3);
+  v3 = omod(mins(oadd(l, vv2)), u3);
   printpol(o2v(v3));
   printf(" =========v3\n");
   // exit(1);
@@ -1399,14 +1402,14 @@ int main()
   unsigned short test[K + 1] = {0, 0, 0, 0, 7, 0};
   EX V;
 
-//ZZ q1 = to_ZZ("1208925819614629174708801");
+ZZ q1 = to_ZZ("1208925819614629174708801");
 int a1 = 1331;
-//J1 =to_ZZ("1461501637326815988079848163961117521046955445901");
+ZZ J1 =to_ZZ("1461501637326815988079848163961117521046955445901");
 //e y2 = x5+a, a ∈ Fp
 
-//ZZ q2 = to_ZZ("1208925819614629174709941");
+ZZ q2 = to_ZZ("1208925819614629174709941");
 int a2 = 2;
-//J2 = to_ZZ("1461501637331762771847359428275278989652932675771");
+ZZ J2 = to_ZZ("1461501637331762771847359428275278989652932675771");
 
   ff = setpol(f, K + 1);
   uu1 = setpol(u1, K + 1);
@@ -1435,11 +1438,11 @@ int a2 = 2;
   printf("\n");
 
   // below undercondtruction
-  k = odiv(oadd(ff, minus(omul(vv1, vv1))), uu1);
+  k = odiv(oadd(ff, mins(omul(vv1, vv1))), uu1);
   s = omod(odiv(k, scr(2, vv1)), uu1);
   l = omul(s, uu1);
-  u3 = omod(oadd(omul(s, s), minus(oadd(scr(2, omul(vv1, s)), minus(k)))), uu1);
-  v3 = omod(minus(oadd(l, vv1)), u3);
+  u3 = omod(oadd(omul(s, s), mins(oadd(scr(2, omul(vv1, s)), mins(k)))), uu1);
+  v3 = omod(mins(oadd(l, vv1)), u3);
   printpol(o2v(u3));
   printf("======du3\n");
   printpol(o2v(v3));
