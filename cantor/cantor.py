@@ -114,7 +114,7 @@ class GF:
 def polyval(xs, n):
     return functools.reduce(lambda x, y: x * n + y, xs)
 
-
+"""
 def xgcd(a, b):
     x0, y0, x1, y1 = 1, 0, 0, 1
     while b != 0:
@@ -130,7 +130,7 @@ def modinv(a, m):
     else:
         return x % m
     
-
+"""
 
 def legendre(a, p):
     return pow(a, (p - 1) // 2, p)
@@ -195,31 +195,34 @@ if __name__ == '__main__':
 def inv(a, n):
   a=np.array(a)
   n=np.array(n)
-  f=np.array([0,0,0,0])
+  f=np.array([0,0,0])
   gf=GF(11)
 
   d = n;
-  x = np.array([0,0,0,0]);
-  s = np.array([0,0,0,1]);
+  x = np.array([0,0,0]);
+  s = np.array([0,0,1]);
   print(f)
-  r=np.array([0,0,0,0])
-  q=np.array([0,0,0,0])
-  while (a.all() != 0):
+  aa=np.array([0,0,0])
+  r=np.array([0,0,0])
+  q=np.array([0,0,0])
+  while (a.all() ):
     q, r = gf.polydiv(d , a);
     d = a;
     a = r;
-    tt = gf.polymul(q , s)
-    t = gf.polysub(x, tt)
+    t = gf.polysub(x, gf.polymul(q,s))
     x = s;
     s = t;
-  
+
+  print(q,r,d,a,t,x,s)
   gcd = d;
-  print(r)
-  exit()
+  print(gcd)
+  
   f,g = gf.polydiv(n,d)
   o=gf.polyadd(x,n)
-  h,e =gf.polydiv(o,f)
-  return q, r
+  h,e =gf.polydiv(f,o)
+  print(h,e)
+  exit()
+  return h,e
 
 
 
@@ -234,17 +237,51 @@ def test(p, xs, ys):
         p, q = gf.polydiv(x, y)
         print(x, "/", y, "=", p, q)
 
-        
+def modinv(a, b):
+    a=np.array(a)
+    b=np.array(b)
+    gf=GF(11)
+    p = b
+    x=np.array([0,0,1])
+    y=np.array([0,0,0])
+    u=np.array([0,0,0])
+    v=np.array([0,0,1])
+    t=np.array([0,0,0])
+    g=np.array([0,0,0])
+    #x, y, u, v = 1, 0, 0, 1
+    while b.any():
+        k,l = gf.polydiv(a , b)
+        print(k)
+        print(l)
+ 
+        x = gf.polysub(x,gf.polymul(k , u))
+        y = gf.polysub(y,gf.polymul(k , v))
+        x, u = u, x
+        y, v = v, y
+        t,s=gf.polydiv(a,b)
+        t=gf.polymul(b,t)
+        g=gf.polysub(a,t)
+        a, b = b, g
+    y,t=gf.polydiv(x,p)
+    y=gf.polysub(x,gf.polymul(y,p))
+    x = y  #%= p
+    if x.all() < 0:
+        x = gf,polyadd(x,p)
+    return x
 
 test(2, [1,0,1,1], [1,0,1])
 test(3, [2,1,0,2], [2,0,1])
 test(5, [4,3,2,1], [3,2,1])
+
 gf=GF(11)
 f=[1,0,3,7,1,2]
 v1=[1,9]
 u1=[1,7,10]
 u2=[1,0,10]
 v2=[7,9]
+print(inv(u1,u2))
+exit()
+
 t1=np.array(v2)
 t2=np.array(v1)
 ff=np.array(f)
@@ -255,8 +292,11 @@ c=gf.polysub(ff,a)
 p,q=gf.polydiv(c,uu2)
 print(p)
 print(q)
-#exit()
+y=inv(u1,u2)
+print(y);
+print(xgcd(u1,u2))
 
+exit()
 k=p
 a=gf.polysub(t2,t1)
 print(inv(uu2,uu1)) # 答えは 3x+10
