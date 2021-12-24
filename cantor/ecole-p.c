@@ -1412,7 +1412,7 @@ int main()
   printf(" =====u3\n");
   printpol(o2v(V.v));
   printf(" =====v3\n");
-  // exit(1);
+   exit(1);
 
   printpol(o2v(ff));
   printf("\n");
