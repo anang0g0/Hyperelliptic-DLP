@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <stdint.h>
+#include <strings.h>
 #include <stdbool.h>
 #include "struct.h"
 #include "chash-p.c"
@@ -9,6 +11,7 @@
 #define K 5
 //#define P 11
 
+//using namespa
 // sagemath上での原始多項式
 unsigned short pp[4][4] = {{0, 0, 9, 2}, {0, 0, 11, 2}, {0, 0, 16, 3}, {0, 0, 15, 2}};
 // {0,0,9,2}, {1,0,11,2}, {1,0,16,3}, {1,0,15,2};
