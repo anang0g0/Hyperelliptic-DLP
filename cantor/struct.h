@@ -27,6 +27,7 @@ typedef struct{
   OP u; //inverse of polynomial?
   OP v; //error locater
   OP d; //gcd
+  OP h;
 } EX;
 
 

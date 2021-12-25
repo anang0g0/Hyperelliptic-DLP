@@ -5,8 +5,6 @@
 #include <string.h>
 
 
-#define P 11
-
 
 //nomal bases
 //unsigned short gf[M]={0,1,2,4,8,9,11,15,7,14,5,10,13,3,6,12};
@@ -84,28 +82,4 @@ void seed(void){
 return;
   
 }
-
-
-int mlt(int x, int y){
-
-    if(x==0||y==0)
-        return 0;
-  
-  return (x*y)%P;
-}
-
-
-int mltn(int n,int x){
-  int i,j;
-
-if(n==0)
-return 1;
-  i=x;
-    for(j=0;j<n-1;j++)
-      i=mlt(i,x);
-
-  return i%P;
-}
-
-
 
