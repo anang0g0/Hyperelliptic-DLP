@@ -889,17 +889,26 @@ print "b'=",3-aa*1553122609714208136553134,"\n"
 
 end
 
+def test()
 
+  for y in 0..31
+  for x in 0..31
+    if((y**2)%31 == (x**5 + 2*x**3 - 7*x**2 + 5*x + 1)%31)
+      print x," , ",y ,"\n"
+    end
+  end
+end
+end
 
-HEC()
+#HEC()
 
-
+test()
 
 mktable(@wu,@wv)
 #exit()
-jac(@J3,@p3)
+jac(@J3,@p2)
 #jac(@Jga,@P)
-print "debug\n"
+#print "debug\n"
 exit()
 jac(6,@g4p)
 print "debug\n"

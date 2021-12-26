@@ -732,6 +732,11 @@ def ladd(u11,u10,u21,u20,v11,v10,v21,v20,po)
 
 end
 
+
+a=inv(2,3)
+print a,"\n"
+exit()
+
 #HEC()
 @op=11
 @z=[0,3,7,1,2]
