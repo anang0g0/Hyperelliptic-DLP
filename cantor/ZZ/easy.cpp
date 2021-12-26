@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <strings.h>
 #include <stdbool.h>
-#include <NTL/ZZ.h>
+//#include <NTL/ZZ.h>
 #include "struct.h"
 #include "chash-p.c"
 
@@ -12,7 +12,7 @@
 #define K 5
 #define P 11
 
-NTL_CLIENT
+//NTL_CLIENT
 
 //using namespa
 // sagemath上での原始多項式
@@ -1195,13 +1195,13 @@ EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   l = omul(s, uu2);
   printpol(o2v(l));
   printf("\n");
-  u = odiv(osub(k, (omul(s, oadd(l, omul(s, vv2))))), uu1);
+  u = odiv(oadd(k, minus(omul(s, oadd(l, omul(s, vv2))))), uu1);
   printpol(o2v(u));
   printf("\n");
   u3 = coeff(u);
   printpol(o2v(u3));
   printf(" =======u3\n");
-  v3 = omod(-(oadd(l, vv2)), u3);
+  v3 = omod(minus(oadd(l, vv2)), u3);
   printpol(o2v(v3));
   printf(" =========v3\n");
   // exit(1);
@@ -1316,7 +1316,7 @@ int main()
 
   unsigned short f[K + 1] = {1, 0, 3, 7, 1, 2};
   unsigned short u1[K + 1] = {0, 0, 0, 1, 7, 10};
-  unsigned short u2[K + 1] = {0, 0, 0, 1, 0, 10};
+  unsigned short u2[K + 1] = {0, 0, 0, 1, 7, 10};
   unsigned short v1[K + 1] = {0, 0, 0, 0, 1, 9};
   unsigned short v2[K + 1] = {0, 0, 0, 0, 7, 9};
 
@@ -1354,7 +1354,7 @@ printf("\n");
 //exit(1);
 
 
-
+/*
   V=xgcd(uu1,uu2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
@@ -1365,10 +1365,10 @@ printf("\n");
   printpol(o2v((V.h)));
   printf(" =====h3\n");
 //  exit(1);
-  
-  d=oadd(vv1,vv2);
-  printpol(o2v(d));
-  printf(" v1+v2\n");
+  */
+  //d=oadd(vv1,vv2);
+  //printpol(o2v(d));
+  //printf(" v1+v2\n");
   //exit(1);
   /*
   vx=diviser(V.d,d);
@@ -1377,7 +1377,7 @@ printf("\n");
   V.d=v2o(vx);
   //exit(1);
 */
-
+/*
   V=xgcd((V.d),d);
   printpol(o2v(V.u));
   printf(" =====u3\n");
@@ -1388,7 +1388,7 @@ printf("\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
   exit(1);
-
+*/
   
   V = g2add(ff, uu1, uu2, vv1, vv2);
   //V=xgcd(uu1,uu2,2);
@@ -1400,46 +1400,26 @@ printf("\n");
   printf(" =====d3\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
+  
   //printf("%d\n",equ(5,8));
-  exit(1);
-  o=oadd(vv1,vv2);
-  printpol(o2v(o));
-  printf("\n");
+//  exit(1);
+  //o=oadd(vv1,vv2);
+  //printpol(o2v(o));
+  //printf("\n");
 
   // below undercondtruction
   k = odiv(osub(ff, (omul(vv1, vv1))), uu1);
   s = omod(odiv(k, scr(2, vv1)), uu1);
   l = omul(s, uu1);
   u3 = omod(osub(omul(s, s), (osub(scr(2, omul(vv1, s)), (k)))), uu1);
-  v3 = omod(-(oadd(l, vv1)), u3);
+  v3 = omod(minus(oadd(l, vv1)), u3);
   printpol(o2v(u3));
   printf("======du3\n");
   printpol(o2v(v3));
   printf("======dv3\n");
-  exit(1);
 
-  mkmf();
 
-  makefg(O);
 
-  count = 0;
-  c2 = 0;
-  for (i = 0; i < O; i++)
-  {
-    if (gf[i] > 0)
-      count++;
-    if (fg[i] > 0)
-    {
-      c2++;
-    }
-    else
-    {
-      // printf("i=%d\n",i);
-    }
-  }
-
-  printf("%d %d\n", count, c2);
-  // exit(1);
 
   return 0;
 }

@@ -31,4 +31,12 @@ typedef struct{
 } EX;
 
 
+typedef struct  {
+  unsigned short x;
+  unsigned short y;
+} PO;
 
+typedef struct {
+  OP u;
+  OP v;
+} Div;

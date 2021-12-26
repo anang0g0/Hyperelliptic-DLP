@@ -9,10 +9,10 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 31
+#define P 37
 
-//using namespa
-// sagemath上での原始多項式
+// using namespa
+//  sagemath上での原始多項式
 unsigned short pp[4][4] = {{0, 0, 9, 2}, {0, 0, 11, 2}, {0, 0, 16, 3}, {0, 0, 15, 2}};
 // {0,0,9,2}, {1,0,11,2}, {1,0,16,3}, {1,0,15,2};
 // GF(11^3,13^3,17^3,19^3)
@@ -307,7 +307,6 @@ OP oadd(OP f, OP g)
   {
     // if(a.x[i]>b.x[i])
     c.x[i] = (a.x[i] + b.x[i]) % P;
-    
   }
   //
   h = v2o(c);
@@ -396,17 +395,16 @@ OP osub(OP f, OP g)
     }
     else
     {
-      d.x[i] = (P + (a.x[i] - b.x[i])) ;
+      d.x[i] = (P + (a.x[i] - b.x[i]));
     }
-    
-    printf("%d - %d = %d\n",a.x[i],b.x[i],d.x[i]);
-    //if(d.x[i]<0){
-    //  printf("%d\n",d.x[i]);
-    //  d.x[i]+=P;
-    //}
-    
+
+    printf("%d - %d = %d\n", a.x[i], b.x[i], d.x[i]);
+    // if(d.x[i]<0){
+    //   printf("%d\n",d.x[i]);
+    //   d.x[i]+=P;
+    // }
   }
-//exit(1);
+  // exit(1);
   ans = v2o(d);
 
   return ans;
@@ -658,7 +656,7 @@ OP omod(OP f, OP g)
   b = LT(g);
   OP ll;
 
-  //assert(("double baka\n", b.a > 0 && b.n > 0));
+  // assert(("double baka\n", b.a > 0 && b.n > 0));
   while (LT(f).n > -1 && LT(g).n > -1)
   {
 
@@ -747,7 +745,7 @@ OP odiv(OP f, OP g)
   // if (LT (g).n == 0 && LT (g).a > 1)
   //   return g; //coeff (f);
 
-  k = 0;//odeg(f) - odeg(g);
+  k = 0; // odeg(f) - odeg(g);
   b = LT(g);
   if (b.a == 1 && b.n == 0)
     return f;
@@ -762,7 +760,7 @@ OP odiv(OP f, OP g)
   }
   OP null = {0};
   i = 0;
-  k=0;
+  k = 0;
   while (LT(f).a > -1 || LT(g).a > -1)
   {
     c = LTdiv(f, b);
@@ -803,13 +801,13 @@ OP odiv(OP f, OP g)
 
   // tt は逆順に入ってるので入れ替える
   OP ret = {0};
-  
-  int tt_terms = terms (tt);
+
+  int tt_terms = terms(tt);
   for (i = 0; i < tt_terms; i++)
-    {
-      ret.t[i] = tt.t[tt_terms - i - 1];
-    }
-  
+  {
+    ret.t[i] = tt.t[tt_terms - i - 1];
+  }
+
   ret = conv(ret);
   printpol(o2v(ret));
   printf("  return\n");
@@ -953,7 +951,6 @@ OP inv3(OP a, OP n)
   return u;
 }
 
-
 OP scr(unsigned short d, OP f)
 {
   int i, n;
@@ -968,25 +965,27 @@ OP scr(unsigned short d, OP f)
   return f;
 }
 
-OP monic(OP f){
+OP monic(OP f)
+{
   int e1;
   e1 = inv(LT(f).a, P);
-  printf("e=%d\n",e1);
-  f=scr(e1,f);
+  printf("e=%d\n", e1);
+  f = scr(e1, f);
 
-return f;
+  return f;
 }
 
-OP cdiv(int a,OP f){
+OP cdiv(int a, OP f)
+{
   vec v;
-  int i,l;
+  int i, l;
 
-  v=o2v(f);
-  l=odeg(f);
-  for(i=0;i<l;i++)
-  v.x[i]=(a*v.x[i])%P;
+  v = o2v(f);
+  l = odeg(f);
+  for (i = 0; i < l; i++)
+    v.x[i] = (a * v.x[i]) % P;
 
-  f=v2o(v);
+  f = v2o(v);
 
   return f;
 }
@@ -996,9 +995,8 @@ EX xgcd(OP f, OP g)
 {
   OP h[10] = {0}, ww[10] = {0}, *v, *u;
   oterm a, b;
-  int i = 0, j,  flg = 0,k;
+  int i = 0, j, flg = 0, k;
   EX e = {0}, ee = {0};
-
 
   v = (OP *)malloc(sizeof(OP) * (DEG));
   u = (OP *)malloc(sizeof(OP) * (DEG));
@@ -1022,36 +1020,38 @@ EX xgcd(OP f, OP g)
   printpol(o2v(g));
   printf(" s===============\n");
   // exit(1);
-  if(LT(f).a==0 || LT(g).a==0){
+  if (LT(f).a == 0 || LT(g).a == 0)
+  {
     printf("f or g ==0\n");
     exit(1);
   }
 
-k = odeg(g);
-if(k==0 && LT(g).a>0){
-  printf("use cdiv\n");
-  exit(1);
-}
- i = 1;
-  while (1)
-//  for (i = 1; i < 1+ k+1; i++)
+  k = odeg(g);
+  if (k == 0 && LT(g).a > 0)
+  {
+    printf("use cdiv\n");
+    exit(1);
+  }
+  i = 1;
+  while (LT(g).a!=0)
+  //  for (i = 1; i < 1+ k+1; i++)
   {
     printpol(o2v(f));
     printf(" fffffffffffffffff\n");
 
-   // if(LT(g).a>-0){
+    // if(LT(g).a>-0){
     printpol(o2v(g));
     printf(" ggggggggggggggggg\n");
-  // if (LT(g).a > 0)
+    // if (LT(g).a > 0)
     h[i] = omod(f, g);
     printpol(o2v(h[i]));
     printf(" %d hhhhhhhhhhhhhh\n", i);
 
-  //if (LT(g).a > 0)
+    // if (LT(g).a > 0)
     ww[i] = odiv(f, g);
     printpol(o2v(ww[i]));
     printf(" %d wwwwwwwwwwwwww\n", i);
-  
+
     v[i + 1] = osub(v[i - 1], (omul(ww[i], v[i])));
     printpol(o2v(v[i]));
     printf(" vvvvvvvvvvvvvvvv[%d]\n", i);
@@ -1064,16 +1064,16 @@ if(k==0 && LT(g).a>0){
 
     f = g;
     g = h[i];
-   
-if(LT(g).a==0)
-break;
-     i++;
+
+    //if (LT(g).a == 0)
+    //  break;
+    i++;
   }
-//f=g;
-//g=h[i];
-  if(LT(g).a>0)
+  // f=g;
+  // g=h[i];
+  if (LT(g).a > 0)
     ww[i] = odiv(f, g);
-   printpol(o2v(ww[i]));
+  printpol(o2v(ww[i]));
   printf(" %d wwwwwwwwwwwwww\n", i);
   printpol(o2v(f));
   printf(" =========fvi@\n");
@@ -1087,8 +1087,7 @@ break;
   printf(" =========wvi@\n");
   printpol(o2v(g));
   printf(" =========gvi@\n");
-//exit(1);
-  
+  // exit(1);
 
   e.d = f;
   e.u = u[i];
@@ -1099,21 +1098,18 @@ break;
   free(u);
 
   printf("end of fnc\n");
-  //exit(1);
+  // exit(1);
   return e;
   //  wait ();
 }
 
-
-
-
 OP qinv(OP uu1, OP uu2)
 {
-  EX tt,V;
+  EX tt, V;
   OP v;
   int e;
 
-//return cdiv(LT(g).a,g);
+  // return cdiv(LT(g).a,g);
   tt = xgcd(uu1, uu2);
   printpol(o2v(tt.v));
   printf("\n");
@@ -1123,17 +1119,15 @@ OP qinv(OP uu1, OP uu2)
   printf("\n");
   printpol(o2v(tt.h));
   printf("\n");
-  //exit(1);
-  v=omul(tt.d,tt.v);
+  // exit(1);
+  v = omul(tt.d, tt.v);
   printpol(o2v(v));
   printf(" in qinv's v\n");
 
-  //exit(1);
+  // exit(1);
 
   return v;
 }
-
-
 
 EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
@@ -1157,21 +1151,21 @@ EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   printpol(o2v(ll));
   printf("=======mod\n");
   // exit(1);
-   EX tt={0};
+  EX tt = {0};
 
   // tt=muri(uu2,uu1);
   v = qinv(uu1, uu2);
   printpol(o2v(v));
   // omod(omul(t,uu2),uu1);
   printf(" ===inv\n");
-//   exit(1);
+  //   exit(1);
 
-//v=oadd(vv1,vv2);
- //printpol(o2v(v));
-  //printf(" v\n");
-  //exit(1);
-  //tt=xgcd(uu1,uu2);
-  tt=xgcd(oadd(vv1,vv2),v);
+  // v=oadd(vv1,vv2);
+  // printpol(o2v(v));
+  // printf(" v\n");
+  // exit(1);
+  // tt=xgcd(uu1,uu2);
+  tt = xgcd(oadd(vv1, vv2), v);
   printpol(o2v(tt.d));
   printf(" d@\n");
   printpol(o2v(tt.u));
@@ -1180,7 +1174,7 @@ EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   printf(" v@\n");
   printpol(o2v(tt.h));
   printf(" h@\n");
-  //exit(1);
+  // exit(1);
   ll = osub(vv1, (vv2));
   printpol(o2v(ll));
   printf("\n");
@@ -1209,164 +1203,344 @@ EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   return X;
 }
 
+vec diviser(OP o, OP m)
+{
+  int t1[2][3], cc[2];
+  vec c1 = {0};
+  int i, j, k;
 
-vec diviser(OP o,OP m){
-int t1[2][3],cc[2];
-vec c1={0};
-int i,j,k;
+  t1[0][0] = o.t[1].a;
+  t1[1][0] = o.t[0].a;
+  t1[0][1] = m.t[1].a;
+  t1[1][1] = m.t[0].a;
+  t1[0][2] = 0;
+  t1[1][2] = 1;
 
+  cc[0] = inv(t1[0][0], P);
+  printf("%d\n", cc[0]);
+  // exit(1);
 
-
-t1[0][0]=o.t[1].a;
-t1[1][0]=o.t[0].a;
-t1[0][1]=m.t[1].a;
-t1[1][1]=m.t[0].a;
-t1[0][2]=0;
-t1[1][2]=1;
-
-
-cc[0]=inv(t1[0][0],P);
-printf("%d\n",cc[0]);
-//exit(1);
-
-  for(i=0;i<2;i++){
-    for(j=0;j<3;j++)
-  printf("%d,",t1[i][j]);
-  printf("\n");
-}
-printf("\n");
-
-  for(j=0;j<3;j++){
-    t1[0][j]=(t1[0][j]*cc[0])%P;
-    printf("%d,",t1[0][j]);
-  }
-  printf("\n");
-//exit(1);
-  int z;
-  z=t1[1][0];
-      for(j=0;j<3;j++){
-    t1[1][j]=t1[1][j]-(t1[0][j]*z);
-    
-    if(t1[1][j]<0)
-    t1[1][j]=P+t1[1][j];
-    printf("%d,",t1[1][j]);
-      }
-    printf("\n\n");
-//exit(1);
-
-  cc[1]=inv(t1[1][1],P);
-  for(j=0;j<3;j++){
-    t1[1][j]=(t1[1][j]*cc[1])%P;
-    printf("%d,",t1[1][j]);
-  }
-  printf("\n\n");
-for(i=0;i<2;i++){
-  for(j=0;j<3;j++)
-  printf("%d,",t1[i][j]);
-  printf("\n");
-}
-printf("\n\n");
-  //exit(1);
-  for(i=0;i<3;i++)
-printf("b%d,",t1[0][i]);
-printf("\n");
-//exit(1);
-  printf("A%d",t1[0][1]);
-
-  int y=t1[0][1];
-
-  for(j=0;j<3;j++){
-    t1[0][j]=(t1[0][j]-t1[1][j]*y)%P;
-    if(t1[0][j]<0)
-    t1[0][j]+=P;
-    printf("a%d,",t1[1][j]*t1[1][1]);
-  }
-      printf("\n\n");
-    // exit(1);
-
-  for(i=0;i<2;i++){
-    for(j=0;j<3;j++)
-    printf("%d,",t1[i][j]);
+  for (i = 0; i < 2; i++)
+  {
+    for (j = 0; j < 3; j++)
+      printf("%d,", t1[i][j]);
     printf("\n");
   }
   printf("\n");
-//  exit(1);
-  c1.x[0]=t1[0][2];
-  c1.x[1]=t1[1][2];
-printf("%d %d\n",c1.x[0],c1.x[1]);
-//exit(1);
 
-return c1;
+  for (j = 0; j < 3; j++)
+  {
+    t1[0][j] = (t1[0][j] * cc[0]) % P;
+    printf("%d,", t1[0][j]);
+  }
+  printf("\n");
+  // exit(1);
+  int z;
+  z = t1[1][0];
+  for (j = 0; j < 3; j++)
+  {
+    t1[1][j] = t1[1][j] - (t1[0][j] * z);
+
+    if (t1[1][j] < 0)
+      t1[1][j] = P + t1[1][j];
+    printf("%d,", t1[1][j]);
+  }
+  printf("\n\n");
+  // exit(1);
+
+  cc[1] = inv(t1[1][1], P);
+  for (j = 0; j < 3; j++)
+  {
+    t1[1][j] = (t1[1][j] * cc[1]) % P;
+    printf("%d,", t1[1][j]);
+  }
+  printf("\n\n");
+  for (i = 0; i < 2; i++)
+  {
+    for (j = 0; j < 3; j++)
+      printf("%d,", t1[i][j]);
+    printf("\n");
+  }
+  printf("\n\n");
+  // exit(1);
+  for (i = 0; i < 3; i++)
+    printf("b%d,", t1[0][i]);
+  printf("\n");
+  // exit(1);
+  printf("A%d", t1[0][1]);
+
+  int y = t1[0][1];
+
+  for (j = 0; j < 3; j++)
+  {
+    t1[0][j] = (t1[0][j] - t1[1][j] * y) % P;
+    if (t1[0][j] < 0)
+      t1[0][j] += P;
+    printf("a%d,", t1[1][j] * t1[1][1]);
+  }
+  printf("\n\n");
+  // exit(1);
+
+  for (i = 0; i < 2; i++)
+  {
+    for (j = 0; j < 3; j++)
+      printf("%d,", t1[i][j]);
+    printf("\n");
+  }
+  printf("\n");
+  //  exit(1);
+  c1.x[0] = t1[0][2];
+  c1.x[1] = t1[1][2];
+  printf("%d %d\n", c1.x[0], c1.x[1]);
+  // exit(1);
+
+  return c1;
 }
+
+Div gendiv(OP f){
+PO xy[1000],a,b,e;
+OP d1,d2,c,d;
+int x,y,i,j,k,count;
+Div D;
+vec v1,v2,z1,z2;
+count=0;
+
+ 
+ 
+  for (x = 0; x < P; x++)
+  {
+    for (y = 0; y < P; y++)
+    {
+      if ((y * y) % P == (x * x * x * x * x + 2 * x * x * x + 30 * x * x + 5 * x + 1) % P){
+      xy[count].x=x;
+      xy[count].y=y;
+      count++;
+        printf("%d,%d\n", x, y);
+
+      }
+    }
+  }
+  do{
+  k=rand()%count;
+  j=rand()%count;
+  i=rand()%count;
+  a=xy[k];
+  b=xy[j];
+  e=xy[i];
+  v1.x[0]=a.x;
+  v1.x[1]=1;
+  c=v2o(v1);
+  v2.x[0]=b.x;
+  v2.x[1]=1;
+  z1.x[1]=e.x;
+  z1.x[0]=e.y;
+  d=v2o(v2);
+  d1=omul(c,d);
+  d2=v2o(z1);
+  printpol(o2v(d1));
+  printf(" ==u\n");
+  printpol(o2v(d2));
+  printf(" ==v\n");
+  exit(1);
+  }while(LT((omod(oadd(osub(d2,d2),f),d1))).a ==0);
+  D.u=d1;
+  D.v=d2;
+
+return D;
+}
+
+int bit(unsigned b,int i){
+int k=1;
+
+if((b&(1<<i))>0){
+return 1;
+}else{
+  return 0;
+}
+  
+}
+
+//jj=aa^bb mod oo
+int Exp(int aa,int bb,int oo){
+int ii,jj,kk[8192];
+int j,c[8192],count=0,i;
+  ii=oo;
+  j=0;
+  jj=0;
+//  kk[4096]; //prime is 4096 bit table
+//  c[8192]  //mod is 8192 bit table
+  count=0;
+
+  for(i=0;i<8192;i++){
+    kk[i]=0;
+    }
+  while(ii>0){
+    ii = (ii>>1);
+    j=j+1;
+  }
+
+
+  kk[0]=aa;
+
+//  cout << j << "\n";
+  
+//ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
+  for(i=0;i<j+1;i++){
+      if(bit(bb,i) != 0){ // testbit(bb,i)
+	c[count]=i;
+	count=count+1;
+      }
+    }
+//    cout << bb << endl;
+//    cout << count << "\n";
+//exit(1);
+    for(i=1;i<c[count-1]+1;i++){
+      kk[i] = kk[i-1]*kk[i-1]%oo;
+    }
+
+    jj=1;
+    for(i=0;i<count;i++){
+      jj=kk[c[i]]*jj%oo;
+      if (jj==0){
+//	print i,"\n"
+      }
+    }
+
+    return jj;
+}
+
+
+unsigned root(unsigned a,unsigned p){
+int c,b;
+
+  printf("p mod = %d , %d\n", p % 4, p % 8);
+  if (p % 4 == 3 || p % 8 == 5){
+    if (p % 4 == 3){
+      b = (p + 1) / 4;
+      c = Exp(a, b, p);
+      if (c * c % p != a){
+        printf("baka1\n");
+        //#exit()
+      }
+      if (c * c % p == a){
+        printf("good\n");
+        printf("c=%d\n", c);
+      }
+    }
+    if (p % 8 == 5){
+      c = Exp(a, (p + 3) / 8, p);
+      if (c * c % p != a)
+        printf("baka\n");
+    }
+      if (c * c % p == a){
+        printf("good\n");
+        printf("%d\n",c);
+      }
+    }
+    if (p % 8 == 5){
+      c = 2 * a * Exp(4 * a, (p - 5) / 8, p);
+      if (c * c % p != a){
+        printf("dangerous\n");
+      }
+      if (c * c % p == a){
+        printf("good\n");
+        printf("%d\n", c);
+      }
+    
+    return c;
+    }
+  
+  return 0;
+}
+
+int tr1e(int x,int f4,int f3,int f2,int f1,int f0,int p){
+  int b,c,a;
+
+  b = (x *x*x*x*x + f4 * x*x*x*x + f3 * x *x*x + f2 * x * x + f1 * x + f0)%p;
+  c = root(b % p, p);
+  if (c == 0){
+    return 0;
+  }
+  a = c * c;
+  if (a % p == b % p){
+    printf("%d, %d\n", x, c);
+    return c;
+  }
+  return -1;
+}
+
 
 int main()
 {
   unsigned int i, count = 0, c2 = 0;
   unsigned short aaa[O] = {0};
+  /*
+    unsigned short f[K + 1] = {1, 7, 6, 2, 8, 2};
+    unsigned short u1[K + 1] = {0, 0, 0, 1, 21, 16};
+    unsigned short u2[K + 1] = {0, 0, 0, 1, 19, 20};
+    unsigned short v1[K + 1] = {0, 0, 0, 0, 21, 21};
+    unsigned short v2[K + 1] = {0, 0, 0, 0, 12, 8};
+  */
 
-  unsigned short f[K + 1] = {1, 7, 6, 2, 8, 2};
-  unsigned short u1[K + 1] = {0, 0, 0, 1, 21, 16};
-  unsigned short u2[K + 1] = {0, 0, 0, 1, 19, 20};
-  unsigned short v1[K + 1] = {0, 0, 0, 0, 21, 21};
-  unsigned short v2[K + 1] = {0, 0, 0, 0, 12, 8};
-
-/*
   unsigned short f[K + 1] = {1, 0, 3, 7, 1, 2};
   unsigned short u1[K + 1] = {0, 0, 0, 1, 7, 10};
   unsigned short u2[K + 1] = {0, 0, 0, 1, 0, 10};
   unsigned short v1[K + 1] = {0, 0, 0, 0, 1, 9};
   unsigned short v2[K + 1] = {0, 0, 0, 0, 7, 9};
-*/
+
   OP ff, k, uu1, uu2, vv1, vv2, s, l, u3, v3, u, ll, t, m, o, d, c;
   unsigned short tst1[K + 1] = {0, 0, 0, 0, 1, 29};
   unsigned short tst2[K + 1] = {0, 0, 0, 0, 2, 29};
-  unsigned tmp[2][3]={0};
+  unsigned tmp[2][3] = {0};
   EX V;
   oterm a;
-  OP b={0};
-//ZZ q1 = to_ZZ("1208925819614629174708801");
-int a1 = 1331;
-//J1 =to_ZZ("1461501637326815988079848163961117521046955445901");
-//e y2 = x5+a, a ∈ Fp
+  OP b = {0};
+  // int q1 = to_int("1208925819614629174708801");
+  int a1 = 1331;
+  // J1 =to_int("1461501637326815988079848163961117521046955445901");
+  // e y2 = x5+a, a ∈ Fp
 
-//ZZ q2 = to_ZZ("1208925819614629174709941");
-int a2 = 2;
-//J2 = to_ZZ("1461501637331762771847359428275278989652932675771");
-int j,t1[2][3]={0},c1[2]={0},cc[2]={0};
-vec vx={0};
+  // int q2 = to_int("1208925819614629174709941");
+  int a2 = 2;
+  // J2 = to_int("1461501637331762771847359428275278989652932675771");
+  int j, t1[2][3] = {0}, c1[2] = {0}, cc[2] = {0};
+  vec vx = {0};
+
+
+srand(clock());
 
   ff = setpol(f, K + 1);
   uu1 = setpol(u1, K + 1);
   uu2 = setpol(u2, K + 1);
   vv1 = setpol(v1, K + 1);
   vv2 = setpol(v2, K + 1);
-  o=setpol(tst1,K+1);
-  m=setpol(tst2,K+1);
+  o = setpol(tst1, K + 1);
+  m = setpol(tst2, K + 1);
 
+  printpol(o2v(uu1));
+  printf("\n");
+  printpol(o2v(uu2));
+  printf("\n");
+  // exit(1);
 
-printpol(o2v(uu1));
-printf("\n");
-printpol(o2v(uu2));
-printf("\n");
-//exit(1);
+  /*
+    V=xgcd(uu1,uu2);
+    printpol(o2v(V.u));
+    printf(" =====u3\n");
+    printpol(o2v((V.v)));
+    printf(" =====v3\n");
+    printpol(o2v(V.d));
+    printf(" =====d3\n");
+    printpol(o2v((V.h)));
+    printf(" =====h3\n");
+  //  exit(1);
 
-
-
-  V=xgcd(uu1,uu2);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v((V.v)));
-  printf(" =====v3\n");
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v((V.h)));
-  printf(" =====h3\n");
-//  exit(1);
-  
-  d=oadd(vv1,vv2);
-  printpol(o2v(d));
-  printf(" v1+v2\n");
-  //exit(1);
+    d=oadd(vv1,vv2);
+    printpol(o2v(d));
+    printf(" v1+v2\n");
+    //exit(1);
+    */
+  /*
   vx=diviser(V.d,d);
   printpol(vx);
   printf("\n");
@@ -1384,10 +1558,31 @@ printf("\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
   exit(1);
+*/
 
-  
-  V = g2add(ff, uu1, uu2, vv1, vv2);
-  //V=xgcd(uu1,uu2,2);
+//  exit(1);
+
+  unsigned short f1[K + 1] = {1, 0, 2, 30, 5, 1};
+  unsigned short d1[K + 1] = {0, 0, 0, 1, 3, 0};
+  unsigned short l1[K + 1] = {0, 0, 0, 1, 9, 20};
+  unsigned short d2[K + 1] = {0, 0, 0, 0, 11, 14};
+  unsigned short l2[K + 1] = {0, 0, 0, 0, 15, 13};
+
+  OP ff1, dd1, dd2, v0, vv;
+  Div D1,D2;
+
+
+  ff1 = setpol(f1, K + 1);
+  dd1 = setpol(d1, K + 1);
+  dd2 = setpol(d1, K + 1);
+  v0 = setpol(l1, K + 1);
+  vv = setpol(l2, K + 1);
+
+  D1=gendiv(ff1);
+  D2=gendiv(ff1);
+
+  V = g2add(ff1, D1.u, D2.u, D1.v, D2.v);
+  // V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
   printpol(o2v(V.v));
@@ -1396,18 +1591,18 @@ printf("\n");
   printf(" =====d3\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
-  //printf("%d\n",equ(5,8));
+  // printf("%d\n",equ(5,8));
   exit(1);
-  o=oadd(vv1,vv2);
+  o = oadd(vv1, vv2);
   printpol(o2v(o));
   printf("\n");
 
   // below undercondtruction
-  k = odiv(osub(ff, (omul(vv1, vv1))), uu1);
-  s = omod(odiv(k, scr(2, vv1)), uu1);
-  l = omul(s, uu1);
-  u3 = omod(osub(omul(s, s), (osub(scr(2, omul(vv1, s)), (k)))), uu1);
-  v3 = omod(minus(oadd(l, vv1)), u3);
+  k = odiv(osub(ff, (omul(vv, vv))), dd2);
+  s = omod(odiv(k, scr(2, vv)), dd2);
+  l = omul(s, dd2);
+  u3 = omod(osub(omul(s, s), (osub(scr(2, omul(v0, s)), (k)))), dd2);
+  v3 = omod(minus(oadd(l, vv)), u3);
   printpol(o2v(u3));
   printf("======du3\n");
   printpol(o2v(v3));

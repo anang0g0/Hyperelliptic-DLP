@@ -1,0 +1,59 @@
+EX gadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
+{
+  OP ll, u;
+  OP v, s, l, k, v3, u3;
+  EX X,V;
+
+  ll = (omul(vv2, vv2));
+  printpol(o2v(ll));
+  printf("\n");
+  ll = (osub(ff, (ll)));
+  printpol(o2v(ll));
+  printf("\n");
+  k = (odiv(ll, uu2));
+  printpol(o2v(k));
+  printf(" ('A`)\n");
+  ll = odiv(uu1, uu2);
+  printpol(o2v(ll));
+  printf("========div\n");
+  ll = omod(uu2, uu1);
+  printpol(o2v(ll));
+  printf("=======mod\n");
+  // exit(1);
+  // EX tt={0};
+
+  // tt=muri(uu2,uu1);
+  v = qinv(uu1, uu2);
+
+  printpol(o2v(v));
+  // omod(omul(t,uu2),uu1);
+  printf(" ===inv\n");
+  // exit(1);
+
+  ll = osub(vv1, (vv2));
+  printpol(o2v(ll));
+  printf("\n");
+  s = omod(omul(ll, v), uu1);
+  printpol(o2v(s));
+  printf("\n");
+  // exit(1);
+
+  l = omul(s, uu2);
+  printpol(o2v(l));
+  printf("\n");
+  u = odiv(oadd(k, minus(omul(s, oadd(l, omul(s, vv2))))), uu1);
+  printpol(o2v(u));
+  printf("\n");
+  u3 = coeff(u);
+  printpol(o2v(u3));
+  printf(" =======u3\n");
+  v3 = omod(minus(oadd(l, vv2)), u3);
+  printpol(o2v(v3));
+  printf(" =========v3\n");
+   //exit(1);
+
+  X.u = u3;
+  X.v = v3;
+
+  return X;
+}
