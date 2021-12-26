@@ -1337,12 +1337,13 @@ count=0;
   d=v2o(v2);
   d1=omul(c,d);
   d2=v2o(z1);
+  }while(LT((omod(oadd(osub(d2,d2),f),d1))).a ==0);
   printpol(o2v(d1));
   printf(" ==u\n");
   printpol(o2v(d2));
   printf(" ==v\n");
-  exit(1);
-  }while(LT((omod(oadd(osub(d2,d2),f),d1))).a ==0);
+//  exit(1);
+
   D.u=d1;
   D.v=d2;
 
@@ -1593,7 +1594,8 @@ srand(clock());
   printf(" =====h3\n");
   // printf("%d\n",equ(5,8));
   exit(1);
-  o = oadd(vv1, vv2);
+
+  o = oadd(D1.v ,D2.v);
   printpol(o2v(o));
   printf("\n");
 
