@@ -1149,11 +1149,11 @@ int chkdiv(Div d, OP f)
 
 
 
-EX g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
+Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
   OP ll, u;
   OP v, s, l, k, v3, u3;
-  EX X;
+  Div X;
 
   ll = (omul(vv2, vv2));
   printpol(o2v(ll));
@@ -1500,19 +1500,21 @@ printf("\n");
   printf(" =====h3\n");
   //exit(1);
 
+Div U;
 
-  V = g2add(ff, uu1, uu2, vv1, vv2);
+  U = g2add(ff, uu1, uu2, vv1, vv2);
   //V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
   printpol(o2v(V.v));
   printf(" =====v3\n");
+/*
   printpol(o2v(V.d));
   printf(" =====d3\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
   //printf("%d\n",equ(5,8));
-
+*/
 Div D1,D2;
 D1.u=uu1;
 D1.v=vv1;
@@ -1520,7 +1522,16 @@ D2.u=uu2;
 D2.v=vv2;
 
 printf("isdiv=%d\n",chkdiv(D1,ff));
+printf("isdiv=%d\n",chkdiv(U,ff));
+//exit(1);
+
+D1=gendiv(ff);
+D2=gendiv(ff);
+
+printf("isdiv=%d\n",chkdiv(D1,ff));
+printf("isdiv=%d\n",chkdiv(D2,ff));
 exit(1);
+
 
   o=oadd(vv1,vv2);
   printpol(o2v(o));
