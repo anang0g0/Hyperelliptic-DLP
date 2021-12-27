@@ -1297,59 +1297,6 @@ vec diviser(OP o, OP m)
   return c1;
 }
 
-Div gendiv(OP f)
-{
-  PO xy[1000], a, b, e;
-  OP d1, d2, c, d;
-  int x, y, i, j, k, count;
-  Div D;
-  vec v1, v2, z1, z2;
-  count = 0;
-
-  for (x = 0; x < P; x++)
-  {
-    for (y = 0; y < P; y++)
-    {
-      if ((y * y) % P == (x * x * x * x * x + 2 * x * x * x + 30 * x * x + 5 * x + 1) % P)
-      {
-        xy[count].x = x;
-        xy[count].y = y;
-        count++;
-        printf("%d,%d\n", x, y);
-      }
-    }
-  }
-  do
-  {
-    k = rand() % count;
-    j = rand() % count;
-    i = rand() % count;
-    a = xy[k];
-    b = xy[j];
-    e = xy[i];
-    v1.x[0] = a.x;
-    v1.x[1] = 1;
-    c = v2o(v1);
-    v2.x[0] = b.x;
-    v2.x[1] = 1;
-    z1.x[1] = e.x;
-    z1.x[0] = e.y;
-    d = v2o(v2);
-    d1 = omul(c, d);
-    d2 = v2o(z1);
-  } while (LT((omod(oadd(osub(d2, d2), f), d1))).a == 0);
-  printpol(o2v(d1));
-  printf(" ==u\n");
-  printpol(o2v(d2));
-  printf(" ==v\n");
-  //  exit(1);
-
-  D.u = d1;
-  D.v = d2;
-
-  return D;
-}
-
 int bit(unsigned b, int i)
 {
   int k = 1;
@@ -1532,26 +1479,84 @@ unsigned root(unsigned a, unsigned p)
   }
 
   return 0;
+
 }
 
-int tr1e(int x, int f4, int f3, int f2, int f1, int f0, int p)
-{
-  int b, c, a;
 
+
+PO tr1e(int f4, int f3, int f2, int f1, int f0, int p)
+{
+  int b, c, a,x;
+  PO aa={0};
+
+while(1){
+  x=rand()%p;
   b = (x * x * x * x * x + f4 * x * x * x * x + f3 * x * x * x + f2 * x * x + f1 * x + f0) % p;
   c = root(b % p, p);
   if (c == 0)
   {
-    return 0;
+    aa.x=x;
+    aa.y=0;
+    return aa;
   }
   a = c * c;
   if (a % p == b % p)
   {
+    aa.x=x;
+    aa.y=c;
     printf("%d, %d\n", x, c);
-    return c;
+    return aa;
   }
-  return -1;
 }
+//  return -1;
+}
+
+
+
+Div gendiv(OP f)
+{
+  PO a={0}, b={0}, e={0};
+  OP d1={0}, d2={0}, c={0}, d={0};
+  int x, y, i, j, k, count;
+  Div D={0};
+  vec v1={0}, v2={0}, z1={0}, z2={0},ff={0};
+  count = 0;
+
+  ff=o2v(f);
+
+  do
+  {
+    x=rand()%P;
+    a=tr1e(ff.x[4],ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
+    x=rand()%P;
+    b=tr1e(ff.x[4] ,ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
+    x=rand()%P;
+    e=tr1e(ff.x[4] ,ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
+    
+    v1.x[0] = a.x;
+    v1.x[1] = 1;
+    c = v2o(v1);
+    v2.x[0] = b.x;
+    v2.x[1] = 1;
+    z1.x[1] = e.x;
+    z1.x[0] = e.y;
+    d = v2o(v2);
+    d1 = omul(c, d);
+    d2 = v2o(z1);
+  } while (LT((omod(oadd(osub(d2, d2), f), d1))).a == 0);
+
+  printpol(o2v(d1));
+  printf(" ==u\n");
+  printpol(o2v(d2));
+  printf(" ==v\n");
+  //  exit(1);
+
+  D.u = d1;
+  D.v = d2;
+
+  return D;
+}
+
 
 int main()
 {
@@ -1661,7 +1666,8 @@ int main()
 
   D1 = gendiv(ff1);
   D2 = gendiv(ff1);
-
+  exit(1);
+  
   V = g2add(ff1, D1.u, D2.u, D1.v, D2.v);
   // V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
