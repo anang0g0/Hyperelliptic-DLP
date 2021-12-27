@@ -1033,7 +1033,7 @@ EX xgcd(OP f, OP g)
     exit(1);
   }
   i = 1;
-  while (LT(g).a!=0)
+  while (LT(g).a != 0)
   //  for (i = 1; i < 1+ k+1; i++)
   {
     printpol(o2v(f));
@@ -1065,8 +1065,8 @@ EX xgcd(OP f, OP g)
     f = g;
     g = h[i];
 
-    //if (LT(g).a == 0)
-    //  break;
+    // if (LT(g).a == 0)
+    //   break;
     i++;
   }
   // f=g;
@@ -1297,179 +1297,261 @@ vec diviser(OP o, OP m)
   return c1;
 }
 
-Div gendiv(OP f){
-PO xy[1000],a,b,e;
-OP d1,d2,c,d;
-int x,y,i,j,k,count;
-Div D;
-vec v1,v2,z1,z2;
-count=0;
+Div gendiv(OP f)
+{
+  PO xy[1000], a, b, e;
+  OP d1, d2, c, d;
+  int x, y, i, j, k, count;
+  Div D;
+  vec v1, v2, z1, z2;
+  count = 0;
 
- 
- 
   for (x = 0; x < P; x++)
   {
     for (y = 0; y < P; y++)
     {
-      if ((y * y) % P == (x * x * x * x * x + 2 * x * x * x + 30 * x * x + 5 * x + 1) % P){
-      xy[count].x=x;
-      xy[count].y=y;
-      count++;
+      if ((y * y) % P == (x * x * x * x * x + 2 * x * x * x + 30 * x * x + 5 * x + 1) % P)
+      {
+        xy[count].x = x;
+        xy[count].y = y;
+        count++;
         printf("%d,%d\n", x, y);
-
       }
     }
   }
-  do{
-  k=rand()%count;
-  j=rand()%count;
-  i=rand()%count;
-  a=xy[k];
-  b=xy[j];
-  e=xy[i];
-  v1.x[0]=a.x;
-  v1.x[1]=1;
-  c=v2o(v1);
-  v2.x[0]=b.x;
-  v2.x[1]=1;
-  z1.x[1]=e.x;
-  z1.x[0]=e.y;
-  d=v2o(v2);
-  d1=omul(c,d);
-  d2=v2o(z1);
-  }while(LT((omod(oadd(osub(d2,d2),f),d1))).a ==0);
+  do
+  {
+    k = rand() % count;
+    j = rand() % count;
+    i = rand() % count;
+    a = xy[k];
+    b = xy[j];
+    e = xy[i];
+    v1.x[0] = a.x;
+    v1.x[1] = 1;
+    c = v2o(v1);
+    v2.x[0] = b.x;
+    v2.x[1] = 1;
+    z1.x[1] = e.x;
+    z1.x[0] = e.y;
+    d = v2o(v2);
+    d1 = omul(c, d);
+    d2 = v2o(z1);
+  } while (LT((omod(oadd(osub(d2, d2), f), d1))).a == 0);
   printpol(o2v(d1));
   printf(" ==u\n");
   printpol(o2v(d2));
   printf(" ==v\n");
-//  exit(1);
+  //  exit(1);
 
-  D.u=d1;
-  D.v=d2;
+  D.u = d1;
+  D.v = d2;
 
-return D;
+  return D;
 }
 
-int bit(unsigned b,int i){
-int k=1;
+int bit(unsigned b, int i)
+{
+  int k = 1;
 
-if((b&(1<<i))>0){
-return 1;
-}else{
-  return 0;
+  if ((b & (1 << i)) > 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
 }
-  
-}
 
-//jj=aa^bb mod oo
-int Exp(int aa,int bb,int oo){
-int ii,jj,kk[8192];
-int j,c[8192],count=0,i;
-  ii=oo;
-  j=0;
-  jj=0;
-//  kk[4096]; //prime is 4096 bit table
-//  c[8192]  //mod is 8192 bit table
-  count=0;
+// jj=aa^bb mod oo
+int Exp(int aa, int bb, int oo)
+{
+  int ii, jj, kk[8192];
+  int j, c[8192], count = 0, i;
+  ii = oo;
+  j = 0;
+  jj = 0;
+  //  kk[4096]; //prime is 4096 bit table
+  //  c[8192]  //mod is 8192 bit table
+  count = 0;
 
-  for(i=0;i<8192;i++){
-    kk[i]=0;
-    }
-  while(ii>0){
-    ii = (ii>>1);
-    j=j+1;
+  for (i = 0; i < 8192; i++)
+  {
+    kk[i] = 0;
+  }
+  while (ii > 0)
+  {
+    ii = (ii >> 1);
+    j = j + 1;
   }
 
+  kk[0] = aa;
 
-  kk[0]=aa;
+  //  cout << j << "\n";
 
-//  cout << j << "\n";
-  
-//ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
-  for(i=0;i<j+1;i++){
-      if(bit(bb,i) != 0){ // testbit(bb,i)
-	c[count]=i;
-	count=count+1;
-      }
+  // ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
+  for (i = 0; i < j + 1; i++)
+  {
+    if (bit(bb, i) != 0)
+    { // testbit(bb,i)
+      c[count] = i;
+      count = count + 1;
     }
-//    cout << bb << endl;
-//    cout << count << "\n";
-//exit(1);
-    for(i=1;i<c[count-1]+1;i++){
-      kk[i] = kk[i-1]*kk[i-1]%oo;
-    }
+  }
+  //    cout << bb << endl;
+  //    cout << count << "\n";
+  // exit(1);
+  for (i = 1; i < c[count - 1] + 1; i++)
+  {
+    kk[i] = kk[i - 1] * kk[i - 1] % oo;
+  }
 
-    jj=1;
-    for(i=0;i<count;i++){
-      jj=kk[c[i]]*jj%oo;
-      if (jj==0){
-//	print i,"\n"
-      }
+  jj = 1;
+  for (i = 0; i < count; i++)
+  {
+    jj = kk[c[i]] * jj % oo;
+    if (jj == 0)
+    {
+      //	print i,"\n"
     }
+  }
 
-    return jj;
+  return jj;
 }
 
+long pow_mod(long x, long n, long p)
+{
+  if (n == 0)
+    return 1;
+  if (n & 1)
+    return (pow_mod(x, n - 1, p) * x) % p;
+  x = pow_mod(x, n / 2, p);
+  return (x * x) % p;
+}
 
-unsigned root(unsigned a,unsigned p){
-int c,b;
+/* Takes as input an odd prime p and n < p and returns r
+ * such that r * r = n [mod p]. */
+long tonelli_shanks(long n, long p)
+{
+  long s = 0;
+  long q = p - 1;
+  while ((q & 1) == 0)
+  {
+    q /= 2;
+    ++s;
+  }
+  if (s == 1)
+  {
+    long r = pow_mod(n, (p + 1) / 4, p);
+    if ((r * r) % p == n)
+      return r;
+    return 0;
+  }
+  // Find the first quadratic non-residue z by brute-force search
+  long z = 1;
+  while (pow_mod(++z, (p - 1) / 2, p) != p - 1)
+    ;
+  long c = pow_mod(z, q, p);
+  long r = pow_mod(n, (q + 1) / 2, p);
+  long t = pow_mod(n, q, p);
+  long m = s;
+  while (t != 1)
+  {
+    long tt = t;
+    long i = 0;
+    while (tt != 1)
+    {
+      tt = (tt * tt) % p;
+      ++i;
+      if (i == m)
+        return 0;
+    }
+    long b = pow_mod(c, pow_mod(2, m - i - 1, p - 1), p);
+    long b2 = (b * b) % p;
+    r = (r * b) % p;
+    t = (t * b2) % p;
+    c = b2;
+    m = i;
+  }
+  if ((r * r) % p == n)
+    return r;
+  return 0;
+}
+
+unsigned root(unsigned a, unsigned p)
+{
+  int c, b;
 
   printf("p mod = %d , %d\n", p % 4, p % 8);
-  if (p % 4 == 3 || p % 8 == 5){
-    if (p % 4 == 3){
+  if (p % 4 == 3 || p % 8 == 5)
+  {
+    if (p % 4 == 3)
+    {
       b = (p + 1) / 4;
       c = Exp(a, b, p);
-      if (c * c % p != a){
+      if (c * c % p != a)
+      {
         printf("baka1\n");
         //#exit()
       }
-      if (c * c % p == a){
+      if (c * c % p == a)
+      {
         printf("good\n");
         printf("c=%d\n", c);
       }
     }
-    if (p % 8 == 5){
+    if (p % 8 == 5)
+    {
       c = Exp(a, (p + 3) / 8, p);
       if (c * c % p != a)
         printf("baka\n");
     }
-      if (c * c % p == a){
-        printf("good\n");
-        printf("%d\n",c);
-      }
+    if (c * c % p == a)
+    {
+      printf("good\n");
+      printf("%d\n", c);
     }
-    if (p % 8 == 5){
-      c = 2 * a * Exp(4 * a, (p - 5) / 8, p);
-      if (c * c % p != a){
-        printf("dangerous\n");
-      }
-      if (c * c % p == a){
-        printf("good\n");
-        printf("%d\n", c);
-      }
-    
+  }
+  if (p % 8 == 5)
+  {
+    c = 2 * a * Exp(4 * a, (p - 5) / 8, p);
+    if (c * c % p != a)
+    {
+      printf("dangerous\n");
+    }
+    if (c * c % p == a)
+    {
+      printf("good\n");
+      printf("%d\n", c);
+    }
+    if (p % 8 == 1)
+      c = tonelli_shanks(a, p);
+
     return c;
-    }
-  
+  }
+
   return 0;
 }
 
-int tr1e(int x,int f4,int f3,int f2,int f1,int f0,int p){
-  int b,c,a;
+int tr1e(int x, int f4, int f3, int f2, int f1, int f0, int p)
+{
+  int b, c, a;
 
-  b = (x *x*x*x*x + f4 * x*x*x*x + f3 * x *x*x + f2 * x * x + f1 * x + f0)%p;
+  b = (x * x * x * x * x + f4 * x * x * x * x + f3 * x * x * x + f2 * x * x + f1 * x + f0) % p;
   c = root(b % p, p);
-  if (c == 0){
+  if (c == 0)
+  {
     return 0;
   }
   a = c * c;
-  if (a % p == b % p){
+  if (a % p == b % p)
+  {
     printf("%d, %d\n", x, c);
     return c;
   }
   return -1;
 }
-
 
 int main()
 {
@@ -1507,8 +1589,7 @@ int main()
   int j, t1[2][3] = {0}, c1[2] = {0}, cc[2] = {0};
   vec vx = {0};
 
-
-srand(clock());
+  srand(clock());
 
   ff = setpol(f, K + 1);
   uu1 = setpol(u1, K + 1);
@@ -1561,7 +1642,7 @@ srand(clock());
   exit(1);
 */
 
-//  exit(1);
+  //  exit(1);
 
   unsigned short f1[K + 1] = {1, 0, 2, 30, 5, 1};
   unsigned short d1[K + 1] = {0, 0, 0, 1, 3, 0};
@@ -1570,8 +1651,7 @@ srand(clock());
   unsigned short l2[K + 1] = {0, 0, 0, 0, 15, 13};
 
   OP ff1, dd1, dd2, v0, vv;
-  Div D1,D2;
-
+  Div D1, D2;
 
   ff1 = setpol(f1, K + 1);
   dd1 = setpol(d1, K + 1);
@@ -1579,8 +1659,8 @@ srand(clock());
   v0 = setpol(l1, K + 1);
   vv = setpol(l2, K + 1);
 
-  D1=gendiv(ff1);
-  D2=gendiv(ff1);
+  D1 = gendiv(ff1);
+  D2 = gendiv(ff1);
 
   V = g2add(ff1, D1.u, D2.u, D1.v, D2.v);
   // V=xgcd(uu1,uu2,2);
@@ -1595,7 +1675,7 @@ srand(clock());
   // printf("%d\n",equ(5,8));
   exit(1);
 
-  o = oadd(D1.v ,D2.v);
+  o = oadd(D1.v, D2.v);
   printpol(o2v(o));
   printf("\n");
 
