@@ -1216,6 +1216,17 @@ vec diviser(OP o, OP m)
   t1[0][2] = 0;
   t1[1][2] = 1;
 
+  if (t1[0][0] == 0)
+  {
+    for (i = 0; i < 2; i++)
+      t1[0][i] = (t1[0][i] + t1[1][i]) % P;
+  }
+  if (t1[1][1] == 0)
+  {
+    for (i = 0; i < 2; i++)
+      t1[1][i] = (t1[1][i] + t1[0][i]) % P;
+  }
+
   cc[0] = inv(t1[0][0], P);
   printf("%d\n", cc[0]);
   // exit(1);
@@ -1239,7 +1250,7 @@ vec diviser(OP o, OP m)
   z = t1[1][0];
   for (j = 0; j < 3; j++)
   {
-    t1[1][j] = t1[1][j] - (t1[0][j] * z);
+    t1[1][j] = t1[1][j] - (t1[0][j] * z) % P;
 
     if (t1[1][j] < 0)
       t1[1][j] = P + t1[1][j];
@@ -1479,60 +1490,56 @@ unsigned root(unsigned a, unsigned p)
   }
 
   return 0;
-
 }
-
-
 
 PO tr1e(int f4, int f3, int f2, int f1, int f0, int p)
 {
-  int b, c, a,x;
-  PO aa={0};
+  int b, c, a, x;
+  PO aa = {0};
 
-while(1){
-  x=rand()%p;
-  b = (x * x * x * x * x + f4 * x * x * x * x + f3 * x * x * x + f2 * x * x + f1 * x + f0) % p;
-  c = root(b % p, p);
-  if (c == 0)
+  while (1)
   {
-    aa.x=x;
-    aa.y=0;
-    return aa;
+    x = rand() % p;
+    b = (x * x * x * x * x + f4 * x * x * x * x + f3 * x * x * x + f2 * x * x + f1 * x + f0) % p;
+    c = root(b % p, p);
+    if (c == 0)
+    {
+      aa.x = x;
+      aa.y = 0;
+      return aa;
+    }
+    a = c * c;
+    if (a % p == b % p)
+    {
+      aa.x = x;
+      aa.y = c;
+      printf("%d, %d\n", x, c);
+      return aa;
+    }
   }
-  a = c * c;
-  if (a % p == b % p)
-  {
-    aa.x=x;
-    aa.y=c;
-    printf("%d, %d\n", x, c);
-    return aa;
-  }
+  //  return -1;
 }
-//  return -1;
-}
-
-
 
 Div gendiv(OP f)
 {
-  PO a={0}, b={0}, e={0};
-  OP d1={0}, d2={0}, c={0}, d={0};
+  PO a = {0}, b = {0}, e = {0};
+  OP d1 = {0}, d2 = {0}, c = {0}, d = {0};
   int x, y, i, j, k, count;
-  Div D={0};
-  vec v1={0}, v2={0}, z1={0}, z2={0},ff={0};
+  Div D = {0};
+  vec v1 = {0}, v2 = {0}, z1 = {0}, z2 = {0}, ff = {0};
   count = 0;
 
-  ff=o2v(f);
+  ff = o2v(f);
 
   do
   {
-    x=rand()%P;
-    a=tr1e(ff.x[4],ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
-    x=rand()%P;
-    b=tr1e(ff.x[4] ,ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
-    x=rand()%P;
-    e=tr1e(ff.x[4] ,ff.x[3],ff.x[2],ff.x[1],ff.x[0],P); // cofficient of function
-    
+    x = rand() % P;
+    a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    x = rand() % P;
+    b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    x = rand() % P;
+    e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+
     v1.x[0] = a.x;
     v1.x[1] = 1;
     c = v2o(v1);
@@ -1556,7 +1563,22 @@ Div gendiv(OP f)
 
   return D;
 }
+EX manford(OP a, OP b)
+{
+  EX V;
 
+  V = xgcd(a, b);
+  printpol(o2v(V.u));
+  printf(" =====u3\n");
+  printpol(o2v((V.v)));
+  printf(" =====v3\n");
+  printpol(o2v(V.d));
+  printf(" =====d3\n");
+  printpol(o2v((V.h)));
+  printf(" =====h3\n");
+
+  return V;
+}
 
 int main()
 {
@@ -1604,50 +1626,33 @@ int main()
   o = setpol(tst1, K + 1);
   m = setpol(tst2, K + 1);
 
-  printpol(o2v(uu1));
+  printpol(o2v(vv1));
   printf("\n");
-  printpol(o2v(uu2));
+  printpol(o2v(vv2));
   printf("\n");
   // exit(1);
 
-  /*
-    V=xgcd(uu1,uu2);
-    printpol(o2v(V.u));
-    printf(" =====u3\n");
-    printpol(o2v((V.v)));
-    printf(" =====v3\n");
-    printpol(o2v(V.d));
-    printf(" =====d3\n");
-    printpol(o2v((V.h)));
-    printf(" =====h3\n");
-  //  exit(1);
-
-    d=oadd(vv1,vv2);
-    printpol(o2v(d));
-    printf(" v1+v2\n");
-    //exit(1);
-    */
-  /*
-  vx=diviser(V.d,d);
+  vx = diviser(vv1, vv2);
   printpol(vx);
   printf("\n");
-  V.d=v2o(vx);
-  //exit(1);
-
-
-  V=xgcd((V.d),d);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v(V.v));
-  printf(" =====v3\n");
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v(V.h));
-  printf(" =====h3\n");
+  V.d = v2o(vx);
   exit(1);
-*/
 
   //  exit(1);
+  V = manford(uu1, uu2);
+  d = oadd(vv1, vv2);
+  printpol(o2v(d));
+  printf(" v1+v2\n");
+  // exit(1);
+
+  vx = diviser(V.d, d);
+  printpol(vx);
+  printf("\n");
+  V.d = v2o(vx);
+  exit(1);
+
+  V = manford(V.d, d);
+  // exit(1);
 
   unsigned short f1[K + 1] = {1, 0, 2, 30, 5, 1};
   unsigned short d1[K + 1] = {0, 0, 0, 1, 3, 0};
@@ -1667,7 +1672,7 @@ int main()
   D1 = gendiv(ff1);
   D2 = gendiv(ff1);
   exit(1);
-  
+
   V = g2add(ff1, D1.u, D2.u, D1.v, D2.v);
   // V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
