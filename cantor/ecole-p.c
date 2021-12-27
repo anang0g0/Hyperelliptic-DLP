@@ -1544,21 +1544,37 @@ printf("isdiv=%d\n",chkdiv(U,ff));
 printf("isdiv=%d\n",chkdiv(U0,ff));
 U=g2add(ff,uu1,uu2,vv1,vv2);
   printf("isdiv=%d\n",chkdiv(U,ff));
-  exit(1);
-
+  //exit(1);
+OP oi,rem;
 Div D1,D2;
 while(1){
   D1=gendiv(ff);
   D2=gendiv(ff);
-  printpoln(o2v(D1.u));
-  printpoln(o2v(D2.u));
-  printf("isdiv=%d\n",chkdiv(D1,ff));
-  printf("isdiv=%d\n",chkdiv(D2,ff));
-  U = g2add(ff, D2.u, D1.u, D2.v, D1.v);
-  printf("isdiv=%d\n",chkdiv(U,ff));
-
-  if(chkdiv(U,ff)==-1)
+  printpol(o2v(D1.u));
+  printf(" ===D1.u\n");
+  printpol(o2v(D1.v));
+  printf(" ===D1.v\n");
+  printpol(o2v(D2.u));
+  printf(" ===D2.u\n");
+  printpol(o2v(D2.v));
+  printf(" ===D2.v\n");
+  oi=qinv(D2.u,D1.u);
+  printpol(o2v(oi));
+  printf(" ===Doi\n");
+  rem=omod(omul(oi,D2.u),D1.u);
+  printpol(o2v(rem));
+  printf(" ==D rem\n");
   exit(1);
+  printf("isdiv=%d D\n",chkdiv(D1,ff));
+  printf("isdiv=%d D\n",chkdiv(D2,ff));
+  U = g2add(ff, D1.u, D2.u, D1.v, D2.v);
+  printf("isdiv=%d D\n",chkdiv(U,ff));
+  exit(1);
+  
+  if(chkdiv(U,ff)==-1){
+    printf("buggy\n");
+  exit(1);
+  }
 }
   //U = g2add(ff, uu1, uu2, vv1, vv2);
   //printf("isdiv=%d\n",chkdiv(U,ff));
