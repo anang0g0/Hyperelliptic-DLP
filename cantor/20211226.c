@@ -1366,17 +1366,15 @@ Div gendiv(OP f)
     e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
 
-    if(a.x!=-1){ 
+    if(a.x!=-1 && b.x!=-1 && c.x!=-1){ 
     v1.x[0] = a.x;
     v1.x[1] = 1;
     c = v2o(v1);
-    }
-    if(b.x!= -1){
+
     v2.x[0] = b.x;
     v2.x[1] = 1;
     d = v2o(v2);
-    }
-    if(e.x!= -1){
+
     z1.x[1] = e.x;
     z1.x[0] = e.y;
     d2 = v2o(z1);
@@ -1396,6 +1394,8 @@ Div gendiv(OP f)
 
   return D;
 }
+
+
 EX manford(OP a, OP b)
 {
   EX V;

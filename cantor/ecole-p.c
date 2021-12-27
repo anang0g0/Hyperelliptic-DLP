@@ -144,6 +144,32 @@ void printpol(vec a)
   return;
 }
 
+//多項式を表示する(default)
+void printpoln(vec a)
+{
+  int i, n;
+
+  n = deg(a);
+
+  // printf ("baka\n");
+  assert(("baka\n", n >= 0));
+
+  for (i = n; i > -1; i--)
+  {
+    if (a.x[i] > 0)
+    {
+      printf("%d", a.x[i]);
+      // if (i > 0)
+      printf("x^%d", i);
+      // if (i > 0)
+      printf("+");
+    }
+  }
+  printf("\n");
+
+  return;
+}
+
 //多項式の代入値
 unsigned short
 xtrace(OP f, unsigned short x)
@@ -396,7 +422,7 @@ OP osub(OP f, OP g)
     }
     else
     {
-      d.x[i] = (P + (a.x[i] - b.x[i])) ;
+      d.x[i] = (P + (a.x[i] - b.x[i]))%P ;
     }
     
     printf("%d - %d = %d\n",a.x[i],b.x[i],d.x[i]);
@@ -961,8 +987,10 @@ OP scr(unsigned short d, OP f)
 
   n = deg(o2v(f));
   v = o2v(f);
-  for (i = 0; i < n + 1; i++)
+  for (i = 0; i < n+1 ; i++){
+    printf("v[%d]=%d\n",i,v.x[i]);
     v.x[i] = (v.x[i] * d) % P;
+  }
   f = v2o(v);
 
   return f;
@@ -1105,8 +1133,6 @@ break;
 }
 
 
-
-
 OP qinv(OP uu1, OP uu2)
 {
   EX tt,V;
@@ -1124,7 +1150,7 @@ OP qinv(OP uu1, OP uu2)
   printpol(o2v(tt.h));
   printf("\n");
   //exit(1);
-  v=omul(tt.d,tt.v);
+  v=scr(LT(tt.d).a,tt.u);
   printpol(o2v(v));
   printf(" in qinv's v\n");
 
@@ -1138,7 +1164,7 @@ int chkdiv(Div d, OP f)
 {
   OP t;
 
-  t=(omod(oadd(omul(d.v, d.v), minus(f)), d.u));
+  t=(omod(osub(omul(d.v, d.v), (f)), d.u));
   printpol(o2v(t));
   printf(" 00000000000\n");
   if (LT(t).a==0)
@@ -1158,33 +1184,39 @@ Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   ll = (omul(vv2, vv2));
   printpol(o2v(ll));
   printf("\n");
-  ll = (osub(ff, (ll)));
-  printpol(o2v(ll));
-  printf("\n");
-  k = (odiv(ll, uu2));
+  k = odiv(osub(ff, (ll)),uu2);
   printpol(o2v(k));
+  printf(" is\n");
+//  exit(1);
+//  k = (odiv(ll, uu2));
+  
   printf(" ('A`)\n");
-  ll = odiv(uu1, uu2);
-  printpol(o2v(ll));
-  printf("========div\n");
-  ll = omod(uu2, uu1);
-  printpol(o2v(ll));
-  printf("=======mod\n");
+//  ll = odiv(uu1, uu2);
+//  printpol(o2v(ll));
+//  printf("========div\n");
+//  ll = omod(uu2, uu1);
+//  printpol(o2v(ll));
+//  printf("=======mod\n");
   // exit(1);
    EX tt={0};
 
   // tt=muri(uu2,uu1);
-  v = qinv(uu1, uu2);
+  v = qinv(uu2, uu1);
   printpol(o2v(v));
+  printf(" is ");
   // omod(omul(t,uu2),uu1);
   printf(" ===inv\n");
-//   exit(1);
+  ll=omod(omul(v,uu2),uu1);
+  printpol(o2v(ll));
+  printf(" lis ");
+//  exit(1);
 
 //v=oadd(vv1,vv2);
  //printpol(o2v(v));
   //printf(" v\n");
   //exit(1);
   //tt=xgcd(uu1,uu2);
+  /*
   tt=xgcd(oadd(vv1,vv2),v);
   printpol(o2v(tt.d));
   printf(" d@\n");
@@ -1195,26 +1227,28 @@ Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   printpol(o2v(tt.h));
   printf(" h@\n");
   //exit(1);
-  ll = osub(vv1, (vv2));
+  */
+  ll = oadd(vv1, minus(vv2));
   printpol(o2v(ll));
-  printf("\n");
-  s = omod(omul(ll, v), uu1);
+  printf(" @is \n");
+  s = omod(omul(ll, v),uu1);
+  //s = omul(ll, v);
   printpol(o2v(s));
-  printf("\n");
-  // exit(1);
+  printf(" @is\n");
+//   exit(1);
 
   l = omul(s, uu2);
   printpol(o2v(l));
-  printf("\n");
-  u = odiv(oadd(k, minus(omul(s, oadd(l, omul(s, vv2))))), uu1);
+  printf(" is\n");
+  u = odiv(osub(k, (omul(s, oadd(l, omul(s, vv2))))), uu1);
   printpol(o2v(u));
-  printf("\n");
+  printf(" is\n");
   u3 = coeff(u);
   printpol(o2v(u3));
-  printf(" =======u3\n");
+  printf(" =======u3 is\n");
   v3 = omod(minus(oadd(l, vv2)), u3);
   printpol(o2v(v3));
-  printf(" =========v3\n");
+  printf(" =========v3 is\n");
   // exit(1);
 
   X.u = u3;
@@ -1458,6 +1492,7 @@ vec vx={0};
   o=setpol(tst1,K+1);
   m=setpol(tst2,K+1);
 
+srand(clock());
 
 printpol(o2v(uu1));
 printf("\n");
@@ -1500,9 +1535,35 @@ printf("\n");
   printf(" =====h3\n");
   //exit(1);
 
-Div U;
+Div U,U0;
+U.u=uu1;
+U.v=vv1;
+U0.u=uu2;
+U0.v=vv2;
+printf("isdiv=%d\n",chkdiv(U,ff));
+printf("isdiv=%d\n",chkdiv(U0,ff));
+U=g2add(ff,uu1,uu2,vv1,vv2);
+  printf("isdiv=%d\n",chkdiv(U,ff));
+  exit(1);
 
-  U = g2add(ff, uu1, uu2, vv1, vv2);
+Div D1,D2;
+while(1){
+  D1=gendiv(ff);
+  D2=gendiv(ff);
+  printpoln(o2v(D1.u));
+  printpoln(o2v(D2.u));
+  printf("isdiv=%d\n",chkdiv(D1,ff));
+  printf("isdiv=%d\n",chkdiv(D2,ff));
+  U = g2add(ff, D2.u, D1.u, D2.v, D1.v);
+  printf("isdiv=%d\n",chkdiv(U,ff));
+
+  if(chkdiv(U,ff)==-1)
+  exit(1);
+}
+  //U = g2add(ff, uu1, uu2, vv1, vv2);
+  //printf("isdiv=%d\n",chkdiv(U,ff));
+//    printf("isdiv=%d\n",chkdiv(D2,ff));
+  exit(1);
   //V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
@@ -1515,7 +1576,7 @@ Div U;
   printf(" =====h3\n");
   //printf("%d\n",equ(5,8));
 */
-Div D1,D2;
+
 D1.u=uu1;
 D1.v=vv1;
 D2.u=uu2;
@@ -1530,47 +1591,29 @@ D2=gendiv(ff);
 
 printf("isdiv=%d\n",chkdiv(D1,ff));
 printf("isdiv=%d\n",chkdiv(D2,ff));
-exit(1);
-
+//exit(1);
+U=g2add(ff,D1.u,D2.u,D1.v,D2.v);
 
   o=oadd(vv1,vv2);
   printpol(o2v(o));
   printf("\n");
 
+  Div W;
   // below undercondtruction
-  k = odiv(osub(ff, (omul(vv1, vv1))), uu1);
-  s = omod(odiv(k, scr(2, vv1)), uu1);
+  k = odiv(oadd(ff, minus(omul(D1.v, D1.v))), D1.u);
+  s = omod(odiv(k, scr(2, D1.v)), D1.u);
   l = omul(s, uu1);
-  u3 = omod(osub(omul(s, s), (osub(scr(2, omul(vv1, s)), (k)))), uu1);
-  v3 = omod(minus(oadd(l, vv1)), u3);
+  u3 = omod(osub(omul(s, s), (osub(scr(2, omul(D1.v, s)), (k)))), D1.u);
+  v3 = omod(minus(oadd(l, D1.v)), u3);
+  W.u=u3;
+  W.v=v3;
   printpol(o2v(u3));
   printf("======du3\n");
   printpol(o2v(v3));
   printf("======dv3\n");
-  exit(1);
+  printf("W's isdiv=%d\n",chkdiv(W,ff));
+//  exit(1);
 
-  mkmf();
-
-  makefg(O);
-
-  count = 0;
-  c2 = 0;
-  for (i = 0; i < O; i++)
-  {
-    if (gf[i] > 0)
-      count++;
-    if (fg[i] > 0)
-    {
-      c2++;
-    }
-    else
-    {
-      // printf("i=%d\n",i);
-    }
-  }
-
-  printf("%d %d\n", count, c2);
-  // exit(1);
 
   return 0;
 }
