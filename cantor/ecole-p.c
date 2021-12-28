@@ -477,20 +477,6 @@ int oequ(OP f, OP g)
   return 0;
 }
 
-// aに何をかけたらbになるか
-unsigned short
-equ(unsigned short a, unsigned short b)
-{
-  int i;
-
-  for (i = 0; i < P; i++)
-  {
-    if ((a * i) % P == b)
-      break;
-  }
-  return i;
-}
-
 void mkmf()
 {
   int i, j, k, count = 0;
@@ -623,6 +609,18 @@ unsigned int inv(unsigned int a, unsigned int n)
 
   return ((x + n) % (n / d));
 }
+
+
+// aに何をかけたらbになるか
+unsigned short
+equ(unsigned short a, unsigned short b)
+{
+  int i=inv(a,P);
+
+return i*b;
+
+}
+
 
 //多項式を単行式で割る
 oterm LTdiv(OP f, oterm t)
@@ -898,7 +896,7 @@ OP scr(unsigned short d, OP f)
   return f;
 }
 
-OP monic(OP f){
+OP monique(OP f){
   int e1;
   e1 = inv(LT(f).a, P);
   printf("e=%d\n",e1);
@@ -907,7 +905,7 @@ OP monic(OP f){
 return f;
 }
 
-EX mn(EX X){
+EX monic(EX X){
   int e1;
   e1=inv(LT(X.d).a,P);
   X.d=scr(e1,X.d);
@@ -1202,59 +1200,81 @@ Div reduce(Div D3,OP f){
 return D;
 }
 
-Div cantor(Div D1,Div D2,OP f){
-  EX Z;
-  OP s1={0},s2={0},s3={0},e1={0},e2={0},c1={0},c2={0};
+Div cadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
+  EX V;
   Div D3,D;
   vec vx;
+  OP e1,e2,d1,s1,s2,s3,c1,c2,d,u;
 
-Z=xgcd(D1.u,D2.u);
-e1=Z.u;
-e2=Z.v;
-printpoln(o2v(Z.u));
-printpoln(o2v(Z.v));
-printpoln(o2v(Z.d));
-//exit(1);
-
-Z=xgcd(Z.d,oadd(D1.v,D2.v));
-printpoln(o2v(Z.u));
-printpoln(o2v(Z.v));
-printpoln(o2v(Z.d));
-//vx=diviser(Z.d,oadd(D1.v,D2.v));
-//s1=cdiv(LT(Z.d).a,oadd(D1.v,D2.v));
-//printpoln(o2v((s1)));
-//printpoln(o2v(oadd(D1.v,D2.v)));
-c1=Z.v;
-c2=Z.u;
-printpoln(o2v(Z.u));
-printpoln(o2v(Z.v));
-printpoln(o2v(Z.d));
-printpoln(o2v(Z.h));
-//exit(1);
-
+V=xgcd(uu1,uu2);
+V=monic(V);
+printpol(o2v(V.u));
+printf("  Uu\n");
+e1=V.u;
+printpol(o2v(V.v));
+printf("  Uv\n");
+e2=V.v;
+printpol(o2v(V.d));
+printf("  Ud\n");
+d1=V.d;
+printpol(o2v(V.h));
+printf("  Uh\n");
+V=xgcd(V.d,oadd(vv1,vv2));
+V=monic(V);
+printpol(o2v(V.u));
+printf("  Uu\n");
+c1=V.u;
+printpol(o2v(V.v));
+printf("  Uv\n");
+c2=V.v;
+printpol(o2v(V.d));
+printf("  Ud\n");
+d=V.d;
+printpol(o2v(V.h));
+printf("  Uh\n");
 s1=omul(c1,e1);
+printpol(o2v(s1));
+printf(" ==s1\n");
 s2=omul(c1,e2);
+printpol(o2v(s2));
+printf(" ==s2\n");
 s3=c2;
-printpoln(o2v(s1));
-printpoln(o2v(s2));
-e1=omul(s1,omul(D1.u,D2.v));
-//e1=monic(e1);
-e2=omul(s2,omul(D2.u,D1.v));
-//e2=monic(e2);
-printpoln(o2v(e1));
-printpoln(o2v(e2));
-
+printpol(o2v(s3));
+printf(" ==s3\n");
+//exit(1);
+int count=0;
+OP v;
+reduct:
+count++;
+u=odiv(omul(uu1,uu2),omul(d,d));
+printpol(o2v(u));
+printf(" ==u\n");
+v=omod(oadd(oadd(omul(omul(s1,uu1),vv2),omul(omul(s2,uu2),vv1)),omul(s3,oadd(omul(vv1,vv2),ff))),u);
+printpol(o2v(v));
+printf(" ==v\n");
 //exit(1);
 
-D3.u=odiv(omul(D1.u,D2.u),omul(Z.d,Z.d));
-c2=qinv(Z.d,D3.u);
-printpoln(o2v(c2));
-exit(1);
-D3.v=omul(oadd(e1,e2),qinv(Z.d,D3.u));
-printpoln(o2v(D3.u));
-printpoln(o2v(D3.v));
-exit(1);
-
+OP ud,vd;
+ud=odiv(osub(ff,omul(v,v)),u);
+vd=omod(minus(v),ud);
+if(odeg(ud)>2){
+  if(count>100){
+    printf("over 100\n");
+  exit(1);
+  }
+  u=ud;
+  v=vd;
+  printf("==================\n");
+  goto reduct;
+}
+ud=monique(ud);
+printpol(o2v(ud));
+printf(" @@ud\n");
+printpol(o2v(vd));
+printf(" @@udv\n");
+//printpoln(o2v(oadd(vv1,vv2)));
+D3.u=ud;
+D3.v=vd;
 
 return D3;
 }
@@ -1307,7 +1327,7 @@ exit(1);
   //exit(1);
 l=omul(s,uu2);
 u=odiv(osub(k,omul(s,oadd(l,scr(2,vv2)))),uu1);
-u3=monic(u);
+u3=monique(u);
 v3=omod(minus(oadd(l,vv2)),u3);
 //v=oadd(vv1,vv2);
  //printpol(o2v(v));
@@ -1455,7 +1475,7 @@ EX manford(OP a, OP b)
 
 int main()
 {
-  unsigned int i, count = 0, c2 = 0;
+  unsigned int i, count = 0;
   unsigned short aaa[O] = {0};
 
   unsigned short f[K + 1] = {1, 7, 6, 2, 8, 2};
@@ -1486,7 +1506,7 @@ int a1 = 1331;
 //ZZ q2 = to_ZZ("1208925819614629174709941");
 int a2 = 2;
 //J2 = to_ZZ("1461501637331762771847359428275278989652932675771");
-int j,t1[2][3]={0},c1[2]={0},cc[2]={0};
+
 vec vx={0},xv={0};
 Div G0,G1,X;
   ff = setpol(f, K + 1);
@@ -1504,35 +1524,16 @@ G1.u=uu2;
 G0.v=vv1;
 G1.v=vv2;
 //cantor(G0,G1,ff);
-//exit(1);
-//b=odiv(o,m);
-
-V=xgcd(uu1,uu2);
-printpoln(o2v(o));
-printpoln(o2v(m));
-//printpoln(o2v(b));
-//exit(1);
-V=mn(V);
-printpol(o2v(V.u));
-printf("  Uu\n");
-printpol(o2v(V.v));
-printf("  Uv\n");
-printpol(o2v(V.d));
-printf("  Ud\n");
-//printpoln(o2v(monic(V.d)));
-printpol(o2v(V.h));
-printf("  Uh\n");
-V=xgcd(V.d,oadd(vv1,vv2));
-V=mn(V);
-printpol(o2v(V.u));
-printf("  Uu\n");
-printpol(o2v(V.v));
-printf("  Uv\n");
-printpol(o2v(V.d));
-printf("  Ud\n");
-printpol(o2v(V.h));
-printf("  Uh\n");
+G0=cadd(ff,uu1,uu2,vv1,vv2);
+if(chkdiv(G0,ff)==-1)
+{
+  printf("naze?\n");
+}else{
+  printf("イイっ！この因子すげえいいっ！\n");
+}
 exit(1);
+//b=odiv(o,m);
+//exit(1);
 
 //X=g2add(ff,uu1,uu2,vv1,vv2);
 
@@ -1623,8 +1624,12 @@ U=gendiv(ff);
 U0=gendiv(ff);
 
 //F=xgcd(U.u,U0.u);
-
-X=g2add(ff,U.u,U0.u,U.v,U0.v);
+if(chkdiv(U,ff)==-1 || chkdiv(U0,ff)==-1)
+{
+  printf("ee?!\n");
+  exit(1);
+}
+X=cadd(ff,U.u,U0.u,U.v,U0.v);
 if(chkdiv(X,ff)==-1)
 {
   printpoln(o2v(U.u));
