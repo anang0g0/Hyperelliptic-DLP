@@ -1208,30 +1208,35 @@ Div cadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
 
 V=xgcd(uu1,uu2);
 V=monic(V);
-printpol(o2v(V.u));
-printf("  Uu\n");
 e1=V.u;
-printpol(o2v(V.v));
-printf("  Uv\n");
-e2=V.v;
-printpol(o2v(V.d));
-printf("  Ud\n");
-d1=V.d;
-printpol(o2v(V.h));
-printf("  Uh\n");
-V=xgcd(V.d,oadd(vv1,vv2));
-V=monic(V);
 printpol(o2v(V.u));
-printf("  Uu\n");
-c1=V.u;
+printf("  e1\n");
+e2=V.v;
 printpol(o2v(V.v));
-printf("  Uv\n");
-c2=V.v;
+printf("  e2\n");
+d1=V.d;
 printpol(o2v(V.d));
-printf("  Ud\n");
-d=V.d;
+printf("  d1\n");
+
 printpol(o2v(V.h));
 printf("  Uh\n");
+//exit(1);
+V=xgcd(oadd(vv1,vv2),V.d);
+V=monic(V);
+c2=V.u;
+printpol(o2v(V.u));
+printf("  c2\n");
+c1=V.v;
+printpol(o2v(V.v));
+printf("  c1\n");
+d=V.d;
+printpol(o2v(V.d));
+printf("  d\n");
+
+printpol(o2v(V.h));
+printf("  Uh\n");
+//exit(1);
+
 s1=omul(c1,e1);
 printpol(o2v(s1));
 printf(" ==s1\n");
@@ -1279,104 +1284,44 @@ D3.v=vd;
 return D3;
 }
 
-
 Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
   OP ll, u;
   OP v, s, l, k, v3, u3;
   Div X;
 
-if(odeg(uu1)==0){
-  printf("hen\n");
-  exit(1);
-}
   ll = (omul(vv2, vv2));
   printpol(o2v(ll));
   printf("\n");
-  k = odiv(osub(ff, (ll)),uu2);
-  printpol(o2v(k));
-  printf(" is\n");
-  printpol(o2v(uu2));
-  printf(" at\n");
-// exit(1);
-//  k = (odiv(ll, uu2));
-  
-  printf(" ('A`)\n");
-//  ll = odiv(uu1, uu2);
-//  printpol(o2v(ll));
-//  printf("========div\n");
-//  ll = omod(uu2, uu1);
-//  printpol(o2v(ll));
-//  printf("=======mod\n");
-  // exit(1);
-   EX tt={0};
-
-  // tt=muri(uu2,uu1);
-if(odeg(uu1)==0)
-  printf("love is over\n");
-  v = qinv(uu2, uu1);
-  printpol(o2v(v));
-  printf(" is ");
-  // omod(omul(t,uu2),uu1);
-  printf(" ===inv\n");
-exit(1);
-  
-  s=omod(omul(v,osub(vv1,vv2)),uu1);
-  printpol(o2v(s));
-  printf(" lis ");
-  //exit(1);
-l=omul(s,uu2);
-u=odiv(osub(k,omul(s,oadd(l,scr(2,vv2)))),uu1);
-u3=monique(u);
-v3=omod(minus(oadd(l,vv2)),u3);
-//v=oadd(vv1,vv2);
- //printpol(o2v(v));
-  //printf(" v\n");
-  //exit(1);
-  //tt=xgcd(uu1,uu2);
-  /*
-  tt=xgcd(oadd(vv1,vv2),v);
-  printpol(o2v(tt.d));
-  printf(" d@\n");
-  printpol(o2v(tt.u));
-  printf(" u@\n");
-  printpol(o2v(tt.v));
-  printf(" v@\n");
-  printpol(o2v(tt.h));
-  printf(" h@\n");
-  //exit(1);
-  */
- /*
-  ll = oadd(vv1, minus(vv2));
+  ll = (osub(ff, (ll)));
   printpol(o2v(ll));
-  printf(" @is \n");
-  s = omod(omul(ll, v),uu1);
-  //s = omul(ll, v);
-  printpol(o2v(s));
-  printf(" @es\n");
-//   exit(1);
+  printf("\n");
+  k = (odiv(ll, uu2));
+  printpol(o2v(k));
+  printf(" ('A`)\n");
+  //exit(1);
+  ll=qinv(uu2,uu1);
+  s=omod(omul(osub(vv1,vv2),ll),uu1);
+  printpol(o2v(ll));
+  printf("========inv\n");
+l=omul(s,uu2);
+u=odiv(osub(k,omul(s,oadd(l,omul(s,vv2)))),uu1);
+printpol(o2v(u));
+printf(" ===u\n");
+u3=monique(u);
+printpol(o2v(u3));
+printf(" ===u3\n");
+v3=omod(minus(oadd(l,vv2)),u3);
+printpol(o2v(v3));
+printf(" ===v3\n");
+exit(1);
 
-  l = omul(s, uu2);
-  printpol(o2v(l));
-  printf(" il\n");
-  u = odiv(osub(k, (omul(s, oadd(l, omul(s, vv2))))), uu1);
-  printpol(o2v(u));
-  printf(" iu\n");
-  u3 = coeff(u);
-  printpol(o2v(u3));
-  printf(" =======u3 is\n");
-  v3 = omod(minus(oadd(l, vv2)), u3);
-  printpol(o2v(v3));
-  printf(" =========v3 is\n");
-  // exit(1);
-*/
+
   X.u = u3;
   X.v = v3;
 
   return X;
 }
-
-
 
 
 PO tr1e(int f4, int f3, int f2, int f1, int f0, int p)
@@ -1436,10 +1381,7 @@ if(deg(v1)==0 || deg(v2)==0){
 
     d2 = v2o(z1);
     d1 = omul(c, d);
-    if(LT(d2).a==0)
-    printf("innnnnnnnnnnnnnnnn\n");
-    if(LT(d1).a==0)
-    printf("eeeeeeeeeeeeeeeeee!\n");
+
   } while (LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
 printf("debug mode\n");
   printpol(o2v(d1));
@@ -1450,7 +1392,10 @@ printf("debug mode\n");
 
   D.u = d1;
   D.v = d2;
-
+if(chkdiv(D,f)==-1){
+  printf("so buggy!\n");
+  exit(1);
+}
   return D;
 }
 
@@ -1479,17 +1424,17 @@ int main()
   unsigned short aaa[O] = {0};
 
   unsigned short f[K + 1] = {1, 7, 6, 2, 8, 2};
-  unsigned short u1[K + 1] = {0, 0, 0, 1, 21, 16};
-  unsigned short u2[K + 1] = {0, 0, 0, 1, 19, 20};
-  unsigned short v1[K + 1] = {0, 0, 0, 0, 21, 21};
-  unsigned short v2[K + 1] = {0, 0, 0, 0, 12, 8};
+  unsigned short u2[K + 1] = {0, 0, 0, 1, 21, 16};
+  unsigned short u1[K + 1] = {0, 0, 0, 1, 19, 20};
+  unsigned short v2[K + 1] = {0, 0, 0, 0, 21, 21};
+  unsigned short v1[K + 1] = {0, 0, 0, 0, 12, 8};
 
 /*
   unsigned short f[K + 1] = {1, 0, 3, 7, 1, 2};
-  unsigned short u1[K + 1] = {0, 0, 0, 1, 7, 10};
-  unsigned short u2[K + 1] = {0, 0, 0, 1, 0, 10};
-  unsigned short v1[K + 1] = {0, 0, 0, 0, 1, 9};
-  unsigned short v2[K + 1] = {0, 0, 0, 0, 7, 9};
+  unsigned short u2[K + 1] = {0, 0, 0, 1, 7, 10};
+  unsigned short u1[K + 1] = {0, 0, 0, 1, 0, 10};
+  unsigned short v2[K + 1] = {0, 0, 0, 0, 1, 9};
+  unsigned short v1[K + 1] = {0, 0, 0, 0, 7, 9};
 */
   OP ff, k, uu1, uu2, vv1, vv2, s, l, u3, v3, u, ll, t, m, o, d, c;
   unsigned short tst1[K + 1] = {0, 0, 0, 0, 8, 7};
@@ -1519,12 +1464,8 @@ Div G0,G1,X;
 
 
 
-G0.u=uu1;
-G1.u=uu2;
-G0.v=vv1;
-G1.v=vv2;
-//cantor(G0,G1,ff);
-G0=cadd(ff,uu1,uu2,vv1,vv2);
+
+G0=cadd(ff,uu2,uu1,vv2,vv1);
 if(chkdiv(G0,ff)==-1)
 {
   printf("naze?\n");
@@ -1532,17 +1473,26 @@ if(chkdiv(G0,ff)==-1)
   printf("イイっ！この因子すげえいいっ！\n");
 }
 exit(1);
+/*
+G0=g2add(ff,uu1,uu2,vv1,vv2);
+if(chkdiv(G0,ff)==-1){
+  printf("nani?\n");
+}else{
+printf("だろうな\n");
+}
+exit(1);
+*/
 //b=odiv(o,m);
 //exit(1);
 
-//X=g2add(ff,uu1,uu2,vv1,vv2);
+X=g2add(ff,uu1,uu2,vv1,vv2);
 
-//printpol(o2v(X.u));
-//printf("  Xu\n");
-//printpol(o2v(X.v));
-//printf("  Xv\n");
+printpol(o2v(X.u));
+printf("  Xu\n");
+printpol(o2v(X.v));
+printf("  Xv\n");
 //printf("%d\n",chkdiv(X,ff));
-//exit(1);
+exit(1);
 
 srand(clock());
 /*
@@ -1581,7 +1531,7 @@ printf("\n");
 //exit(1);
 */
 
-/*
+
   V=xgcd(uu1,uu2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
@@ -1591,7 +1541,7 @@ printf("\n");
   printf(" =====d3\n");
   printpol(o2v((V.h)));
   printf(" =====h3\n");
-//  exit(1);
+  //exit(1);
   
   d=oadd(vv1,vv2);
   printpol(o2v(d));
@@ -1600,7 +1550,7 @@ printf("\n");
   vx=diviser(V.d,d);
   printpol(vx);
   printf("\n");
-  V.d=v2o(vx);
+  //V.d=v2o(vx);
   //exit(1);
 
 
@@ -1613,8 +1563,8 @@ printf("\n");
   printf(" =====d3\n");
   printpol(o2v(V.h));
   printf(" =====h3\n");
-  //exit(1);
-*/
+  exit(1);
+
 
 EX F;
 Div U={0},U0={0};
@@ -1622,13 +1572,14 @@ while(1)
 {
 U=gendiv(ff);
 U0=gendiv(ff);
-
+printf("1111111111111111111111111111\n");
 //F=xgcd(U.u,U0.u);
 if(chkdiv(U,ff)==-1 || chkdiv(U0,ff)==-1)
 {
   printf("ee?!\n");
   exit(1);
 }
+
 X=cadd(ff,U.u,U0.u,U.v,U0.v);
 if(chkdiv(X,ff)==-1)
 {
