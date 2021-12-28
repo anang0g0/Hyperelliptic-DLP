@@ -1472,7 +1472,7 @@ if(chkdiv(G0,ff)==-1)
 }else{
   printf("イイっ！この因子すげえいいっ！\n");
 }
-exit(1);
+//exit(1);
 /*
 G0=g2add(ff,uu1,uu2,vv1,vv2);
 if(chkdiv(G0,ff)==-1){
@@ -1484,7 +1484,7 @@ exit(1);
 */
 //b=odiv(o,m);
 //exit(1);
-
+/*
 X=g2add(ff,uu1,uu2,vv1,vv2);
 
 printpol(o2v(X.u));
@@ -1493,77 +1493,8 @@ printpol(o2v(X.v));
 printf("  Xv\n");
 //printf("%d\n",chkdiv(X,ff));
 exit(1);
-
-srand(clock());
-/*
-G0=gendiv(ff);
-G1=gendiv(ff);
-V=xgcd(G0.u,G1.u);
-printpoln(o2v(G0.u));
-printpoln(o2v(G1.u));
-printpol(o2v(V.u));
-printf("  Uu\n");
-printpol(o2v(V.v));
-printf("  Uv\n");
-printpol(o2v(V.d));
-printf("  Ud\n");
-printpol(o2v(V.h));
-printf("  Uh\n");
-exit(1);
-
-V=xgcd(G0.u,G1.u);
-printpoln(o2v(G0.u));
-printpoln(o2v(G1.u));
-printpol(o2v(V.u));
-printf("  Uu\n");
-printpol(o2v(V.v));
-printf("  Uv\n");
-printpol(o2v(V.d));
-printf("  Ud\n");
-printpol(o2v(V.h));
-printf("  Uh\n");
-//exit(1);
-
-printpol(o2v(uu1));
-printf("\n");
-printpol(o2v(uu2));
-printf("\n");
-//exit(1);
 */
-
-
-  V=xgcd(uu1,uu2);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v((V.v)));
-  printf(" =====v3\n");
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v((V.h)));
-  printf(" =====h3\n");
-  //exit(1);
-  
-  d=oadd(vv1,vv2);
-  printpol(o2v(d));
-  printf(" v1+v2\n");
-  //exit(1);
-  vx=diviser(V.d,d);
-  printpol(vx);
-  printf("\n");
-  //V.d=v2o(vx);
-  //exit(1);
-
-
-  V=xgcd((V.d),d);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v(V.v));
-  printf(" =====v3\n");
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v(V.h));
-  printf(" =====h3\n");
-  exit(1);
+srand(clock());
 
 
 EX F;
