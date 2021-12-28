@@ -1413,12 +1413,10 @@ if(deg(v1)==0 || deg(v2)==0){
   exit(1);
 }
   do
-  {
-    a = tr1e(0, 3, 7, 1, 2, P); // cofficient of function
-    b = tr1e(0, 3, 7, 1, 2, P); // cofficient of function
-    e = tr1e(0, 3, 7, 1, 2, P); // cofficient of function
-//    e = tr1e(ff.x[0], ff.x[1], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-//    b = tr1e(ff.x[0], ff.x[1], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+  {  
+    a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
   
     v1.x[0] = a.x;
     printpol(v1);
