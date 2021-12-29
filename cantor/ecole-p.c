@@ -9,7 +9,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 37
+#define P 31
 
 unsigned long long  PP=100000000000000003LLU;
 
@@ -1337,9 +1337,8 @@ exit(1);
 }
 
 
-int bit(unsigned long long b, int i)
+int bit(__int128_t b, int i)
 {
-  int k = 1;
 
   if ((b & (1 << i)) > 0)
   {
@@ -1351,73 +1350,17 @@ int bit(unsigned long long b, int i)
   }
 }
 
-//jj=aa^bb mod oo
-unsigned long long  eXp(unsigned long long  aa, unsigned long long  bb, unsigned long long  oo)
-{
-  unsigned long long  ii, jj, kk[8192];
-  int j, c[8192], count = 0, i;
-  ii = oo;
-  j = 0;
-  jj = 0;
-  //  kk[4096]; //prime is 4096 bit table
-  //  c[8192]  //mod is 8192 bit table
-  count = 0;
 
-  for (i = 0; i < 522; i++)
-  {
-    kk[i] = 0;
-  }
-  while (ii > 0)
-  {
-    ii = (ii >> 1);
-    j = j + 1;
-  }
-
-  kk[0] = aa;
-
-  //  cout << j << "\n";
-
-  //ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
-  for (i = 0; i < j + 1; i++)
-  {
-    if (bit(bb, i) != 0)
-    { // testbit(bb,i)
-      c[count] = i;
-      count = count + 1;
-    }
-  }
-  //    cout << bb << }l;
-  //    cout << count << "\n";
-  //exit(1);
-  for (i = 1; i < c[count - 1] + 1; i++)
-  {
-    kk[i] = kk[i - 1] * kk[i - 1] % oo;
-  }
-
-  jj = 1;
-  for (i = 0; i < count; i++)
-  {
-    jj = kk[c[i]] * jj % oo;
-    if (jj == 0)
-    {
-      //	print i,"\n"
-    }
-  }
-
-  return jj;
-}
-
-
-
-unsigned long long pow_mod(unsigned long long x, unsigned long long n, unsigned long long p)
+unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
     return 1;
   if (n & 1)
     return (pow_mod(x, n - 1, p) * x) % p;
   x = pow_mod(x, n / 2, p);
-  return (x * x) % p;
+  return (unsigned long long)((x * x) % p);
 }
+
 
 /* Takes as input an odd prime p and n < p and returns r
  * such that r * r = n [mod p]. */
@@ -1468,33 +1411,22 @@ unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
   return 0;
 }
 
-unsigned long long root(unsigned long long a, unsigned long long p)
+__int128_t root(__int128_t a, __int128_t p)
 {
-  unsigned long long  c, b;
+  __int128_t  c, b;
 
-  printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
+  //printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
   if (p % 4 == 3 || p % 8 == 5)
   {
     if (p % 4 == 3)
     {
       b = (p + 1) / 4;
-      c = eXp(a, b, p);
-      if ((c * c) % p != a)
-      {
-        printf("baka@\n");
-        //return -1;
-        //#exit()
-      }
-      if (c * c % p == a)
-      {
-        //printf("good\n");
-        printf("good c= %llu\n", c);
-        return c;
-      }
+      c = pow_mod(a, b, p);
+        return c;      
     }
     if (p % 8 == 5)
     {
-      c = eXp(a, (p + 3) / 8, p);
+      c = pow_mod(a, (p + 3) / 8, p);
       if ((c * c) % p != a)
         printf("baka2\n");
         return -1;
@@ -1538,15 +1470,15 @@ unsigned long long root(unsigned long long a, unsigned long long p)
 
 PO tr1e(unsigned long long  f4, unsigned long long  f3, unsigned long long  f2, unsigned long long  f1, unsigned long long  f0, unsigned long long  p)
 {
-  unsigned long long  x,y,f,g;
+  __int128_t  x,y,f,g;
   PO aa = {0};
 
   while (1)
   {
     x = rand() % p;
-    y = rand() % p;
-    f=((x * x * x * x * x)%p + (f4 * x * x * x * x)%p + (f3 * x * x * x)%p + (f2 * x * x)%p + f1 * x + f0)%p;
-    //g=root(f,P);
+    //y = rand() % p;
+    f=(pow_mod(x,5,P) + (f4 * pow_mod(x,4,P))%P  + (f3 * pow_mod(x,3,P))%P + (f2 *pow_mod(x ,2,P))%p + f1 * x + f0)%p;
+    y=root(f,P);
     g=(y*y)%p;
     if(f == g){
       aa.x=x;
@@ -1562,7 +1494,8 @@ Div gendiv(OP f)
 {
   PO a = {0}, b = {0}, e = {0};
   OP d1 = {0}, d2 = {0}, c = {0}, d = {0};
-  unsigned long long  x, y, i, j, k, count;
+//  unsigned long long  x, y, i, j, k, 
+unsigned count;
   Div D = {0};
   vec v1 = {0}, v2 = {0}, z1 = {0}, z2 = {0}, ff = {0};
   count = 0;
@@ -1636,24 +1569,26 @@ int main()
   unsigned int i, count = 0;
   unsigned long long  aaa[O] = {0};
   
-/*
+
   unsigned long long  f[K + 1] = {1, 7, 6, 2, 8, 2};
+/*
   unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
   unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
   unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
   unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
 */
-  unsigned long long  f[K+1]={1 ,0, 2,  30,  5,  1};
-/*
-  unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
+// unsigned long long  f[K+1]={1 ,0, 2,  30,  5,  1};
+
+  //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
 //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
 unsigned long long  u2[K+1]={0,0,0,1,1571353025997967 , 12198441063534328};
 unsigned long long  v2[K+1]={0,0,0,0,32227723250469108 , 68133247565452990};
 unsigned long long  u1[K+1]={0,0,0,1, 70887725815800572 , 94321182398888258};
 unsigned long long  v1[K+1]={0,0,0,0, 42016761890161508 , 3182371156137467 };
-*/
+
+
+//  unsigned long long  f[K + 1] = {1, 0, 3, 7, 1, 2};
 /*
-  unsigned long long  f[K + 1] = {1, 0, 3, 7, 1, 2};
   unsigned long long  u2[K + 1] = {0, 0, 0, 1, 7, 10};
   unsigned long long  u1[K + 1] = {0, 0, 0, 1, 0, 10};
   unsigned long long  v2[K + 1] = {0, 0, 0, 0, 1, 9};
