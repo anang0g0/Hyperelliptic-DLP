@@ -2,13 +2,13 @@
 
 /* -*- mode: C; coding:utf-8 -*- */
 #define N 100
-#define E 4
+#define E 128
 
 
 //monomial
 typedef struct{
-  unsigned short n; //単項式の次数
-  unsigned short a; //単項式の係数
+  __int128_t n; //単項式の次数
+  __int128_t a; //単項式の係数
 } oterm;
 
 //polynomial
@@ -17,8 +17,8 @@ typedef struct{
 } OP;
 
 typedef union {
-  unsigned short x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
-  unsigned long long int e[DEG/4];
+  __int128_t x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
+  __int128_t e[DEG/4];
 } vec;
 
 
@@ -32,11 +32,24 @@ typedef struct{
 
 
 typedef struct  {
-  unsigned short x;
-  unsigned short y;
+  __int128_t x;
+  __int128_t y;
 } PO;
 
 typedef struct {
   OP u;
   OP v;
 } Div;
+
+
+  struct BF {
+    unsigned int a : 10;
+    unsigned int b : 8;
+    unsigned int c : 12;
+    unsigned int d : 2;
+  };
+
+  union {
+    struct BF f;
+    unsigned int u;
+  } dd;
