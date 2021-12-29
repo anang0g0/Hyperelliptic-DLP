@@ -923,13 +923,13 @@ EX xgcd(OP f, OP g)
   oterm a, b;
   int i = 0, j,  flg = 0,k;
   EX e = {0}, ee = {0};
-
+/*
 if(odeg(f)<odeg(g)){
 T=f;
 f=g;
 g=T;
 }
-
+*/
   v = (OP *)malloc(sizeof(OP) * (DEG));
   u = (OP *)malloc(sizeof(OP) * (DEG));
   memset(v, 0, sizeof(OP) * DEG);
@@ -952,8 +952,8 @@ g=T;
   printpol(o2v(g));
   printf(" s===============\n");
   // exit(1);
-  if(LT(f).a==0 || LT(g).a==0){
-    printf("f or g ==0\n");
+  if(LT(g).a==0){
+    printf("g ==0\n");
     exit(1);
   }
 
@@ -1061,8 +1061,11 @@ OP qinv(OP uu1, OP uu2)
   printf(" in qinv's v\n");
 
   //exit(1);
-
+if(LT(omod(omul(v,uu1),uu2)).a==0){
   return v;
+}
+printf("can't\n");
+exit(1);
 }
 
 
@@ -1200,9 +1203,85 @@ Div reduce(Div D3,OP f){
 return D;
 }
 
+Div g2dbl(Div D,OP ff){
+unsigned short u1,u0,v1,v0,vu,vv,mm1,mm2,mm3,mm4,z1,z2,t1,t2,t3,t4,l2,l1,l3,d,aa,bb,cc,dd,ee,ue1,ue0,uue1,ve1,ve0,uue0,uu1,uu0;
+Div D2={0};
+vec vx;
+unsigned f2,f3;
+OP u,v;
+
+u=D.u;
+v=D.v;
+vx=o2v(u);
+u1=vx.x[1];
+u0=vx.x[0];
+vx=o2v(v);
+v1=vx.x[1];
+v0=vx.x[0];
+
+vx=o2v(ff);
+f2=vx.x[2];
+f3=vx.x[3];
+
+uu1=(u1*u1)%P; uu0=(u0*u1)%P;
+
+vv=(v1*v1)%P; vu=(((v1+u1)*(v1+u1))-vv-uu1)%P; mm1=(2*v0-2*vu)%P; mm2=(2*v1*(u0+2*uu1))%P;
+mm3=(-2*v1)%P; mm4=(vu+2*v0)%P; z1=(f2+2*uu1*u1+2*uu0-vv)%P; z2=(f3-2*u0+3*uu1)%P;
+t1=((mm2-z1)*(z2-mm1))%P; t2=((-z1-mm2)*(z2+mm1))%P; 
+t3=((mm4-z1)*(z2-mm3))%P; t4=((-z1-mm4)*(z2+mm3))%P;
+l2=(t1-t2)%P; l3=(t3-t4)%P; d=(t3+t4-t1-t2-2*(mm2-mm4)*(mm1+mm3))%P;
+aa=inv(d*l3,P); bb=(d*aa)%P; cc=(d*bb)%P; cc=(d*bb)%P; dd=(l2*bb)%P; ee=(l3*l3*aa)%P;
+ue1=(2*dd-cc*cc-2*u1)%P; ve0=((dd-u1)*(dd-u1)+2*cc*(v1+cc*u1))%P; uue1=(ue1*ue1)%P; uue0=(ue1*ue0)%P;
+ve1=(ee*ve1+v1)%P; ve0=(ee*ve0+v0)%P;
+memset(vx.x,0,sizeof(vx.x));
+vx.x[2]=1;
+vx.x[1]=ue1;
+vx.x[0]=ue0;
+D2.u=v2o(vx);
+
+memset(vx.x,0,sizeof(vx.x));
+vx.x[1]=ve1;
+vx.x[0]=ve0;
+D2.v=v2o(vx);
+
+
+return D2;
+}
+
+Div cdbl(Div D,OP f){
+OP k,s,l,u,v,u1,u2,v2,ut,vt,vc;
+
+
+u=D.u;
+v=D.v;
+if(chkdiv(D,f)==-1){
+  printf("bakayo\n");
+  exit(1);
+}
+
+k=odiv(osub(f,omul(v,v)),u);
+s=omod(omul(k,qinv(scr(2,v),u)),u);
+l=omul(s,u);
+u1=osub(omul(s,s),omod(osub(omul(scr(2,v),s),k),u));
+u2=monique(u1);
+v2=omod(minus(oadd(l,v)),u2);
+
+printpoln(o2v(u2));
+printpoln(o2v(omul(u,u)));
+if(oequ(omul(u,u),u2)==0 && oequ(omod(v2,u),omod(v,u))==0 && LT(omod(osub(omul(v2,v2),f),v2)).a==0){
+D.u=u2;
+D.v=v2;
+printf("ii!\n");
+return D;
+}
+printf("dame\n");
+exit(1);
+}
+
+
 Div cadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
   EX V;
-  Div D3,D;
+  Div D3,D, null={0};
   vec vx;
   OP e1,e2,d1,s1,s2,s3,c1,c2,d,u;
 
@@ -1249,11 +1328,13 @@ printf(" ==s3\n");
 //exit(1);
 int count=0;
 OP v;
-reduct:
-count++;
+
 u=odiv(omul(uu1,uu2),omul(d,d));
 printpol(o2v(u));
 printf(" ==u\n");
+
+reduct:
+count++;
 v=omod(oadd(oadd(omul(omul(s1,uu1),vv2),omul(omul(s2,uu2),vv1)),omul(s3,oadd(omul(vv1,vv2),ff))),u);
 printpol(o2v(v));
 printf(" ==v\n");
@@ -1265,7 +1346,10 @@ vd=omod(minus(v),ud);
 if(odeg(ud)>2){
   if(count>100){
     printf("over 100\n");
-  exit(1);
+    D3.u=ud;
+    D3.v=vd;
+    return D3;
+  //exit(1);
   }
   u=ud;
   v=vd;
@@ -1461,17 +1545,46 @@ Div G0,G1,X;
   vv2 = setpol(v2, K + 1);
   o=setpol(tst1,K+1);
   m=setpol(tst2,K+1);
+count=0;
+int xount=0;
+X.u=uu1;
+X.v=vv1;
+srand(clock());
+while(1){
+G1=gendiv(ff);
+X=gendiv(ff);
+G0=cadd(ff,X.u,G1.u,X.v,G1.v);
+//G0=cdbl(X,ff);
+if(chkdiv(G0,ff)==-1)
+{
+  V=xgcd(X.u,G1.u);
+  if(LT(V.d).n>0){
+  printf("gcd!\n");
+  }else{
+  printf("why?\n");
+  count++;
+  }
+}else{
+  printf("イイっ！この因子すげえいいっ！\n");
+  xount++;
+  exit(1);
+}
+if(xount>100)
+break;
+printf("%d xount=%d\n",count,xount);
+}
+printf("%d %d\n",count,xount);
+exit(1);
 
-
-
-
-G0=cadd(ff,uu2,uu1,vv2,vv1);
+/*
+G0=cdbl(X,ff);
 if(chkdiv(G0,ff)==-1)
 {
   printf("naze?\n");
 }else{
   printf("イイっ！この因子すげえいいっ！\n");
 }
+*/
 //exit(1);
 /*
 G0=g2add(ff,uu1,uu2,vv1,vv2);
@@ -1496,7 +1609,7 @@ exit(1);
 */
 srand(clock());
 
-
+/*
 EX F;
 Div U={0},U0={0};
 while(1)
@@ -1547,9 +1660,9 @@ printpol(o2v(U.v));
 printf("  Uv wwwwwwww\n");
 printpol(o2v(U0.v));
 printf("  U0v vwwwwwwww\n");
-
+*/
 //exit(1);
-
+/*
 //printf("isdiv=%d\n",chkdiv(U,ff));
 //printf("isdiv=%d\n",chkdiv(U0,ff));
 X=g2add(ff,U.u,U0.u,U.v,U0.v);
@@ -1559,8 +1672,10 @@ printpol(o2v(U0.u));
 printf("  isU0wwwwwwww\n");
   printf("isdiv=%d\n",chkdiv(X,ff));
   exit(1);
+  */
 OP oi,rem;
 Div D1,D2;
+/*
 while(1){
   D1=gendiv(ff);
   D2=gendiv(ff);
@@ -1590,21 +1705,16 @@ while(1){
   exit(1);
   }
 }
+
   //U = g2add(ff, uu1, uu2, vv1, vv2);
   //printf("isdiv=%d\n",chkdiv(U,ff));
 //    printf("isdiv=%d\n",chkdiv(D2,ff));
-  exit(1);
+//  exit(1);
   //V=xgcd(uu1,uu2,2);
   printpol(o2v(V.u));
   printf(" =====u3\n");
   printpol(o2v(V.v));
   printf(" =====v3\n");
-/*
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v(V.h));
-  printf(" =====h3\n");
-  //printf("%d\n",equ(5,8));
 */
 
 D1.u=uu1;
@@ -1613,7 +1723,7 @@ D2.u=uu2;
 D2.v=vv2;
 
 printf("isdiv=%d\n",chkdiv(D1,ff));
-printf("isdiv=%d\n",chkdiv(U,ff));
+printf("isdiv=%d\n",chkdiv(D2,ff));
 //exit(1);
 
 D1=gendiv(ff);
@@ -1622,7 +1732,7 @@ D2=gendiv(ff);
 printf("isdiv=%d\n",chkdiv(D1,ff));
 printf("isdiv=%d\n",chkdiv(D2,ff));
 //exit(1);
-U=g2add(ff,D1.u,D2.u,D1.v,D2.v);
+//U=g2add(ff,D1.u,D2.u,D1.v,D2.v);
 
   o=oadd(vv1,vv2);
   printpol(o2v(o));
