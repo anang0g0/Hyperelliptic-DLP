@@ -9,7 +9,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 31
+#define P 37
 
 //using namespa
 // sagemath上での原始多項式
@@ -1506,13 +1506,14 @@ int main()
 {
   unsigned int i, count = 0;
   unsigned short aaa[O] = {0};
-
+/*
   unsigned short f[K + 1] = {1, 7, 6, 2, 8, 2};
   unsigned short u2[K + 1] = {0, 0, 0, 1, 21, 16};
   unsigned short u1[K + 1] = {0, 0, 0, 1, 19, 20};
   unsigned short v2[K + 1] = {0, 0, 0, 0, 21, 21};
   unsigned short v1[K + 1] = {0, 0, 0, 0, 12, 8};
-
+*/
+  unsigned short f[K+1]={1 ,0, 2,  30,  5,  1};
 /*
   unsigned short f[K + 1] = {1, 0, 3, 7, 1, 2};
   unsigned short u2[K + 1] = {0, 0, 0, 1, 7, 10};
@@ -1539,10 +1540,10 @@ int a2 = 2;
 vec vx={0},xv={0};
 Div G0,G1,X;
   ff = setpol(f, K + 1);
-  uu1 = setpol(u1, K + 1);
-  uu2 = setpol(u2, K + 1);
-  vv1 = setpol(v1, K + 1);
-  vv2 = setpol(v2, K + 1);
+//  uu1 = setpol(u1, K + 1);
+//  uu2 = setpol(u2, K + 1);
+//  vv1 = setpol(v1, K + 1);
+//  vv2 = setpol(v2, K + 1);
   o=setpol(tst1,K+1);
   m=setpol(tst2,K+1);
 count=0;
