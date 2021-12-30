@@ -17,62 +17,6 @@ int bit(unsigned long long b, int i)
   }
 }
 
-//jj=aa^bb mod oo
-unsigned long long  eXp(unsigned long long  aa, unsigned long long  bb, unsigned long long  oo)
-{
-  unsigned long long  ii, jj, kk[8192];
-  int j, c[8192], count = 0, i;
-  ii = oo;
-  j = 0;
-  jj = 0;
-  //  kk[4096]; //prime is 4096 bit table
-  //  c[8192]  //mod is 8192 bit table
-  count = 0;
-
-  for (i = 0; i < 522; i++)
-  {
-    kk[i] = 0;
-  }
-  while (ii > 0)
-  {
-    ii = (ii >> 1);
-    j = j + 1;
-  }
-
-  kk[0] = aa;
-
-  //  cout << j << "\n";
-
-  //ex.1000=2**3+2**5+2**6+2**7+2**8+2**9 makes a array c=[3,5,6,7,8,9]
-  for (i = 0; i < j + 1; i++)
-  {
-    if (bit(bb, i) != 0)
-    { // testbit(bb,i)
-      c[count] = i;
-      count = count + 1;
-    }
-  }
-  //    cout << bb << }l;
-  //    cout << count << "\n";
-  //exit(1);
-  for (i = 1; i < c[count - 1] + 1; i++)
-  {
-    kk[i] = kk[i - 1] * kk[i - 1] % oo;
-  }
-
-  jj = 1;
-  for (i = 0; i < count; i++)
-  {
-    jj = kk[c[i]] * jj % oo;
-    if (jj == 0)
-    {
-      //	print i,"\n"
-    }
-  }
-
-  return jj;
-}
-
 
 
 unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
@@ -136,7 +80,7 @@ unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
 
 unsigned long long root(unsigned long long a, unsigned long long p)
 {
-  unsigned long long  c, b;
+  __int128_t c, b;
 
   printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
   if (p % 4 == 3 || p % 8 == 5)
@@ -144,16 +88,16 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     if (p % 4 == 3)
     {
       b = (p + 1) / 4;
-      c = eXp(a, b, p);
+      c = pow_mod(a, b, p);
       {
         //printf("good\n");
-        printf("good c= %llu\n", c);
-        return c;
+        printf("good c= %llu\n", (unsigned long long)c);
+        return (unsigned long long)c;
       }
     }
     if (p % 8 == 5)
     {
-      c = eXp(a, (p + 3) / 8, p);
+      c = pow_mod(a, (p + 3) / 8, p);
       if ((c * c) % p != a)
         printf("baka2\n");
         return -1;
@@ -161,13 +105,13 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
+      printf("%llu\n", (unsigned long long)c);
       return c;
     }
   }
   if (p % 8 == 5)
   {
-    c = 2 * a * eXp(4 * a, (p - 5) / 8, p);
+    c = 2 * a * pow_mod(4 * a, (p - 5) / 8, p);
     if (c * c % p != a)
     {
       printf("dangerous\n");
@@ -176,7 +120,7 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
+      printf("%llu\n", (unsigned long long)c);
       return c;
     }
     if (p % 8 == 1){
@@ -205,13 +149,13 @@ unsigned long long b = (P + 1) / 4;
 unsigned long long c = pow_mod(10, b, P);
 printf("%llu\n",c);
 
-//printf("%llu\n",root(10,P));
+printf("%llu\n",root(10,P));
 //exit(1);
 
 for(i=0;i<64;i++)
 printf("%d,",bit(P,i));
 printf("\n");
-exit(1);
+//exit(1);
 
 for(xx=0;xx<10000;xx++){
 printf("%llu %llu\n", root(xx,P) , xx);
