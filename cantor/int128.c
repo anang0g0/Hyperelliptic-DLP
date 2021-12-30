@@ -1539,7 +1539,7 @@ exit(1);
 */
 srand(clock());
 
-/*
+
 EX F;
 Div U={0},U0={0};
 while(1)
@@ -1569,84 +1569,8 @@ if(chkdiv(X,ff)==-1)
 }
 }
 
-printf("isdiv=%llu\n",chkdiv(X,ff));
-printpol(o2v(F.u));
-printf("  Fuwwwwwwww\n");
-printpol(o2v(F.v));
-printf("  Fvwwwwwwww\n");
-printpol(o2v(F.d));
-printf("  Fdwwwwwwww\n");
-printpol(o2v(F.h));
-printf("  Fhwwwwwwww\n");
-printpol(o2v(X.u));
-printf("  Xuwwwwwwww\n");
-printpol(o2v(X.v));
-printf("  Xvwwwwwwww\n");
-printpol(o2v(U.u));
-printf("  Uu wwwwwwww\n");
-printpol(o2v(U0.u));
-printf("  U0u vwwwwwwww\n");
-printpol(o2v(U.v));
-printf("  Uv wwwwwwww\n");
-printpol(o2v(U0.v));
-printf("  U0v vwwwwwwww\n");
-*/
-//exit(1);
-/*
-//printf("isdiv=%llu\n",chkdiv(U,ff));
-//printf("isdiv=%llu\n",chkdiv(U0,ff));
-X=g2add(ff,U.u,U0.u,U.v,U0.v);
-printpol(o2v(U.u));
-printf("  isUwwwwwwww\n");
-printpol(o2v(U0.u));
-printf("  isU0wwwwwwww\n");
-  printf("isdiv=%llu\n",chkdiv(X,ff));
-  exit(1);
-  */
-OP oi,rem;
 Div D1,D2;
-/*
-while(1){
-  D1=gendiv(ff);
-  D2=gendiv(ff);
-  printpol(o2v(D1.u));
-  printf(" ===D1.u\n");
-  printpol(o2v(D1.v));
-  printf(" ===D1.v\n");
-  printpol(o2v(D2.u));
-  printf(" ===D2.u\n");
-  printpol(o2v(D2.v));
-  printf(" ===D2.v\n");
-  oi=qinv(D2.u,D1.u);
-  printpol(o2v(oi));
-  printf(" ===Doi\n");
-  rem=omod(omul(oi,D2.u),D1.u);
-  printpol(o2v(rem));
-  printf(" ==D rem\n");
-  exit(1);
-  printf("isdiv=%llu D\n",chkdiv(D1,ff));
-  printf("isdiv=%llu D\n",chkdiv(D2,ff));
-  U = g2add(ff, D1.u, D2.u, D1.v, D2.v);
-  printf("isdiv=%llu D\n",chkdiv(U,ff));
-  //exit(1);
-  
-  if(chkdiv(U,ff)==-1){
-    printf("buggy\n");
-  exit(1);
-  }
-}
-
-  //U = g2add(ff, uu1, uu2, vv1, vv2);
-  //printf("isdiv=%llu\n",chkdiv(U,ff));
-//    printf("isdiv=%llu\n",chkdiv(D2,ff));
-//  exit(1);
-  //V=xgcd(uu1,uu2,2);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v(V.v));
-  printf(" =====v3\n");
-*/
-
+//exit(1);
 D1.u=uu1;
 D1.v=vv1;
 D2.u=uu2;
