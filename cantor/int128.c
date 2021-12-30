@@ -4,25 +4,16 @@
 #include <stdint.h>
 #include <strings.h>
 #include <stdbool.h>
-#include "struct.h"
+#include "int128.h"
 #include "chash-p.c"
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
 #define P 31
 
-__int128_t  PP=100000000000000003LLU;
+unsigned long long PP=100000000000000003LLU;
 
-//using namespa
-// sagemath上での原始多項式
-__int128_t  pp[4][4] = {{0, 0, 9, 2}, {0, 0, 11, 2}, {0, 0, 16, 3}, {0, 0, 15, 2}};
-// {0,0,9,2}, {1,0,11,2}, {1,0,16,3}, {1,0,15,2};
-// GF(11^3,13^3,17^3,19^3)
-// __int128_t  ff[2][7]={{1,0,0,0,0,2,0,2},{0,0,1,0,0,0,1,2}}; //GF(3^7,5^5)
-
-__int128_t  gf[O] = {0}, fg[O] = {0};
-// int N =0,M=0;
-__int128_t  c[K + 1] = {0};
+unsigned long long c[K + 1] = {0};
 
 // OP型からベクトル型への変換
 vec o2v(OP f)
@@ -173,8 +164,8 @@ void printpoln(vec a)
 }
 
 //多項式の代入値
-__int128_t 
-xtrace(OP f, __int128_t  x)
+unsigned long long 
+xtrace(OP f, unsigned long long  x)
 {
   int i, d;
   __int128_t  u = 0, v = 1;
@@ -328,7 +319,7 @@ OP oterml(OP f, oterm t)
   int i, k, j;
   OP h = {0};
   vec test;
-  __int128_t  n;
+
 
   // f=conv(f);
   k = odeg(f);
@@ -455,7 +446,7 @@ int oequ(OP f, OP g)
 
 
 // nを法とする逆数
-__int128_t inv(__int128_t a, __int128_t n)
+unsigned long long inv(unsigned long long a, unsigned long long n)
 {
   __int128_t d, x, s, q, r, t, gcd;
   d = n;
@@ -463,7 +454,7 @@ __int128_t inv(__int128_t a, __int128_t n)
   s = 1;
   while (a != 0)
   {
-    q = d / a;
+    q = (d / a)%P;
     r = d % a;
     d = a;
     a = r;
@@ -473,7 +464,7 @@ __int128_t inv(__int128_t a, __int128_t n)
   }
   gcd = d;
 
-  return ((x + n) % (n / d))%P;
+  return (unsigned long long)((x + n) % (n / d))%P;
 }
 
 
@@ -619,7 +610,7 @@ OP coeff(OP f)
 }
 
 
-OP cdiv(__int128_t a,OP f){
+OP cdiv(unsigned long long a,OP f){
   vec v;
   int i,l,k;
 
@@ -746,7 +737,7 @@ OP odiv(OP f, OP g)
 }
 
 
-OP scr(__int128_t  d, OP f)
+OP scr(unsigned long long d, OP f)
 {
   int i, n;
   vec v = {0};
@@ -763,7 +754,7 @@ OP scr(__int128_t  d, OP f)
 }
 
 OP monique(OP f){
-  __int128_t e1;
+  unsigned long long e1;
   e1 = inv(LT(f).a, P);
   printf("e=%llu\n",e1);
   f=scr(e1,f);
@@ -935,10 +926,14 @@ printf("can't\n");
 }
 
 
-__int128_t  chkdiv(Div d, OP f)
+int  chkdiv(Div d, OP f)
 {
   OP t;
-
+if(LT(d.u).n==0)
+{
+  printf("what?\n");
+  exit(1);
+}
   t=omod(osub(omul(d.v, d.v), (f)), d.u);
   printpol(o2v(t));
   printf(" 00000000000 t\n");
@@ -954,7 +949,7 @@ __int128_t  chkdiv(Div d, OP f)
 
 vec diviser(OP o, OP m)
 {
-  __int128_t  t1[2][3], cc[2];
+  unsigned long long t1[2][3], cc[2];
   vec c1 = {0};
   int i, j, k;
 
@@ -1176,20 +1171,20 @@ int bit(__int128_t b, int i)
 }
 
 
-__int128_t pow_mod(__int128_t x, __int128_t n, __int128_t p)
+unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
     return 1;
   if (n & 1)
-    return (pow_mod(x, n - 1, p) * x) % p;
+    return (unsigned long long)(pow_mod(x, n - 1, p) * x) % p;
   x = pow_mod(x, n / 2, p);
-  return (__int128_t)((x * x) % p);
+  return (unsigned long long)((x * x) % p);
 }
 
 
 /* Takes as input an odd prime p and n < p and returns r
  * such that r * r = n [mod p]. */
-__int128_t tonelli_shanks(__int128_t n, __int128_t p)
+unsigned long long tonelli_shanks(__int128_t n, __int128_t p)
 {
  __int128_t s = 0;
  __int128_t q = p - 1;
@@ -1200,7 +1195,7 @@ __int128_t tonelli_shanks(__int128_t n, __int128_t p)
   }
   if (s == 1)
   {
-    __int128_t r = pow_mod(n, (p + 1) / 4, p);
+    unsigned long long r = pow_mod(n, (p + 1) / 4, p);
     if ((r * r) % p == n)
       return r;
     return 0;
@@ -1209,14 +1204,14 @@ __int128_t tonelli_shanks(__int128_t n, __int128_t p)
  __int128_t z = 1;
   while (pow_mod(++z, (p - 1) / 2, p) != p - 1)
     ;
- __int128_t c = pow_mod(z, q, p);
- __int128_t r = pow_mod(n, (q + 1) / 2, p);
- __int128_t t = pow_mod(n, q, p);
- __int128_t m = s;
+__int128_t c = pow_mod(z, q, p);
+__int128_t r = pow_mod(n, (q + 1) / 2, p);
+__int128_t t = pow_mod(n, q, p);
+__int128_t m = s;
   while (t != 1)
   {
    __int128_t tt = t;
-   __int128_t i = 0;
+   unsigned long long i = 0;
     while (tt != 1)
     {
       tt = (tt * tt) % p;
@@ -1232,11 +1227,11 @@ __int128_t tonelli_shanks(__int128_t n, __int128_t p)
     m = i;
   }
   if ((r * r) % p == n)
-    return r;
+    return (unsigned long long)r;
   return 0;
 }
 
-__int128_t root(__int128_t a, __int128_t p)
+unsigned long long root(__int128_t a, __int128_t p)
 {
   __int128_t  c, b;
 
@@ -1247,7 +1242,7 @@ __int128_t root(__int128_t a, __int128_t p)
     {
       b = (p + 1) / 4;
       c = pow_mod(a, b, p);
-        return c;      
+        return (unsigned long long)c;
     }
     if (p % 8 == 5)
     {
@@ -1259,8 +1254,8 @@ __int128_t root(__int128_t a, __int128_t p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
-      return c;
+      printf("%llu\n", (unsigned long long)c);
+      return (unsigned long long)c;
     }
   }
   if (p % 8 == 5)
@@ -1274,8 +1269,8 @@ __int128_t root(__int128_t a, __int128_t p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
-      return c;
+      printf("%llu\n", (unsigned long long)c);
+      return (unsigned long long)c;
     }
     if (p % 8 == 1){
       c = tonelli_shanks(a, p);
@@ -1283,7 +1278,7 @@ __int128_t root(__int128_t a, __int128_t p)
         printf("fail!\n");
         return -1;
       }else{
-      return c;
+      return (unsigned long long)c;
       }
     }
     return 0;
@@ -1293,7 +1288,7 @@ __int128_t root(__int128_t a, __int128_t p)
 }
 
 
-PO tr1e(__int128_t  f4, __int128_t  f3, __int128_t  f2, __int128_t  f1, __int128_t  f0, __int128_t  p)
+PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, unsigned long long f1, unsigned long long f0, unsigned long long p)
 {
   __int128_t  x,y,f,g;
   PO aa = {0};
@@ -1306,8 +1301,8 @@ PO tr1e(__int128_t  f4, __int128_t  f3, __int128_t  f2, __int128_t  f1, __int128
     y=root(f,P);
     g=(y*y)%p;
     if(f == g){
-      aa.x=x;
-      aa.y=y;
+      aa.x=(unsigned long long)x;
+      aa.y=(unsigned long long)y;
       return aa;
     }
   }
@@ -1476,8 +1471,8 @@ vv1=G1.v;
 
 //X=gendiv(ff);
 while(1){
-G1=cadd(ff,G1.u,uu1,G1.v,vv1);
-if(oequ(G1.u,uu1)==0)
+G0=cadd(ff,G1.u,uu1,G1.v,vv1);
+if(oequ(G0.u,uu1)==0)
 break;
 //G0=cdbl(X,ff);
 /*
@@ -1657,15 +1652,15 @@ D1.v=vv1;
 D2.u=uu2;
 D2.v=vv2;
 
-printf("isdiv=%llu\n",chkdiv(D1,ff));
-printf("isdiv=%llu\n",chkdiv(D2,ff));
+printf("isdiv=%d\n",chkdiv(D1,ff));
+printf("isdiv=%d\n",chkdiv(D2,ff));
 //exit(1);
 
 D1=gendiv(ff);
 D2=gendiv(ff);
 
-printf("isdiv=%llu\n",chkdiv(D1,ff));
-printf("isdiv=%llu\n",chkdiv(D2,ff));
+printf("isdiv=%d\n",chkdiv(D1,ff));
+printf("isdiv=%d\n",chkdiv(D2,ff));
 //exit(1);
 //U=g2add(ff,D1.u,D2.u,D1.v,D2.v);
 
