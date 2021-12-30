@@ -239,7 +239,7 @@ oterm LT(OP f)
   int i, k;
   oterm t = {0};
 
-  // k = deg (o2v (f));
+   k = deg (o2v (f));
   for (i = 0; i < DEG; i++)
   {
     // printf("a=%llu %llu\n",f.t[i].a,f.t[i].n);
@@ -349,6 +349,7 @@ OP omul(OP f, OP g)
 {
   f = conv(f);
   g = conv(g);
+printf("qqqqqqqqqqqqqqqqqq\n");
   // assert (op_verify (f));
   // assert (op_verify (g));
   int i, count = 0, k, l;
@@ -638,6 +639,7 @@ OP cdiv(unsigned long long a,OP f){
   return f;
 }
 
+/*
 //多項式の商を取る
 OP odiv(OP f, OP g)
 {
@@ -723,6 +725,120 @@ OP odiv(OP f, OP g)
       break;
       // exit(1);
     }
+    if (c.a == 0)
+      break;
+  }
+
+  // tt は逆順に入ってるので入れ替える
+  OP ret = {0};
+  
+  int tt_terms = terms (tt);
+  for (i = 0; i < tt_terms; i++)
+    {
+      ret.t[i] = tt.t[tt_terms - i - 1];
+    }
+  
+  ret = conv(ret);
+  printpol(o2v(ret));
+  printf("  return\n");
+  // exit(1);
+
+  // assert (op_verify (ret));
+  return ret;
+}
+*/
+
+//多項式の商を取る
+OP odiv(OP f, OP g)
+{
+
+  f = conv(f);
+  g = conv(g);
+  // assert (op_verify (f));
+  // assert (op_verify (g));
+  int i = 0, j, n, k;
+  OP h = {0}, e = {0}, tt = {0}, o = {0};
+  oterm a, b = {0}, c = {0};
+
+  printpol(o2v(f));
+  printf("@@@@@@f\n");
+  printpol(o2v(g));
+  printf("@@@@@@@@@@g\n");
+   //exit(1);
+
+  if (LT(f).a == 0)
+  {
+    return h;
+  }
+  if(LT(g).a==0){
+    printf("baka^\n");
+    exit(1);
+  }
+   
+
+  k = 0;//odeg(f) - odeg(g);
+  b = LT(g);
+  
+  if (b.a > 0 && b.n == 0){
+    e=cdiv(b.a,f);
+    printpol(o2v(e));
+    printf(" cdiv\n");
+    //exit(1);
+    return e;
+  }
+  
+  if (b.a == 0 && b.n == 0)
+  {
+    printf("baka in odiv\n");
+    exit(1);
+  }
+  OP null = {0};
+  if (odeg((f)) < odeg((g)))
+  {
+    return null;
+  }
+
+  i = 0;
+  k=0;
+  while (LT(g).a != 0)
+  {
+    c = LTdiv(f, b);
+    c.a = c.a % P;
+    assert(c.n < DEG);
+    if(c.a>0){
+    tt.t[k] = c;
+    k++;
+    }
+    printf("%llu", c.a);
+    printf(" ccccccccccccccccc\n");
+    printpol(o2v(g));
+    printf(" ===before g in_odiv\n");
+    printpol(o2v(f));
+    printf(" ===before f in_odiv\n");
+    h = oterml(g, c);
+    f = osub(f, (h));
+    printpol(o2v(h));
+    printf(" ===h in_odiv\n");
+    printpol(o2v(g));
+    printf(" ===g in_odiv\n");
+    printpol(o2v(f));
+    printf(" ===f in_odiv\n");
+    if (LT(f).a == 0)
+    {
+      printf("blake2\n");
+      //c.a=1;
+      break;
+    }
+    
+    if (oequ(f, g) == 0)
+    {
+      printpol(o2v(tt));
+      printf("\n");
+      c.a=1;
+      //break;
+      // exit(1);
+    }
+    
     if (c.a == 0)
       break;
   }
@@ -935,7 +1051,7 @@ printf("can't\n");
 }
 
 
-unsigned long long  chkdiv(Div d, OP f)
+int  chkdiv(Div d, OP f)
 {
   OP t;
 
@@ -1119,29 +1235,49 @@ printf(" ==s3\n");
 //exit(1);
 int count=0;
 OP v;
+Div D1;
 
-u=odiv(omul(uu1,uu2),omul(d,d));
+
+//u=odiv(omul(uu1,uu2),omul(d,d));
+//u=omul(d,d);
+u=omul(uu1,uu2);
 printpol(o2v(u));
-printf(" ==u\n");
-
+printf(" ==u3@\n");
+//exit(1);
 
 count++;
 v=omod(oadd(oadd(omul(omul(s1,uu1),vv2),omul(omul(s2,uu2),vv1)),omul(s3,oadd(omul(vv1,vv2),ff))),u);
 printpol(o2v(v));
-printf(" ==v\n");
+printf(" ==vu3@\n");
 //exit(1);
-
+D1.u=u;
+D1.v=v;
+printf("%d\n",chkdiv(D1,ff));
+//exit(1);
 OP ud,vd;
 reduct:
+printpol(o2v(u));
+printf(" =======UUUUUUUU\n");
+//printpoln(o2v(odiv(osub(ff,omul(v,v)),u)));
+//printpoln(o2v(u));
+//exit(1);
 ud=odiv(osub(ff,omul(v,v)),u);
+//exit(1);
+printpoln(o2v(u));
+printpoln(o2v(v));
+printpoln(o2v(ud));
+printpoln(o2v(ff));
+//exit(1);
 vd=omod(minus(v),ud);
+D1.u=monique(ud);
+D1.v=vd;
+
+printf("%d\n",chkdiv(D1,ff));
+//exit(1);
 if(odeg(ud)>2){
   if(count>100){
     printf("over 100\n");
-    D3.u=ud;
-    D3.v=vd;
-    return D3;
-  //exit(1);
+    exit(1);
   }
   u=ud;
   v=vd;
@@ -1154,8 +1290,22 @@ printf(" @@ud\n");
 printpol(o2v(vd));
 printf(" @@udv\n");
 //printpoln(o2v(oadd(vv1,vv2)));
+//exit(1);
 D3.u=ud;
 D3.v=vd;
+/*
+printf("debug point\n");
+if(chkdiv(D3,ff)==1){
+return D3;
+}else if(chkdiv(D3,ff)==-1){
+printf("ptr\n");
+V=xgcd(ud,vd);
+if(odeg(V.d)==0){
+  printf("kasu\n");
+  exit(1);
+}
+}
+*/
 
 return D3;
 }
@@ -1542,13 +1692,19 @@ vec vx={0},xv={0};
 Div G0,G1,X;
   ff = setpol(f, K + 1);
 
-/*
+
   uu1 = setpol(u1, K + 1);
   uu2 = setpol(u2, K + 1);
   vv1 = setpol(v1, K + 1);
   vv2 = setpol(v2, K + 1);
   o=setpol(tst1,K+1);
   m=setpol(tst2,K+1);
+
+//V=xgcd(uu1,uu2);
+G0=cadd(ff,uu1,uu2,vv1,vv2);
+printf("%d\n",chkdiv(G0,ff));
+//exit(1);
+
 G1.u=uu1;
 G1.v=vv1;
 X.u=uu2;
@@ -1569,7 +1725,7 @@ if(chkdiv(G0,ff)==-1)
     printf("bug\n");
     exit(1);
 }
-*/
+
 /*
 G0=cadd(ff,uu1,uu2,vv1,vv2);
 if(chkdiv(G0,ff)==-1){
