@@ -90,7 +90,7 @@ vec Setvec(int n)
 }
 
 //配列の値を係数として多項式に設定する
-OP setpol(__int128_t  f[], int n)
+OP setpol(unsigned long long  f[], int n)
 {
   OP g;
   vec a;
@@ -120,7 +120,7 @@ void printpol(vec a)
 
   // printf ("baka\n");
   assert(("baka\n", n >= 0));
-
+printf("ewiugfweiufg\n");
   for (i = n; i > -1; i--)
   {
     if (a.x[i] > 0)
@@ -1065,7 +1065,6 @@ return D;
 }
 
 
-
 Div cadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
   EX V;
   Div D3,D, null={0};
@@ -1157,10 +1156,11 @@ return D3;
 }
 
 
-int bit(__int128_t b, int i)
+int bit(unsigned long long b, int i)
 {
+  int k = 1;
 
-  if ((b & (1 << i)) > 0)
+  if (((b & (1 << i)) >> i)%2 == 1)
   {
     return 1;
   }
@@ -1171,23 +1171,23 @@ int bit(__int128_t b, int i)
 }
 
 
+
 unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
     return 1;
   if (n & 1)
-    return (unsigned long long)(pow_mod(x, n - 1, p) * x) % p;
+    return (pow_mod(x, n - 1, p) * x) % p;
   x = pow_mod(x, n / 2, p);
   return (unsigned long long)((x * x) % p);
 }
 
-
 /* Takes as input an odd prime p and n < p and returns r
  * such that r * r = n [mod p]. */
-unsigned long long tonelli_shanks(__int128_t n, __int128_t p)
+unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
 {
- __int128_t s = 0;
- __int128_t q = p - 1;
+ unsigned long long s = 0;
+ unsigned long long q = p - 1;
   while ((q & 1) == 0)
   {
     q /= 2;
@@ -1195,22 +1195,22 @@ unsigned long long tonelli_shanks(__int128_t n, __int128_t p)
   }
   if (s == 1)
   {
-    unsigned long long r = pow_mod(n, (p + 1) / 4, p);
+    long r = pow_mod(n, (p + 1) / 4, p);
     if ((r * r) % p == n)
       return r;
     return 0;
   }
   // Find the first quadratic non-residue z by brute-force search
- __int128_t z = 1;
+ unsigned long long z = 1;
   while (pow_mod(++z, (p - 1) / 2, p) != p - 1)
     ;
-__int128_t c = pow_mod(z, q, p);
-__int128_t r = pow_mod(n, (q + 1) / 2, p);
-__int128_t t = pow_mod(n, q, p);
-__int128_t m = s;
+ unsigned long long c = pow_mod(z, q, p);
+ unsigned long long r = pow_mod(n, (q + 1) / 2, p);
+ unsigned long long t = pow_mod(n, q, p);
+ unsigned long long m = s;
   while (t != 1)
   {
-   __int128_t tt = t;
+   unsigned long long tt = t;
    unsigned long long i = 0;
     while (tt != 1)
     {
@@ -1219,30 +1219,34 @@ __int128_t m = s;
       if (i == m)
         return 0;
     }
-   __int128_t b = pow_mod(c, pow_mod(2, m - i - 1, p - 1), p);
-   __int128_t b2 = (b * b) % p;
+   unsigned long long b = pow_mod(c, pow_mod(2, m - i - 1, p - 1), p);
+   unsigned long long b2 = (b * b) % p;
     r = (r * b) % p;
     t = (t * b2) % p;
     c = b2;
     m = i;
   }
   if ((r * r) % p == n)
-    return (unsigned long long)r;
+    return r;
   return 0;
 }
 
-unsigned long long root(__int128_t a, __int128_t p)
+unsigned long long root(unsigned long long a, unsigned long long p)
 {
-  __int128_t  c, b;
+  __int128_t c, b;
 
-  //printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
+  printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
   if (p % 4 == 3 || p % 8 == 5)
   {
     if (p % 4 == 3)
     {
       b = (p + 1) / 4;
       c = pow_mod(a, b, p);
+      {
+        //printf("good\n");
+        printf("good c= %llu\n", (unsigned long long)c);
         return (unsigned long long)c;
+      }
     }
     if (p % 8 == 5)
     {
@@ -1255,7 +1259,7 @@ unsigned long long root(__int128_t a, __int128_t p)
     {
       printf("good\n");
       printf("%llu\n", (unsigned long long)c);
-      return (unsigned long long)c;
+      return c;
     }
   }
   if (p % 8 == 5)
@@ -1270,7 +1274,7 @@ unsigned long long root(__int128_t a, __int128_t p)
     {
       printf("good\n");
       printf("%llu\n", (unsigned long long)c);
-      return (unsigned long long)c;
+      return c;
     }
     if (p % 8 == 1){
       c = tonelli_shanks(a, p);
@@ -1278,7 +1282,7 @@ unsigned long long root(__int128_t a, __int128_t p)
         printf("fail!\n");
         return -1;
       }else{
-      return (unsigned long long)c;
+      return c;
       }
     }
     return 0;
@@ -1298,9 +1302,10 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
     x = rand() % p;
     //y = rand() % p;
     f=(pow_mod(x,5,P) + (f4 * pow_mod(x,4,P))%P  + (f3 * pow_mod(x,3,P))%P + (f2 *pow_mod(x ,2,P))%p + f1 * x + f0)%p;
+    printf("f=%lld\n",(unsigned long long)f);
     y=root(f,P);
     g=(y*y)%p;
-    if(f == g){
+    if((unsigned long long)f == (unsigned long long)g){
       aa.x=(unsigned long long)x;
       aa.y=(unsigned long long)y;
       return aa;
@@ -1327,6 +1332,7 @@ if(deg(v1)==0 || deg(v2)==0){
   printf("ee!?\n");
   exit(1);
 }
+printf("inininininini\n");
   do
   {  
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
@@ -1387,15 +1393,13 @@ EX manford(OP a, OP b)
 int main()
 {
   unsigned int i, count = 0;
-  __int128_t  aaa[O] = {0};
   
+  unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
 
-  __int128_t  f[K + 1] = {1, 7, 6, 2, 8, 2};
-
-  __int128_t  u2[K + 1] = {0, 0, 0, 1, 21, 16};
-  __int128_t  u1[K + 1] = {0, 0, 0, 1, 19, 20};
-  __int128_t  v2[K + 1] = {0, 0, 0, 0, 21, 21};
-  __int128_t  v1[K + 1] = {0, 0, 0, 0, 12, 8};
+  unsigned long long u2[K + 1] = {0, 0, 0, 1, 21, 16};
+  unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
+  unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
+  unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
 
 // __int128_t  f[K+1]={1 ,0, 2,  30,  5,  1};
 /*
@@ -1405,6 +1409,15 @@ __int128_t  u2[K+1]={0,0,0,1,1571353025997967 , 12198441063534328};
 __int128_t  v2[K+1]={0,0,0,0,32227723250469108 , 68133247565452990};
 __int128_t  u1[K+1]={0,0,0,1, 70887725815800572 , 94321182398888258};
 __int128_t  v1[K+1]={0,0,0,0, 42016761890161508 , 3182371156137467 };
+*/
+
+//unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
+/*
+//f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
+unsigned long long  u2[K+1]={0,0,0,1,1571353025997967 , 12198441063534328};
+unsigned long long  v2[K+1]={0,0,0,0,32227723250469108 , 68133247565452990};
+unsigned long long  u1[K+1]={0,0,0,1, 70887725815800572 , 94321182398888258};
+unsigned long long  v1[K+1]={0,0,0,0, 42016761890161508 , 3182371156137467 };
 */
 
 //  __int128_t  f[K + 1] = {1, 0, 3, 7, 1, 2};
@@ -1433,20 +1446,20 @@ int a2 = 2;
 vec vx={0},xv={0};
 Div G0,G1,X;
   ff = setpol(f, K + 1);
-
+/*
   uu1 = setpol(u1, K + 1);
   uu2 = setpol(u2, K + 1);
   vv1 = setpol(v1, K + 1);
   vv2 = setpol(v2, K + 1);
   o=setpol(tst1,K+1);
   m=setpol(tst2,K+1);
-
+*/
 count=0;
 int xount=0;
 
 
 PO xx;
-__int128_t rr=0;
+unsigned long long rr=0;
 /*
 for(rr=0;rr<1000;rr++){
   printf("%llu %llu\n",root(rr,P),rr);
@@ -1471,8 +1484,8 @@ vv1=G1.v;
 
 //X=gendiv(ff);
 while(1){
-G0=cadd(ff,G1.u,uu1,G1.v,vv1);
-if(oequ(G0.u,uu1)==0)
+G1=cadd(ff,G1.u,G1.u,G1.v,G1.v);
+if(oequ(G1.u,uu1)==0 || LT(G1.v).a==0)
 break;
 //G0=cdbl(X,ff);
 /*
@@ -1483,16 +1496,17 @@ while((LT(xgcd(X.v,X.u).d).a!=1)){
 */
 
 printf("loop\n");
-if(chkdiv(G0,ff)==-1)
+if(chkdiv(G1,ff)==-1)
 {
   printf("baka\n");
-  exit(1);
+  //
   V=xgcd(X.u,G1.u);
   if(LT(V.d).n>0){
   printf("gcd!\n");
   }else{
   printf("why?\n");
   count++;
+  exit(1);
   }
 }else{
   printf("ウホッ！いい因子。\n");

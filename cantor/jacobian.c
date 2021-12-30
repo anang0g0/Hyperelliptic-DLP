@@ -1069,87 +1069,6 @@ Div reduce(Div D3,OP f){
 return D;
 }
 
-Div g2dbl(Div D,OP ff){
-unsigned long long  u1,u0,v1,v0,vu,vv,mm1,mm2,mm3,mm4,z1,z2,t1,t2,t3,t4,l2,l1,l3,d,aa,bb,cc,dd,ee,ue1,ue0,uue1,ve1,ve0,uue0,uu1,uu0;
-Div D2={0};
-vec vx;
-unsigned f2,f3;
-OP u,v;
-
-u=D.u;
-v=D.v;
-vx=o2v(u);
-u1=vx.x[1];
-u0=vx.x[0];
-vx=o2v(v);
-v1=vx.x[1];
-v0=vx.x[0];
-
-vx=o2v(ff);
-f2=vx.x[2];
-f3=vx.x[3];
-
-uu1=(u1*u1)%P; uu0=(u0*u1)%P;
-
-vv=(v1*v1)%P; vu=(((v1+u1)*(v1+u1))-vv-uu1)%P; mm1=(2*v0-2*vu)%P; mm2=(2*v1*(u0+2*uu1))%P;
-mm3=(-2*v1)%P; mm4=(vu+2*v0)%P; z1=(f2+2*uu1*u1+2*uu0-vv)%P; z2=(f3-2*u0+3*uu1)%P;
-t1=((mm2-z1)*(z2-mm1))%P; t2=((-z1-mm2)*(z2+mm1))%P; 
-t3=((mm4-z1)*(z2-mm3))%P; t4=((-z1-mm4)*(z2+mm3))%P;
-l2=(t1-t2)%P; l3=(t3-t4)%P; d=(t3+t4-t1-t2-2*(mm2-mm4)*(mm1+mm3))%P;
-aa=inv(d*l3,P); bb=(d*aa)%P; cc=(d*bb)%P; cc=(d*bb)%P; dd=(l2*bb)%P; ee=(l3*l3*aa)%P;
-ue1=(2*dd-cc*cc-2*u1)%P; ve0=((dd-u1)*(dd-u1)+2*cc*(v1+cc*u1))%P; uue1=(ue1*ue1)%P; uue0=(ue1*ue0)%P;
-ve1=(ee*ve1+v1)%P; ve0=(ee*ve0+v0)%P;
-memset(vx.x,0,sizeof(vx.x));
-vx.x[2]=1;
-vx.x[1]=ue1;
-vx.x[0]=ue0;
-D2.u=v2o(vx);
-
-memset(vx.x,0,sizeof(vx.x));
-vx.x[1]=ve1;
-vx.x[0]=ve0;
-D2.v=v2o(vx);
-
-
-return D2;
-}
-
-Div cdbl(Div D,OP f){
-OP k,s,l,u,v,u1,u2,v2,ut,vt,vc;
-Div D2;
-
-u=D.u;
-v=D.v;
-if(chkdiv(D,f)==-1){
-  printf("bakayo\n");
-  exit(1);
-}
-
-OP t={0};
-
-k=odiv(osub(f,omul(v,v)),u);
-s=omod(omul(k,qinv(scr(2,v),u)),u);
-l=omul(s,u);
-u1=osub(omul(s,s),omod(osub(omul(scr(2,v),s),k),u));
-u2=monique(u1);
-v2=omod(minus(oadd(l,v)),u2);
-
-printpoln(o2v(u2));
-printpoln(o2v(omul(u,u)));
-D2.u=u2;
-D2.v=v2;
-
-//if(LT(omod(omul(u,u),u2)).a==0 && 
-//if(oequ(omod(v2,u),omod(v,u))==0 || LT(omod(osub(omul(v2,v2),f),v2)).a==0){
-t=omod(osub(omul(v2, v2), (f)), u2);
-if(LT(t).a==0){
-printf("ii!\n");
-return D2;
-}
-printf("dame\n");
-exit(1);
-}
-
 
 Div cadd(OP ff,OP uu1,OP uu2,OP vv1,OP vv2){
   EX V;
@@ -1205,7 +1124,7 @@ u=odiv(omul(uu1,uu2),omul(d,d));
 printpol(o2v(u));
 printf(" ==u\n");
 
-reduct:
+
 count++;
 v=omod(oadd(oadd(omul(omul(s1,uu1),vv2),omul(omul(s2,uu2),vv1)),omul(s3,oadd(omul(vv1,vv2),ff))),u);
 printpol(o2v(v));
@@ -1213,6 +1132,7 @@ printf(" ==v\n");
 //exit(1);
 
 OP ud,vd;
+reduct:
 ud=odiv(osub(ff,omul(v,v)),u);
 vd=omod(minus(v),ud);
 if(odeg(ud)>2){
@@ -1510,8 +1430,9 @@ if(deg(v1)==0 || deg(v2)==0){
   do
   {  
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-    e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    //e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+  
   
     v1.x[0] = a.x;
     printpol(v1);
@@ -1527,8 +1448,10 @@ if(deg(v1)==0 || deg(v2)==0){
 
     d2 = v2o(z1);
     d1 = omul(c, d);
-
-  } while (LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
+  
+  D.u=d1;
+  D.v=d2;
+  } while (chkdiv(D,f)==-1); //(LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
 printf("debug mode\n");
   printpol(o2v(d1));
   printf(" ==u\n");
@@ -1562,6 +1485,7 @@ EX manford(OP a, OP b)
 
   return V;
 }
+
 
 
 int main()
@@ -1618,6 +1542,7 @@ vec vx={0},xv={0};
 Div G0,G1,X;
   ff = setpol(f, K + 1);
 
+/*
   uu1 = setpol(u1, K + 1);
   uu2 = setpol(u2, K + 1);
   vv1 = setpol(v1, K + 1);
@@ -1644,7 +1569,7 @@ if(chkdiv(G0,ff)==-1)
     printf("bug\n");
     exit(1);
 }
-
+*/
 /*
 G0=cadd(ff,uu1,uu2,vv1,vv2);
 if(chkdiv(G0,ff)==-1){
@@ -1683,15 +1608,7 @@ while(1){
 G1=gendiv(ff);
 X=gendiv(ff);
 G0=cadd(ff,G1.u,X.u,G1.v,X.v);
-//if(oequ(G1.u,uu1)==0)
-//exit(1);
-//G0=dobule(X,ff);
-/*
-while((LT(xgcd(X.v,X.u).d).a!=1)){
-  X=gendiv(ff);
-  //G0=cdbl(X,ff);
-}
-*/
+
 if(chkdiv(G0,ff)==-1)
 {
 printf("baka\n");
@@ -1703,6 +1620,8 @@ printf("baka\n");
     printf("gen div err\n");
     break;
   }else{
+    printpoln(o2v(G0.u));
+    printpoln(o2v(G0.v));
     printpoln(o2v(G1.u));
     printpoln(o2v(G1.v));
     printpoln(o2v(X.u));

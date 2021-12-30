@@ -150,7 +150,6 @@ unsigned long long c = pow_mod(10, b, P);
 printf("%llu\n",c);
 
 printf("%llu\n",root(10,P));
-//exit(1);
 
 for(i=0;i<64;i++)
 printf("%d,",bit(P,i));
