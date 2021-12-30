@@ -7,8 +7,8 @@
 
 //monomial
 typedef struct{
-  __int128_t n; //単項式の次数
-  __int128_t a; //単項式の係数
+  unsigned long long n; //単項式の次数
+  unsigned long long a; //単項式の係数
 } oterm;
 
 //polynomial
@@ -17,8 +17,8 @@ typedef struct{
 } OP;
 
 typedef union {
-  __int128_t x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
-  __int128_t e[DEG/4];
+  unsigned long long x[DEG]; //配列の添字を次数に、配列の値を係数に持つ多項式の表現
+  unsigned long long e[DEG/4];
 } vec;
 
 
@@ -32,8 +32,8 @@ typedef struct{
 
 
 typedef struct  {
-  __int128_t x;
-  __int128_t y;
+  unsigned long long x;
+  unsigned long long y;
 } PO;
 
 typedef struct {
