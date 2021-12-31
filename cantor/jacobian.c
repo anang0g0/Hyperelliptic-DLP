@@ -15,7 +15,7 @@
 
 // 20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
 // 院卒失業中(小飼弾と同い年)
-// 本格的なおおきな粗鯛上の曲線については、
+// 本格的なおおきな素体上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
 
 unsigned long long PP = 100000000000000003LLU; // Harley's example
@@ -1306,7 +1306,6 @@ Div gendiv(OP f)
   do
   {
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-    // e = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
 
     v1.x[0] = a.x;
@@ -1344,11 +1343,9 @@ Div gendiv(OP f)
 }
 
 // test function
-EX manford(OP a, OP b)
+EX munford(EX V)
 {
-  EX V;
 
-  V = xgcd(a, b);
   printpol(o2v(V.u));
   printf(" =====u3\n");
   printpol(o2v((V.v)));
@@ -1370,14 +1367,7 @@ Div cdbl(Div D, OP f)
   int count = 0;
 
   V = xgcd(D.u, scr(2, D.v));
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v((V.v)));
-  printf(" =====v3\n");
-  printpol(o2v(V.d));
-  printf(" =====d3\n");
-  printpol(o2v((V.h)));
-  printf(" =====h3\n");
+  munford(V);
 
   a = odiv(omul(D.u, D.u), omul(V.d, V.d));
   b = odiv(oadd(omul(V.u, omul(D.u, D.v)), omul(V.v, oadd(omul(D.v, D.v), f))), V.d);
