@@ -1564,8 +1564,9 @@ int count=0;
   a=odiv(omul(D.u,D.u),omul(V.d,V.d));
   b=odiv(oadd(omul(V.u,omul(D.u,D.v)),omul(V.v,oadd(omul(D.v,D.v),f))),V.d);
   
-while(odeg(a)>2){
+while(deg(o2v(a))>2 || odeg(b)>odeg(a)){
   count++;
+  printf("count=%d\n",count);
   if(count>100)
   break;
   uu=odiv(osub(f,omul(b,b)),a);
@@ -1573,10 +1574,17 @@ while(odeg(a)>2){
     a=uu;
     b=vv;
   }
+  printpol(o2v(a));
+  printf("aaaaaaaaaaaaaaaa\n");
+  printpol(o2v(b));
+  printf("bbbbbbbbbbbbbbbbb\n");
+  
+  //if(deg(o2v(a))>0)
+  //exit(1);
 D2.u=a;
 D2.v=b;
 
-printf("%d\n",chkdiv(D2,f));
+//printf("chk==%d\n",chkdiv(D2,f));
 
 return D2;
 }
@@ -1656,6 +1664,7 @@ X.v=vv2;
 G1=gendiv(ff);
 while(chkdiv(G1,ff)==1){
 G1=cdbl(G1,ff);
+printf("chk==%d\n",chkdiv(G1,ff));
 }
 exit(1);
 
