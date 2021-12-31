@@ -10,25 +10,16 @@
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
 #define P 37
-#define J 1373
-#define J2 1412
+#define J 1412
 
-// 20211231 GPL
+
+// 20211231 GPL HyperElliptic Curve DLP
 // 院卒失業中(小飼弾と同い年)
 // 本格的なおおきな粗鯛上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
 
-unsigned long long PP = 100000000000000003LLU;
+unsigned long long PP = 100000000000000003LLU; // Harley's example
 
-// using namespa
-//  sagemath上での原始多項式
-unsigned long long pp[4][4] = {{0, 0, 9, 2}, {0, 0, 11, 2}, {0, 0, 16, 3}, {0, 0, 15, 2}};
-// {0,0,9,2}, {1,0,11,2}, {1,0,16,3}, {1,0,15,2};
-// GF(11^3,13^3,17^3,19^3)
-// unsigned long long  ff[2][7]={{1,0,0,0,0,2,0,2},{0,0,1,0,0,0,1,2}}; //GF(3^7,5^5)
-
-unsigned long long gf[O] = {0}, fg[O] = {0};
-// int N =0,M=0;
 unsigned long long c[K + 1] = {0};
 
 // OP型からベクトル型への変換
