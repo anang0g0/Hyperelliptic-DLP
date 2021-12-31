@@ -26,7 +26,7 @@ ZZ pow_mod(ZZ x, ZZ n, ZZ p)
 {
   if (n == 0)
     return to_ZZ("1");
-  if (n%2== 1)
+  if ((n & 1)==1)
     return (pow_mod(x, n - 1, p) * x) % p;
   x = pow_mod(x, n / 2, p);
   return (ZZ)((x * x) % p);
@@ -159,7 +159,7 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
     {
       aa.x = x;
       aa.y = y;
-      exit(1);
+      //exit(1);
       return aa;
     }
   }
@@ -182,7 +182,7 @@ ZZ c = pow_mod(to_ZZ("10"), b, P);
 cout << c << endl;
 
 //cout << root(to_ZZ("10"),P) << endl;
-
+srand(clock());
 //for(i=0;i<64;i++)
 //printf("%d,",bit(P,i));
 //printf("\n");
