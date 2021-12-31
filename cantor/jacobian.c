@@ -1663,7 +1663,7 @@ Div jac(unsigned long long n, OP f)
   L = tbl[tmp[0]];
   D = L;
   // printf("j=%d\n",j);
-  for (i = 1; i < j + 1; i++)
+  for (i = 1; i < j ; i++)
   {
     G=L;
     if(chkdiv(tbl[tmp[i]],f)==-1){
@@ -1768,13 +1768,13 @@ unsigned long long v1[K+1]={0,0,0,0,10,4};
   srand(clock());
   X = gendiv(ff);
   mktbl(X, ff);
-  for (i = 1; i < 1024; i++)
+ // for (i = 1; i < 1500; i++)
   {
-    X = jac(i, ff);
+    X = jac(1413, ff);
     if (chkdiv(X, ff) == -1)
     {
       printf("bakan %d\n", i);
-      break;
+     // break;
     }
   }
   exit(1);
