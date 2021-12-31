@@ -13,6 +13,11 @@
 #define J 1373
 #define J2 1412
 
+// 20211231 GPL
+// 院卒失業中(小飼弾と同い年)
+// 本格的なおおきな粗鯛上の曲線については、
+// このプログラムを元にNTLの古いバージョンを使って作る予定。
+
 unsigned long long PP = 100000000000000003LLU;
 
 // using namespa
@@ -1135,7 +1140,6 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   return D3;
 }
 
-
 // bit count
 int bit(unsigned long long b, int i)
 {
@@ -1151,7 +1155,7 @@ int bit(unsigned long long b, int i)
   }
 }
 
-// 誰かが書いたやつ
+// 誰かが書いたやつ (https://gist.github.com/LaurentMazare/6745649)
 unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
@@ -1211,7 +1215,7 @@ unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
   return 0;
 }
 
-// cf.modern computer algebra（素数を法とする平方根を求める）
+// cf.A cource in computational number theory p.31（素数を法とする平方根を求める）
 unsigned long long root(unsigned long long a, unsigned long long p)
 {
   __int128_t c, b;
@@ -1574,6 +1578,7 @@ int main()
   o = setpol(tst1, K + 1);
   m = setpol(tst2, K + 1);
 
+  //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
   srand(clock());
   X = gendiv(ff);
   mktbl(X, ff);
