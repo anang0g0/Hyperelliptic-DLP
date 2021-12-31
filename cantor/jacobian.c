@@ -1548,7 +1548,8 @@ EX manford(OP a, OP b)
 Div cdbl(Div D,OP f){
 Div D2;
 EX V;
-OP a,b;
+OP a,b,uu,vv;
+int count=0;
 
   V=xgcd(D.u,scr(2,D.v));
   printpol(o2v(V.u));
@@ -1562,6 +1563,16 @@ OP a,b;
 
   a=odiv(omul(D.u,D.u),omul(V.d,V.d));
   b=odiv(oadd(omul(V.u,omul(D.u,D.v)),omul(V.v,oadd(omul(D.v,D.v),f))),V.d);
+  
+while(odeg(a)>2){
+  count++;
+  if(count>100)
+  break;
+  uu=odiv(osub(f,omul(b,b)),a);
+  vv=omod(minus(b),uu);
+    a=uu;
+    b=vv;
+  }
 D2.u=a;
 D2.v=b;
 
@@ -1643,7 +1654,9 @@ G1.v=vv1;
 X.u=uu2;
 X.v=vv2;
 G1=gendiv(ff);
-cdbl(G1,ff);
+while(chkdiv(G1,ff)!=-1){
+G1=cdbl(G1,ff);
+}
 exit(1);
 
 if(chkdiv(G1,ff)==-1 || chkdiv(X,ff)==-1){
