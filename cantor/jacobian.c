@@ -639,114 +639,7 @@ OP cdiv(unsigned long long a,OP f){
   return f;
 }
 
-/*
-//多項式の商を取る
-OP odiv(OP f, OP g)
-{
 
-  f = conv(f);
-  g = conv(g);
-  // assert (op_verify (f));
-  // assert (op_verify (g));
-  int i = 0, j, n, k;
-  OP h = {0}, e = {0}, tt = {0}, o = {0};
-  oterm a, b = {0}, c = {0};
-
-  printpol(o2v(f));
-  printf("\n");
-  printpol(o2v(g));
-  printf("\n");
-  // exit(1);
-
-  if (LT(f).a == 0)
-  {
-    return h;
-  }
-  if(LT(g).a==0){
-    printf("baka^\n");
-    exit(1);
-  }
-   
-
-  k = 0;//odeg(f) - odeg(g);
-  b = LT(g);
-  
-  if (b.a > 0 && b.n == 0){
-    e=cdiv(b.a,f);
-    printpol(o2v(e));
-    //exit(1);
-    return e;
-  }
-  
-  if (b.a == 0 && b.n == 0)
-  {
-    printf("baka in odiv\n");
-    exit(1);
-  }
-  OP null = {0};
-  if (odeg((f)) < odeg((g)))
-  {
-    return null;
-  }
-
-  i = 0;
-  k=0;
-  while (LT(f).a != 0 || LT(g).a != 0)
-  {
-    c = LTdiv(f, b);
-    c.a = c.a % P;
-    assert(c.n < DEG);
-    tt.t[k] = c;
-    k++;
-
-    printf("%llu", c.a);
-    printf(" ccccccccccccccccc\n");
-    printpol(o2v(g));
-    printf(" ===before g in_odiv\n");
-    printpol(o2v(f));
-    printf(" ===before f in_odiv\n");
-    h = oterml(g, c);
-    f = osub(f, (h));
-    printpol(o2v(h));
-    printf(" ===h in_odiv\n");
-    printpol(o2v(g));
-    printf(" ===g in_odiv\n");
-    printpol(o2v(f));
-    printf(" ===f in_odiv\n");
-    if (LT(f).a == 0 || LT(g).a == 0)
-    {
-      printf("blake2\n");
-      break;
-    }
-    if (oequ(f, g) == 0)
-    {
-      printpol(o2v(tt));
-      printf("\n");
-      break;
-      // exit(1);
-    }
-    if (c.a == 0)
-      break;
-  }
-
-  // tt は逆順に入ってるので入れ替える
-  OP ret = {0};
-  
-  int tt_terms = terms (tt);
-  for (i = 0; i < tt_terms; i++)
-    {
-      ret.t[i] = tt.t[tt_terms - i - 1];
-    }
-  
-  ret = conv(ret);
-  printpol(o2v(ret));
-  printf("  return\n");
-  // exit(1);
-
-  // assert (op_verify (ret));
-  return ret;
-}
-*/
 
 //多項式の商を取る
 OP odiv(OP f, OP g)
@@ -829,8 +722,8 @@ OP odiv(OP f, OP g)
       //c.a=1;
       break;
     }
-    
-    if (oequ(f, g) == 0)
+    int u;
+    if ((oequ(f, g)) == 0)
     {
       printpol(o2v(tt));
       printf("\n");
@@ -897,6 +790,22 @@ EX monic(EX X){
 
   return X;
 }
+
+
+int isideal(OP f,OP g){
+int a,b,c;
+OP h;
+
+a=inv(LT(f).a,P);
+f=scr(a,f);
+b=LT(g).a;
+f=scr(b,f);
+if(oequ(f,g)==0)
+return b*a%P;
+
+return -1;
+}
+
 
 //拡張ユークリッドアルゴリズム
 EX xgcd(OP f, OP g)
@@ -1636,6 +1545,30 @@ EX manford(OP a, OP b)
   return V;
 }
 
+Div cdbl(Div D,OP f){
+Div D2;
+EX V;
+OP a,b;
+
+  V=xgcd(D.u,scr(2,D.v));
+  printpol(o2v(V.u));
+  printf(" =====u3\n");
+  printpol(o2v((V.v)));
+  printf(" =====v3\n");
+  printpol(o2v(V.d));
+  printf(" =====d3\n");
+  printpol(o2v((V.h)));
+  printf(" =====h3\n");
+
+  a=odiv(omul(D.u,D.u),omul(V.d,V.d));
+  b=odiv(oadd(omul(V.u,omul(D.u,D.v)),omul(V.v,oadd(omul(D.v,D.v),f))),V.d);
+D2.u=a;
+D2.v=b;
+
+printf("%d\n",chkdiv(D2,f));
+
+return D2;
+}
 
 
 int main()
@@ -1704,11 +1637,15 @@ Div G0,G1,X;
 G0=cadd(ff,uu1,uu2,vv1,vv2);
 printf("%d\n",chkdiv(G0,ff));
 //exit(1);
-
+srand(clock());
 G1.u=uu1;
 G1.v=vv1;
 X.u=uu2;
 X.v=vv2;
+G1=gendiv(ff);
+cdbl(G1,ff);
+exit(1);
+
 if(chkdiv(G1,ff)==-1 || chkdiv(X,ff)==-1){
     printf("erro!\n");
 exit(1);
@@ -1761,21 +1698,29 @@ uu1=G1.u;
 vv1=G1.v;
 srand(clock());
 while(1){
-G1=gendiv(ff);
-X=gendiv(ff);
-G0=cadd(ff,G1.u,X.u,G1.v,X.v);
+//G1=gendiv(ff);
+//X=gendiv(ff);
+G1=cadd(ff,G1.u,G1.u,G1.v,G1.v);
 
-if(chkdiv(G0,ff)==-1)
+if(chkdiv(G1,ff)==-1)
 {
 printf("baka\n");
-//    exit(1);
+ count++;
+  //exit(1);
   V=xgcd(X.u,G1.u);
   if(LT(V.d).n>0){
   printf("gcd!\n");
-  }else if(chkdiv(G1,ff)==-1 || chkdiv(X,ff)==-1){
-    printf("gen div err\n");
-    break;
-  }else{
+
+  //exit(1);
+  }
+  }else if(oequ(G1.u,uu1)==0){
+    printf("order #J= %d\n",xount);
+    exit(1);
+  }else if(chkdiv(G1,ff)!=-1){
+  printf("ウホッ！いい因子。\n");
+  xount++;
+  //exit(1);
+}else{
     printpoln(o2v(G0.u));
     printpoln(o2v(G0.v));
     printpoln(o2v(G1.u));
@@ -1783,22 +1728,17 @@ printf("baka\n");
     printpoln(o2v(X.u));
     printpoln(o2v(X.v));
   printf("why?\n");
-  count++;
+  //count++;
   exit(1);
   }
-}else{
-  printf("ウホッ！いい因子。\n");
-  xount++;
-  //exit(1);
-}
-if(xount>100)
+if(count>100)
 break;
 printf("%u xount=%u\n",count,xount);
 }
 printf("%u %u\n",count,xount);
 exit(1);
 
-/*
+
 G0=cdbl(X,ff);
 if(chkdiv(G0,ff)==-1)
 {
@@ -1806,29 +1746,7 @@ if(chkdiv(G0,ff)==-1)
 }else{
   printf("イイっ！この因子すげえいいっ！\n");
 }
-*/
-//exit(1);
-/*
-G0=g2add(ff,uu1,uu2,vv1,vv2);
-if(chkdiv(G0,ff)==-1){
-  printf("nani?\n");
-}else{
-printf("だろうな\n");
-}
-exit(1);
-*/
-//b=odiv(o,m);
-//exit(1);
-/*
-X=g2add(ff,uu1,uu2,vv1,vv2);
-printpol(o2v(X.u));
-printf("  Xu\n");
-printpol(o2v(X.v));
-printf("  Xv\n");
-//printf("%llu\n",chkdiv(X,ff));
-exit(1);
-*/
-srand(clock());
+
 
 /*
 EX F;
