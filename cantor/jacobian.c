@@ -1608,67 +1608,75 @@ Div cdbl(Div D, OP f)
   return D2;
 }
 
-Div tbl[1024]={0};
-unsigned long long tmp[1024]={0};
+Div tbl[1024] = {0};
+unsigned long long tmp[1024] = {0};
 
-void mktbl(Div D,OP f){
-int i;
+void mktbl(Div D, OP f)
+{
+  int i;
 
-tbl[0]=D;
-if(chkdiv(D,f)==-1)
-exit(1);
-for(i=0;i<256;i++){
-  tbl[i+1]=cdbl(tbl[i],f);
-  if(chkdiv(tbl[i+1],f)==-1){
-    printf("bakayo\n");
-  exit(1);
+  tbl[0] = D;
+  if (chkdiv(D, f) == -1)
+    exit(1);
+  for (i = 0; i < 256; i++)
+  {
+    tbl[i + 1] = cdbl(tbl[i], f);
+    if (chkdiv(tbl[i + 1], f) == -1)
+    {
+      printf("bakayo\n");
+      exit(1);
+    }
   }
 }
-}
 
-Div jac(unsigned long long n,OP f){
-int i,j=0,tmp[1024]={0},k;
-Div L={0},D;
+Div jac(unsigned long long n, OP f)
+{
+  int i, j = 0, tmp[1024] = {0}, k;
+  Div L = {0}, D;
 
-k=n;
-i=0;
-while(k>0){
-if(k%2==1){
-tmp[j++]=i;
-//printf("i=%d\n",i);
-}
-k=(k>>1);
-i++;
-}
-for(i=0;i<j;i++){
-if(chkdiv(tbl[tmp[i]],f)==-1){
-  printf("tbl is bad %d\n",i);
-exit(1);
-}
-}
-L=tbl[tmp[0]];
-D=L;
-//printf("j=%d\n",j);
-for(i=1;i<j+1;i++){
-  L=cadd(f,tbl[tmp[i]].u,L.u,tbl[tmp[i]].v,L.v);
-  if(chkdiv(L,f)==-1){
-  printf("dame %d\n",i);
-  printpoln(o2v(L.u));
-  printpoln(o2v(L.v));
-  exit(1);
+  k = n;
+  i = 0;
+  while (k > 0)
+  {
+    if (k % 2 == 1)
+    {
+      tmp[j++] = i;
+      // printf("i=%d\n",i);
+    }
+    k = (k >> 1);
+    i++;
   }
-  if(oequ(D.u,L.u)==0 && oequ(D.v,L.v)==0){
-  printf("infinity devide! %llu\n",n);
-  exit(1);
+  for (i = 0; i < j; i++)
+  {
+    if (chkdiv(tbl[tmp[i]], f) == -1)
+    {
+      printf("tbl is bad %d\n", i);
+      exit(1);
+    }
   }
+  L = tbl[tmp[0]];
+  D = L;
+  // printf("j=%d\n",j);
+  for (i = 1; i < j + 1; i++)
+  {
+    L = cadd(f, tbl[tmp[i]].u, L.u, tbl[tmp[i]].v, L.v);
+    if (chkdiv(L, f) == -1)
+    {
+      printf("dame %d\n", i);
+      printpoln(o2v(L.u));
+      printpoln(o2v(L.v));
+      exit(1);
+    }
+    if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
+    {
+      printf("infinity devide! %llu\n", n);
+      exit(1);
+    }
+  }
+  printpoln(o2v(D.u));
+
+  return L;
 }
-printpoln(o2v(D.u));
-
-return L;
-}
-
-
-
 
 int main()
 {
@@ -1730,18 +1738,19 @@ int main()
   o = setpol(tst1, K + 1);
   m = setpol(tst2, K + 1);
 
-
-srand(clock());
-X=gendiv(ff);
-mktbl(X,ff);
-for(i=1;i<1024;i++){
-X=jac(i,ff);
-if(chkdiv(X,ff)==-1){
-  printf("bakan %d\n",i);
-break;
-}
-}
-exit(1);
+  srand(clock());
+  X = gendiv(ff);
+  mktbl(X, ff);
+  for (i = 1; i < 1024; i++)
+  {
+    X = jac(i, ff);
+    if (chkdiv(X, ff) == -1)
+    {
+      printf("bakan %d\n", i);
+      break;
+    }
+  }
+  exit(1);
 
   // V=xgcd(uu1,uu2);
   G0 = cadd(ff, uu1, uu2, vv1, vv2);
