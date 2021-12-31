@@ -13,7 +13,7 @@
 #define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 
-// 20211231 GPL HyperElliptic Curve DLP
+// 20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
 // 院卒失業中(小飼弾と同い年)
 // 本格的なおおきな粗鯛上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
@@ -409,10 +409,6 @@ OP osub(OP f, OP g)
     }
 
     printf("%llu - %llu = %llu\n", a.x[i], b.x[i], d.x[i]);
-    // if(d.x[i]<0){
-    //   printf("%llu\n",d.x[i]);
-    //   d.x[i]+=P;
-    // }
   }
   // exit(1);
   ans = v2o(d);
@@ -536,18 +532,12 @@ OP omod(OP f, OP g)
     printf("g de dib 0!\n");
     exit(1);
   }
-  //  assert (("baka^\n", LT (f).n != 0));
-
-  //  assert (("baka(A)\n", LT (g).n != 0));
 
   if (LT(f).n < LT(g).n)
   {
     //    exit(1);
     return f;
   }
-
-  // printf ("in omod\n");
-  // exit(1);
 
   k = LT(g).n;
   b = LT(g);
