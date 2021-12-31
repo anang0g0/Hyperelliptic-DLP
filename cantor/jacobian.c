@@ -10,7 +10,7 @@
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
 #define P 37
-#define J 1412
+#define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 
 // 20211231 GPL HyperElliptic Curve DLP
