@@ -1,4 +1,4 @@
-# Hyperelliptic-DLP
+# Hyperelliptic-DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
 
 # 20211231
 
