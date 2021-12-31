@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
+#include "struct.h"
 
 int bit(unsigned long long b, int i)
 {
@@ -138,6 +138,32 @@ unsigned long long root(unsigned long long a, unsigned long long p)
   return -1;
 }
 
+// 曲線に代入した値を計算する
+PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, unsigned long long f1, unsigned long long f0, unsigned long long p)
+{
+  __int128_t  x, y, f, g;
+  PO aa = {0};
+
+  while (1)
+  {
+    x = rand() % p;
+    // y = rand() % p;
+    f = (pow_mod(x, 5, p) + (f4 * pow_mod(x, 4, p)) % p + (f3 * pow_mod(x, 3, p)) % p + (f2 * pow_mod(x, 2, p)) % p + f1 * x + f0) % p;
+    y = root(f, p);
+    g = (unsigned long long)(y * y) % p;
+    if ((unsigned long long)f == (unsigned long long)g)
+    {
+      aa.x = x;
+      aa.y = y;
+      exit(1);
+      return aa;
+    }
+  }
+  //  return -1;
+}
+
+
+
 int main()
 {
 unsigned i;
@@ -157,7 +183,7 @@ printf("\n");
 //exit(1);
 
 for(xx=0;xx<10000;xx++){
-printf("%llu %llu\n", root(xx,P) , xx);
+printf("%llu %llu\n", tr1e(1,2,3,4,5,P) , xx);
 }
 
 
