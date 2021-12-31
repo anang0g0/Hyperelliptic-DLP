@@ -9,7 +9,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 31
+#define P 37
 #define J 1373
 #define J2 1412
 
@@ -1686,7 +1686,7 @@ Div jac(unsigned long long n, OP f)
 
       exit(1);
     }
-    if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
+   if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
     {
       printf("infinity devide! %llu\n", n);
       exit(1);
@@ -1704,14 +1704,14 @@ int main()
   unsigned int i, count = 0;
   unsigned long long aaa[O] = {0};
 
-  unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
+  //unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
   /*
     unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
     unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
     unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
     unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
   */
-  // unsigned long long  f[K+1]={1 ,0, 2,  30,  5,  1};
+   unsigned long long  f[K+1]={1 ,0, 2,  30,  5,  1};
   /*
     //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
   //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
