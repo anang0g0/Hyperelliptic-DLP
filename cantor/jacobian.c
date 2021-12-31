@@ -1615,9 +1615,15 @@ void mktbl(Div D,OP f){
 int i;
 
 tbl[0]=D;
-for(i=0;i<256;i++)
+if(chkdiv(D,f)==-1)
+exit(1);
+for(i=0;i<256;i++){
   tbl[i+1]=cdbl(tbl[i],f);
-
+  if(chkdiv(tbl[i+1],f)==-1){
+    printf("bakayo\n");
+  exit(1);
+  }
+}
 }
 
 Div jac(unsigned long long n,OP f){
@@ -1634,15 +1640,24 @@ tmp[j++]=i;
 k=(k>>1);
 i++;
 }
-
+for(i=0;i<j;i++){
+if(chkdiv(tbl[tmp[i]],f)==-1){
+  printf("tbl is bad %d\n",i);
+exit(1);
+}
+}
 L=tbl[tmp[0]];
 D=L;
 //printf("j=%d\n",j);
 for(i=1;i<j+1;i++){
   L=cadd(f,tbl[tmp[i]].u,L.u,tbl[tmp[i]].v,L.v);
-  if(oequ(D.u,L.u)==0 && oequ(D.v,L.v)==0){
+  if(chkdiv(L,f)==-1){
+  printf("dame %d\n",i);
   printpoln(o2v(L.u));
   printpoln(o2v(L.v));
+  exit(1);
+  }
+  if(oequ(D.u,L.u)==0 && oequ(D.v,L.v)==0){
   printf("infinity devide! %llu\n",n);
   exit(1);
   }
@@ -1719,8 +1734,13 @@ int main()
 srand(clock());
 X=gendiv(ff);
 mktbl(X,ff);
-for(i=1;i<1024;i++)
+for(i=1;i<1024;i++){
 X=jac(i,ff);
+if(chkdiv(X,ff)==-1){
+  printf("bakan %d\n",i);
+break;
+}
+}
 exit(1);
 
   // V=xgcd(uu1,uu2);
