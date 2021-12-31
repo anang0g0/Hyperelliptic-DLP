@@ -1151,58 +1151,61 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 
   // u=odiv(omul(uu1,uu2),omul(d,d));
   // u=omul(d,d);
-  u = odiv(omul(uu1, uu2),omul(d,d));
+  u = odiv(omul(uu1, uu2), omul(d, d));
   printpol(o2v(u));
   printf(" ==u3@\n");
   // exit(1);
 
   count++;
-  v = omod(odiv(oadd(oadd(omul(omul(s1, uu1), vv2), omul(omul(s2, uu2), vv1)), omul(s3, oadd(omul(vv1, vv2), ff))),d),u);
+  v = omod(odiv(oadd(oadd(omul(omul(s1, uu1), vv2), omul(omul(s2, uu2), vv1)), omul(s3, oadd(omul(vv1, vv2), ff))), d), u);
   printpol(o2v(v));
   printf(" ==vu3@\n");
-  //exit(1);
+  // exit(1);
   D1.u = u;
   D1.v = v;
   printf("%d\n", chkdiv(D1, ff));
   // exit(1);
   OP ud, vd;
-if(odeg(u)>2){
-
-reduct:
-  printpol(o2v(u));
-  printf(" =======UUUUUUUU\n");
-  // printpoln(o2v(odiv(osub(ff,omul(v,v)),u)));
-  // printpoln(o2v(u));
-  // exit(1);
-  ud = odiv(osub(ff, omul(v, v)), u);
-  // exit(1);
-  printpoln(o2v(u));
-  printpoln(o2v(v));
-  printpoln(o2v(ud));
-  printpoln(o2v(ff));
-  // exit(1);
-  vd = omod(minus(v), ud);
-  D1.u = monique(ud);
-  D1.v = vd;
-
-  printf("%d\n", chkdiv(D1, ff));
-  // exit(1);
-  if (odeg(ud) > 2)
+  if (odeg(u) > 2)
   {
-    if (count > 100)
+
+  reduct:
+    printpol(o2v(u));
+    printf(" =======UUUUUUUU\n");
+    // printpoln(o2v(odiv(osub(ff,omul(v,v)),u)));
+    // printpoln(o2v(u));
+    // exit(1);
+    ud = odiv(osub(ff, omul(v, v)), u);
+    // exit(1);
+    printpoln(o2v(u));
+    printpoln(o2v(v));
+    printpoln(o2v(ud));
+    printpoln(o2v(ff));
+    // exit(1);
+    vd = omod(minus(v), ud);
+    D1.u = monique(ud);
+    D1.v = vd;
+
+    printf("%d\n", chkdiv(D1, ff));
+    // exit(1);
+    if (odeg(ud) > 2)
     {
-      printf("over 100\n");
-      exit(1);
+      if (count > 100)
+      {
+        printf("over 100\n");
+        exit(1);
+      }
+      u = ud;
+      v = vd;
+      printf("==================\n");
+      goto reduct;
     }
-    u = ud;
-    v = vd;
-    printf("==================\n");
-    goto reduct;
   }
-}else{
-  ud=u;
-  vd=v;
-}
+  else
+  {
+    ud = u;
+    vd = v;
+  }
   ud = monique(ud);
   printpol(o2v(ud));
   printf(" @@ud\n");
@@ -1341,8 +1344,9 @@ Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 
 int bit(unsigned long long b, int i)
 {
+  int k = 1;
 
-  if ((b & (1 << i)) > 0)
+  if (((b & (1 << i)) >> i) % 2 == 1)
   {
     return 1;
   }
@@ -1352,7 +1356,7 @@ int bit(unsigned long long b, int i)
   }
 }
 
-unsigned long long pow_mod(unsigned long long x, unsigned long long n, unsigned long long p)
+unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
     return 1;
@@ -1413,16 +1417,20 @@ unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
 
 unsigned long long root(unsigned long long a, unsigned long long p)
 {
-  unsigned long long c, b;
+  __int128_t c, b;
 
-  // printf("p mod = %llu == %llu , %llu\n",a, p % 4, p );
+  printf("p mod = %llu == %llu , %llu\n", a, p % 4, p);
   if (p % 4 == 3 || p % 8 == 5)
   {
     if (p % 4 == 3)
     {
       b = (p + 1) / 4;
       c = pow_mod(a, b, p);
-      return c;
+      {
+        // printf("good\n");
+        printf("good c= %llu\n", (unsigned long long)c);
+        return (unsigned long long)c;
+      }
     }
     if (p % 8 == 5)
     {
@@ -1434,7 +1442,7 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
+      printf("%llu\n", (unsigned long long)c);
       return c;
     }
   }
@@ -1449,7 +1457,7 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     if (c * c % p == a)
     {
       printf("good\n");
-      printf("%llu\n", c);
+      printf("%llu\n", (unsigned long long)c);
       return c;
     }
     if (p % 8 == 1)
@@ -1638,7 +1646,7 @@ void mktbl(Div D, OP f)
 Div jac(unsigned long long n, OP f)
 {
   int i, j = 0, tmp[1024] = {0}, k;
-  Div L = {0}, D,G;
+  Div L = {0}, D, G;
 
   k = n;
   i = 0;
@@ -1663,10 +1671,11 @@ Div jac(unsigned long long n, OP f)
   L = tbl[tmp[0]];
   D = L;
   // printf("j=%d\n",j);
-  for (i = 1; i < j ; i++)
+  for (i = 1; i < j; i++)
   {
-    G=L;
-    if(chkdiv(tbl[tmp[i]],f)==-1){
+    G = L;
+    if (chkdiv(tbl[tmp[i]], f) == -1)
+    {
       printf("before\n");
       printpoln(o2v(tbl[tmp[i]].u));
       printpoln(o2v(tbl[tmp[i]].v));
@@ -1686,7 +1695,7 @@ Div jac(unsigned long long n, OP f)
 
       exit(1);
     }
-   if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
+    if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
     {
       printf("infinity devide! %llu\n", n);
       exit(1);
@@ -1697,21 +1706,19 @@ Div jac(unsigned long long n, OP f)
   return L;
 }
 
-
-
 int main()
 {
   unsigned int i, count = 0;
   unsigned long long aaa[O] = {0};
 
-  //unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
+  // unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
   /*
     unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
     unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
     unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
     unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
   */
-   unsigned long long  f[K+1]={1 ,0, 2,  30,  5,  1};
+  unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
   /*
     //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
   //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
@@ -1719,16 +1726,16 @@ int main()
   unsigned long long  v2[K+1]={0,0,0,0,32227723250469108 , 68133247565452990};
   unsigned long long  u1[K+1]={0,0,0,1, 70887725815800572 , 94321182398888258};
   unsigned long long  v1[K+1]={0,0,0,0, 42016761890161508 , 3182371156137467 };
-  
+
   unsigned long long u2[K + 1] = {0, 0, 0, 1, 26, 20};
   unsigned long long v2[K + 1] = {0, 0, 0, 0, 29, 26};
   unsigned long long u1[K + 1] = {0, 0, 0, 1, 9, 27};
   unsigned long long v1[K + 1] = {0, 0, 0, 0, 29, 16};
 */
-unsigned long long u2[K+1]={0,0,0,1,30,3};
-unsigned long long v2[K+1]={0,0,0,0,12,8};
-unsigned long long u1[K+1]={0,0,0,1,0,12};
-unsigned long long v1[K+1]={0,0,0,0,10,4};
+  unsigned long long u2[K + 1] = {0, 0, 0, 1, 30, 3};
+  unsigned long long v2[K + 1] = {0, 0, 0, 0, 12, 8};
+  unsigned long long u1[K + 1] = {0, 0, 0, 1, 0, 12};
+  unsigned long long v1[K + 1] = {0, 0, 0, 0, 10, 4};
 
   //  unsigned long long  f[K + 1] = {1, 0, 3, 7, 1, 2};
   /*
@@ -1764,69 +1771,62 @@ unsigned long long v1[K+1]={0,0,0,0,10,4};
   o = setpol(tst1, K + 1);
   m = setpol(tst2, K + 1);
 
-
   srand(clock());
   X = gendiv(ff);
   mktbl(X, ff);
- // for (i = 1; i < 1500; i++)
+
+  X = jac(1413, ff);
+  if (chkdiv(X, ff) == -1)
   {
-    X = jac(1413, ff);
-    if (chkdiv(X, ff) == -1)
-    {
-      printf("bakan %d\n", i);
-     // break;
-    }
+    printf("bakayo\n");
+    // break;
   }
   exit(1);
 
-/*
-  // V=xgcd(uu1,uu2);
-  G0 = cadd(ff, uu1, uu2, vv1, vv2);
-  printf("%d\n", chkdiv(G0, ff));
-  // exit(1);
-  srand(clock());
-  G1.u = uu1;
-  G1.v = vv1;
-  X.u = uu2;
-  X.v = vv2;
-  G0 = gendiv(ff);
+  /*
+    // V=xgcd(uu1,uu2);
+    G0 = cadd(ff, uu1, uu2, vv1, vv2);
+    printf("%d\n", chkdiv(G0, ff));
+    // exit(1);
+    srand(clock());
+    G1.u = uu1;
+    G1.v = vv1;
+    X.u = uu2;
+    X.v = vv2;
+    G0 = gendiv(ff);
 
-  while (1)
-  {
-      G0 = cdbl(G0, ff);
+    while (1)
+    {
+        G0 = cdbl(G0, ff);
+      if (chkdiv(G0, ff) == -1)
+      {
+        break;
+      }
+      else
+      {
+        printf("イイっ！この因子すげえいいっ！\n");
+      }
+    }
+    exit(1);
+
+    if (chkdiv(G1, ff) == -1 || chkdiv(X, ff) == -1)
+    {
+      printf("erro!\n");
+      exit(1);
+    }
+    G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
     if (chkdiv(G0, ff) == -1)
     {
-      break;
+      printpoln(o2v(G1.u));
+      printpoln(o2v(G1.v));
+      printpoln(o2v(X.u));
+      printpoln(o2v(X.v));
+      printpoln(o2v(G0.u));
+      printpoln(o2v(G0.v));
+      printf("bug\n");
+      exit(1);
     }
-    else
-    {
-      printf("イイっ！この因子すげえいいっ！\n");
-    }
-  }
-  exit(1);
-
-  if (chkdiv(G1, ff) == -1 || chkdiv(X, ff) == -1)
-  {
-    printf("erro!\n");
-    exit(1);
-  }
-  G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
-  if (chkdiv(G0, ff) == -1)
-  {
-    printpoln(o2v(G1.u));
-    printpoln(o2v(G1.v));
-    printpoln(o2v(X.u));
-    printpoln(o2v(X.v));
-    printpoln(o2v(G0.u));
-    printpoln(o2v(G0.v));
-    printf("bug\n");
-    exit(1);
-  }
-*/
-X=cadd(ff,uu1,uu2,vv1,vv2);
-if(chkdiv(X,ff)==-1)
-printf("bakayo\n");
-exit(1);
+  */
 
   PO xx;
   unsigned long long rr = 0;
