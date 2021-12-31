@@ -1654,7 +1654,7 @@ G1.v=vv1;
 X.u=uu2;
 X.v=vv2;
 G1=gendiv(ff);
-while(chkdiv(G1,ff)!=-1){
+while(chkdiv(G1,ff)==1){
 G1=cdbl(G1,ff);
 }
 exit(1);
