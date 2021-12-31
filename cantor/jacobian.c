@@ -616,6 +616,7 @@ OP coeff(OP f)
   return f;
 }
 
+//　スカラーで割る
 OP cdiv(unsigned long long a, OP f)
 {
   vec v;
@@ -751,6 +752,7 @@ OP odiv(OP f, OP g)
   return ret;
 }
 
+// スカラー倍する
 OP scr(unsigned long long d, OP f)
 {
   int i, n;
@@ -768,6 +770,7 @@ OP scr(unsigned long long d, OP f)
   return f;
 }
 
+// モニック多項式にする
 OP monique(OP f)
 {
   unsigned long long e1;
@@ -778,6 +781,7 @@ OP monique(OP f)
   return f;
 }
 
+//　構造体ごとモニックにする
 EX monic(EX X)
 {
   int e1;
@@ -790,6 +794,7 @@ EX monic(EX X)
   return X;
 }
 
+// ある多項式の倍数になっているか
 int isideal(OP f, OP g)
 {
   int a, b, c;
@@ -929,6 +934,7 @@ EX xgcd(OP f, OP g)
   //  wait ();
 }
 
+// uu2を法とするuu1の逆元
 OP qinv(OP uu1, OP uu2)
 {
   EX tt, V;
@@ -959,6 +965,7 @@ OP qinv(OP uu1, OP uu2)
   // exit(1);
 }
 
+// 因子の条件をチェック
 int chkdiv(Div d, OP f)
 {
   OP t;
@@ -978,112 +985,7 @@ int chkdiv(Div d, OP f)
   }
   return -1;
 }
-
-vec diviser(OP o, OP m)
-{
-  unsigned long long t1[2][3], cc[2];
-  vec c1 = {0};
-  int i, j, k;
-
-  t1[0][0] = o.t[1].a;
-  t1[1][0] = o.t[0].a;
-  t1[0][1] = m.t[1].a;
-  t1[1][1] = m.t[0].a;
-  t1[0][2] = 0;
-  t1[1][2] = 1;
-
-  if (t1[0][0] == 0)
-  {
-    for (i = 0; i < 2; i++)
-      t1[0][i] = (t1[0][i] + t1[1][i]) % P;
-  }
-  if (t1[1][1] == 0)
-  {
-    for (i = 0; i < 2; i++)
-      t1[1][i] = (t1[1][i] + t1[0][i]) % P;
-  }
-
-  cc[0] = inv(t1[0][0], P);
-  printf("%llu\n", cc[0]);
-  // exit(1);
-
-  for (i = 0; i < 2; i++)
-  {
-    for (j = 0; j < 3; j++)
-      printf("%llu,", t1[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-
-  for (j = 0; j < 3; j++)
-  {
-    t1[0][j] = (t1[0][j] * cc[0]) % P;
-    printf("%llu,", t1[0][j]);
-  }
-  printf("\n");
-  // exit(1);
-  int z;
-  z = t1[1][0];
-  for (j = 0; j < 3; j++)
-  {
-    t1[1][j] = t1[1][j] - (t1[0][j] * z) % P;
-
-    if (t1[1][j] < 0)
-      t1[1][j] = P + t1[1][j];
-    printf("%llu,", t1[1][j]);
-  }
-  printf("\n\n");
-  // exit(1);
-
-  cc[1] = inv(t1[1][1], P);
-  for (j = 0; j < 3; j++)
-  {
-    t1[1][j] = (t1[1][j] * cc[1]) % P;
-    printf("%llu,", t1[1][j]);
-  }
-  printf("\n\n");
-  for (i = 0; i < 2; i++)
-  {
-    for (j = 0; j < 3; j++)
-      printf("%llu,", t1[i][j]);
-    printf("\n");
-  }
-  printf("\n\n");
-  // exit(1);
-  for (i = 0; i < 3; i++)
-    printf("b%llu,", t1[0][i]);
-  printf("\n");
-  // exit(1);
-  printf("A%llu", t1[0][1]);
-
-  int y = t1[0][1];
-
-  for (j = 0; j < 3; j++)
-  {
-    t1[0][j] = (t1[0][j] - t1[1][j] * y) % P;
-    if (t1[0][j] < 0)
-      t1[0][j] += P;
-    printf("a%llu,", t1[1][j] * t1[1][1]);
-  }
-  printf("\n\n");
-  // exit(1);
-
-  for (i = 0; i < 2; i++)
-  {
-    for (j = 0; j < 3; j++)
-      printf("%llu,", t1[i][j]);
-    printf("\n");
-  }
-  printf("\n");
-  //  exit(1);
-  c1.x[0] = t1[0][2];
-  c1.x[1] = t1[1][2];
-  printf("%llu %llu\n", c1.x[0], c1.x[1]);
-  // exit(1);
-
-  return c1;
-}
-
+// 使うかもしれない
 Div reduce(Div D3, OP f)
 {
   Div D;
@@ -1097,6 +999,7 @@ Div reduce(Div D3, OP f)
   return D;
 }
 
+// 因子の加法
 Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
   EX V;
@@ -1232,116 +1135,8 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   return D3;
 }
 
-Div dobule(Div D, OP ff)
-{
-  vec vx = o2v(ff);
-  unsigned long long d0, uv010, uu1, uu0, uuv11, d1, d2, d3, d4, d5, f2, e0, e1, f1, f3, mm0, mm1, mm3, mm4, s1, s2, l1, l0, l2, l3, u31, u30, v31, v30, uue0, uue1, iv, uuv01, uuv10, uuv00, u1, u0, v1, v0;
-  OP u, v;
-  Div D2;
-  f3 = vx.x[3];
-  f2 = vx.x[2];
-  f1 = vx.x[1];
 
-  u = D.u;
-  v = D.v;
-  memset(vx.x, 0, sizeof(vx.x));
-  vx = o2v(u);
-  u1 = vx.x[1];
-  u0 = vx.x[0];
-
-  memset(vx.x, 0, sizeof(vx.x));
-  vx = o2v(v);
-  v1 = vx.x[1];
-  v0 = vx.x[0];
-
-  uu1 = (u1 * u1) % P;
-  uu0 = (u1 * u0) % P;
-  uuv01 = (u0 * v1) % P;
-  uuv10 = (u1 * v0) % P;
-  uuv11 = (u1 * v1) % P;
-  uuv00 = (u0 * v0) % P;
-
-  d0 = (6 * v1 * uu1 - uuv10) % P;
-  d1 = (-4 * uuv11 + 4 * v0) % P;
-  d2 = (2 * v1) % P;
-  d3 = (6 * v1 * uu0 - 6 * uuv00) % P;
-  d4 = (-4 * uuv01) % P;
-  d5 = (2 * v0) % P;
-  e0 = (5 * (-u1 * uu1 + 2 * uu0) - 3 * f3 * u1 + 2 * f2) % P;
-  e1 = (5 * (-u0 + uu0 + u0 * u0) - 3 * f3 * u0 + f1) % P;
-  mm0 = (d3 - d5 * (uu1 - u0)) % P;
-  mm1 = (d4 - d5 * (-u1)) % P;
-  mm3 = (d0 - d2 * (uu1 - u0)) % P;
-  mm4 = (d1 - d2 * (-u1)) % P;
-  s1 = (e1 - d5 * v1) % P;
-  s2 = (e0 - d2 * v1) % P;
-  iv = inv((mm0 * mm4 - mm1 * mm3), P);
-  l3 = (iv * (mm4 * s1 - mm1 * s2)) % P;
-  l2 = (iv * (mm0 * s2 - mm3 * s1)) % P;
-  l1 = (v1 + u1 * l2 - (uu1 - u0) * l3) % P;
-  l0 = (v0 + u0 * l2 - (uu0)*l3) % P;
-  u31 = (2 * l3 * l2 - 2 * u1 - 1) % P;
-  u30 = (2 * l3 * l1 + l2 * l2 - 2 * u0 - uu1 - 2 * u31 * u1) % P;
-  uue1 = (u31 * u31) % P;
-  uue0 = (u31 * u30) % P;
-  v31 = ((uu1 - u30) * l3 - u31 * l2 + l1) % P;
-  v30 = (uue0 * l3 - u30 * l2 + l0) % P;
-
-  memset(vx.x, 0, sizeof(vx.x));
-  vx.x[1] = u31;
-  vx.x[0] = u30;
-  vx.x[2] = 1;
-  u = v2o(vx);
-  memset(vx.x, 0, sizeof(vx.x));
-  vx.x[1] = v31;
-  vx.x[0] = v30;
-  vx.x[2] = 1;
-  v = v2o(vx);
-
-  D2.u = u;
-  D2.v = v;
-
-  return D2;
-}
-
-Div g2add(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
-{
-  OP ll, u;
-  OP v, s, l, k, v3, u3;
-  Div X;
-
-  ll = (omul(vv2, vv2));
-  printpol(o2v(ll));
-  printf("\n");
-  ll = (osub(ff, (ll)));
-  printpol(o2v(ll));
-  printf("\n");
-  k = (odiv(ll, uu2));
-  printpol(o2v(k));
-  printf(" ('A`)\n");
-  // exit(1);
-  ll = qinv(uu2, uu1);
-  s = omod(omul(osub(vv1, vv2), ll), uu1);
-  printpol(o2v(ll));
-  printf("========inv\n");
-  l = omul(s, uu2);
-  u = odiv(osub(k, omul(s, oadd(l, omul(s, vv2)))), uu1);
-  printpol(o2v(u));
-  printf(" ===u\n");
-  u3 = monique(u);
-  printpol(o2v(u3));
-  printf(" ===u3\n");
-  v3 = omod(minus(oadd(l, vv2)), u3);
-  printpol(o2v(v3));
-  printf(" ===v3\n");
-  exit(1);
-
-  X.u = u3;
-  X.v = v3;
-
-  return X;
-}
-
+// bit count
 int bit(unsigned long long b, int i)
 {
   int k = 1;
@@ -1356,6 +1151,7 @@ int bit(unsigned long long b, int i)
   }
 }
 
+// 誰かが書いたやつ
 unsigned long long pow_mod(__int128_t x, __int128_t n, __int128_t p)
 {
   if (n == 0)
@@ -1415,6 +1211,7 @@ unsigned long long tonelli_shanks(unsigned long long n, unsigned long long p)
   return 0;
 }
 
+// cf.modern computer algebra（素数を法とする平方根を求める）
 unsigned long long root(unsigned long long a, unsigned long long p)
 {
   __int128_t c, b;
@@ -1479,6 +1276,7 @@ unsigned long long root(unsigned long long a, unsigned long long p)
   return -1;
 }
 
+// 曲線に代入した値を計算する
 PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, unsigned long long f1, unsigned long long f0, unsigned long long p)
 {
   unsigned long long x, y, f, g;
@@ -1501,6 +1299,7 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
   //  return -1;
 }
 
+// ランダムな因子の生成
 Div gendiv(OP f)
 {
   PO a = {0}, b = {0}, e = {0};
@@ -1559,6 +1358,7 @@ Div gendiv(OP f)
   return D;
 }
 
+// test function
 EX manford(OP a, OP b)
 {
   EX V;
@@ -1576,6 +1376,7 @@ EX manford(OP a, OP b)
   return V;
 }
 
+//　2倍点の計算
 Div cdbl(Div D, OP f)
 {
   Div D2;
@@ -1624,7 +1425,7 @@ Div cdbl(Div D, OP f)
 
 Div tbl[1024] = {0};
 unsigned long long tmp[1024] = {0};
-
+// 演算テーブルを作る（繰り返し2乗法）
 void mktbl(Div D, OP f)
 {
   int i;
@@ -1643,6 +1444,7 @@ void mktbl(Div D, OP f)
   }
 }
 
+// 因子のスカラー倍
 Div jac(unsigned long long n, OP f)
 {
   int i, j = 0, tmp[1024] = {0}, k;
@@ -1706,6 +1508,7 @@ Div jac(unsigned long long n, OP f)
   return L;
 }
 
+// 例
 int main()
 {
   unsigned int i, count = 0;
