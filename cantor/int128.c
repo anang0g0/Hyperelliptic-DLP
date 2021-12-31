@@ -938,7 +938,7 @@ if(LT(d.u).n==0)
   printpol(o2v(t));
   printf(" 00000000000 t\n");
   if (LT(t).a==0){
-    return 1;
+    return 0;
   }else{
       printpoln(o2v(d.u));
       printpoln(o2v(d.v));
@@ -1299,7 +1299,7 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
 
   while (1)
   {
-    x = rand() % p;
+    x = rand() % 256;
     //y = rand() % p;
     f=(pow_mod(x,5,P) + (f4 * pow_mod(x,4,P))%P  + (f3 * pow_mod(x,3,P))%P + (f2 *pow_mod(x ,2,P))%p + f1 * x + f0)%p;
     printf("f=%lld\n",(unsigned long long)f);
@@ -1482,23 +1482,30 @@ G1=gendiv(ff);
 uu1=G1.u;
 vv1=G1.v;
 
-//X=gendiv(ff);
-while(1){
-G1=cadd(ff,G1.u,G1.u,G1.v,G1.v);
-if(oequ(G1.u,uu1)==0 || LT(G1.v).a==0)
-break;
-//G0=cdbl(X,ff);
-/*
-while((LT(xgcd(X.v,X.u).d).a!=1)){
-  X=gendiv(ff);
-  //G0=cdbl(X,ff);
+X=gendiv(ff);
+G1=cadd(ff,G1.u,X.u,G1.v,X.v);
+if(chkdiv(G1,ff)==0){
+printf("だろうな\n");
+}else{
+  printf("オホーッ！\n");
 }
-*/
+exit(1);
+while(1){
+G1=cadd(ff,G1.u,X.u,G1.v,X.v);
+printf("after\n");
+if(oequ(G1.u,uu1)==0){
+  printf("order\n");
+  exit(1);
+}else if(LT(G1.v).a==0){
+  printf("v=0\n");
+  exit(1);
+}
 
 printf("loop\n");
 if(chkdiv(G1,ff)==-1)
 {
   printf("baka\n");
+  exit(1);
   //
   V=xgcd(X.u,G1.u);
   if(LT(V.d).n>0){
@@ -1506,9 +1513,11 @@ if(chkdiv(G1,ff)==-1)
   }else{
   printf("why?\n");
   count++;
-  exit(1);
+  //exit(1);
   }
 }else{
+  printpoln(o2v(G1.u));
+  printpoln(o2v(G1.v));
   printf("ウホッ！いい因子。\n");
   xount++;
   exit(1);
