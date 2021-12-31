@@ -1662,9 +1662,14 @@ G1.v=vv1;
 X.u=uu2;
 X.v=vv2;
 G1=gendiv(ff);
-while(chkdiv(G1,ff)==1){
-G1=cdbl(G1,ff);
-printf("chk==%d\n",chkdiv(G1,ff));
+G0=cdbl(X,ff);
+while(1){
+if(chkdiv(G0,ff)==-1)
+{
+  break;
+}else{
+  printf("イイっ！この因子すげえいいっ！\n");
+}
 }
 exit(1);
 
@@ -1685,30 +1690,6 @@ if(chkdiv(G0,ff)==-1)
     exit(1);
 }
 
-/*
-G0=cadd(ff,uu1,uu2,vv1,vv2);
-if(chkdiv(G0,ff)==-1){
-    printf("bug\n");
-    exit(1);
-}
-*/
-/*
-for(rr=0;rr<1000;rr++){
-  printf("%llu %llu\n",root(rr,P),rr);
-}
-exit(1);
-vx=o2v(ff);
-xx = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
-printf("%llu, %llu\n",xx.x, xx.y);
-exit(1);
-*/
-/*
-for(i=0;i<1000;i++){
-  x=i;
-  
-}
-*/
-
 PO xx;
 unsigned long long rr=0;
 count=0;
@@ -1720,9 +1701,9 @@ uu1=G1.u;
 vv1=G1.v;
 srand(clock());
 while(1){
-//G1=gendiv(ff);
-//X=gendiv(ff);
-G1=cadd(ff,G1.u,G1.u,G1.v,G1.v);
+G1=gendiv(ff);
+X=gendiv(ff);
+G1=cadd(ff,G1.u,X.u,G1.v,X.v);
 
 if(chkdiv(G1,ff)==-1)
 {
@@ -1758,160 +1739,7 @@ break;
 printf("%u xount=%u\n",count,xount);
 }
 printf("%u %u\n",count,xount);
-exit(1);
-
-
-G0=cdbl(X,ff);
-if(chkdiv(G0,ff)==-1)
-{
-  printf("naze?\n");
-}else{
-  printf("イイっ！この因子すげえいいっ！\n");
-}
-
-
-/*
-EX F;
-Div U={0},U0={0};
-while(1)
-{
-U=gendiv(ff);
-U0=gendiv(ff);
-printf("1111111111111111111111111111\n");
-//F=xgcd(U.u,U0.u);
-if(chkdiv(U,ff)==-1 || chkdiv(U0,ff)==-1)
-{
-  printf("ee?!\n");
-  exit(1);
-}
-X=cadd(ff,U.u,U0.u,U.v,U0.v);
-if(chkdiv(X,ff)==-1)
-{
-  printpoln(o2v(U.u));
-  printpoln(o2v(U0.u));
-  printpoln(o2v(U.v));
-  printpoln(o2v(U0.v));
-  printf("baka^^\n");
-  exit(1);
-}else{
-  printf("happy!\n");
-  //exit(1);
-}
-}
-printf("isdiv=%llu\n",chkdiv(X,ff));
-printpol(o2v(F.u));
-printf("  Fuwwwwwwww\n");
-printpol(o2v(F.v));
-printf("  Fvwwwwwwww\n");
-printpol(o2v(F.d));
-printf("  Fdwwwwwwww\n");
-printpol(o2v(F.h));
-printf("  Fhwwwwwwww\n");
-printpol(o2v(X.u));
-printf("  Xuwwwwwwww\n");
-printpol(o2v(X.v));
-printf("  Xvwwwwwwww\n");
-printpol(o2v(U.u));
-printf("  Uu wwwwwwww\n");
-printpol(o2v(U0.u));
-printf("  U0u vwwwwwwww\n");
-printpol(o2v(U.v));
-printf("  Uv wwwwwwww\n");
-printpol(o2v(U0.v));
-printf("  U0v vwwwwwwww\n");
-*/
 //exit(1);
-/*
-//printf("isdiv=%llu\n",chkdiv(U,ff));
-//printf("isdiv=%llu\n",chkdiv(U0,ff));
-X=g2add(ff,U.u,U0.u,U.v,U0.v);
-printpol(o2v(U.u));
-printf("  isUwwwwwwww\n");
-printpol(o2v(U0.u));
-printf("  isU0wwwwwwww\n");
-  printf("isdiv=%llu\n",chkdiv(X,ff));
-  exit(1);
-  */
-OP oi,rem;
-Div D1,D2;
-/*
-while(1){
-  D1=gendiv(ff);
-  D2=gendiv(ff);
-  printpol(o2v(D1.u));
-  printf(" ===D1.u\n");
-  printpol(o2v(D1.v));
-  printf(" ===D1.v\n");
-  printpol(o2v(D2.u));
-  printf(" ===D2.u\n");
-  printpol(o2v(D2.v));
-  printf(" ===D2.v\n");
-  oi=qinv(D2.u,D1.u);
-  printpol(o2v(oi));
-  printf(" ===Doi\n");
-  rem=omod(omul(oi,D2.u),D1.u);
-  printpol(o2v(rem));
-  printf(" ==D rem\n");
-  exit(1);
-  printf("isdiv=%llu D\n",chkdiv(D1,ff));
-  printf("isdiv=%llu D\n",chkdiv(D2,ff));
-  U = g2add(ff, D1.u, D2.u, D1.v, D2.v);
-  printf("isdiv=%llu D\n",chkdiv(U,ff));
-  //exit(1);
   
-  if(chkdiv(U,ff)==-1){
-    printf("buggy\n");
-  exit(1);
-  }
-}
-  //U = g2add(ff, uu1, uu2, vv1, vv2);
-  //printf("isdiv=%llu\n",chkdiv(U,ff));
-//    printf("isdiv=%llu\n",chkdiv(D2,ff));
-//  exit(1);
-  //V=xgcd(uu1,uu2,2);
-  printpol(o2v(V.u));
-  printf(" =====u3\n");
-  printpol(o2v(V.v));
-  printf(" =====v3\n");
-*/
-
-D1.u=uu1;
-D1.v=vv1;
-D2.u=uu2;
-D2.v=vv2;
-
-printf("isdiv=%llu\n",chkdiv(D1,ff));
-printf("isdiv=%llu\n",chkdiv(D2,ff));
-//exit(1);
-
-D1=gendiv(ff);
-D2=gendiv(ff);
-
-printf("isdiv=%llu\n",chkdiv(D1,ff));
-printf("isdiv=%llu\n",chkdiv(D2,ff));
-//exit(1);
-//U=g2add(ff,D1.u,D2.u,D1.v,D2.v);
-
-  o=oadd(vv1,vv2);
-  printpol(o2v(o));
-  printf("\n");
-
-  Div W;
-  // below undercondtruction
-  k = odiv(oadd(ff, minus(omul(D1.v, D1.v))), D1.u);
-  s = omod(odiv(k, scr(2, D1.v)), D1.u);
-  l = omul(s, uu1);
-  u3 = omod(osub(omul(s, s), (osub(scr(2, omul(D1.v, s)), (k)))), D1.u);
-  v3 = omod(minus(oadd(l, D1.v)), u3);
-  W.u=u3;
-  W.v=v3;
-  printpol(o2v(u3));
-  printf("======du3\n");
-  printpol(o2v(v3));
-  printf("======dv3\n");
-  printf("W's isdiv=%llu\n",chkdiv(W,ff));
-//  exit(1);
-
-
   return 0;
 }
