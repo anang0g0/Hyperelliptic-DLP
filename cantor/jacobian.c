@@ -1632,7 +1632,7 @@ void mktbl(Div D, OP f)
 Div jac(unsigned long long n, OP f)
 {
   int i, j = 0, tmp[1024] = {0}, k;
-  Div L = {0}, D;
+  Div L = {0}, D,G;
 
   k = n;
   i = 0;
@@ -1659,12 +1659,18 @@ Div jac(unsigned long long n, OP f)
   // printf("j=%d\n",j);
   for (i = 1; i < j + 1; i++)
   {
+    G=L;
     L = cadd(f, tbl[tmp[i]].u, L.u, tbl[tmp[i]].v, L.v);
     if (chkdiv(L, f) == -1)
     {
       printf("dame %d\n", i);
+      printpoln(o2v(tbl[tmp[i]].u));
+      printpoln(o2v(tbl[tmp[i]].v));
+      printpoln(o2v(G.u));
+      printpoln(o2v(G.v));
       printpoln(o2v(L.u));
       printpoln(o2v(L.v));
+
       exit(1);
     }
     if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
