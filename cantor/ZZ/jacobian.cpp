@@ -6,26 +6,31 @@
 #include <stdbool.h>
 #include "struct.h"
 #include "chash-p.c"
+#include <NTL/ZZ.h>
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 37
-#define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
+//#define P 37
+//#define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
+NTL_CLIENT
+
+//ZZ P=to_ZZ("37");
 
 // 20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
 // 院卒失業中(小飼弾と同い年)
 // 本格的なおおきな素体上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
 
-ZZ PP = 100000000000000003LLU; // Harley's example
+ZZ PP = to_ZZ("100000000000000003"); // Harley's example
+ZZ P=to_ZZ("10000000000000000051");
 
-ZZ c[K + 1] = {0};
+ZZ c[K + 1];
 
 // OP型からベクトル型への変換
 vec o2v(OP f)
 {
-  vec a = {0};
+  vec a;
   int i;
 
   //#pragma omp parallel for
@@ -86,7 +91,7 @@ int deg(vec a)
 vec Setvec(int n)
 {
   int i;
-  vec v = {0};
+  vec v;
 
   for (i = 0; i < n; i++)
   {
@@ -107,7 +112,7 @@ OP setpol(ZZ f[], int n)
   // memcpy (c, f, n);
   for (i = 0; i < n; i++)
   {
-    c[i] = f[i];
+    c[i] = (f[i]);
     // printf("%llu,",f[i]);
   }
   // exit(1);
@@ -132,7 +137,7 @@ void printpol(vec a)
   {
     if (a.x[i] > 0)
     {
-      printf("%llu", a.x[i]);
+      cout << a.x[i];
       // if (i > 0)
       printf("x^%d", i);
       // if (i > 0)
@@ -158,7 +163,7 @@ void printpoln(vec a)
   {
     if (a.x[i] > 0)
     {
-      printf("%llu", a.x[i]);
+      cout << a.x[i];
       // if (i > 0)
       printf("x^%d", i);
       // if (i > 0)
@@ -175,7 +180,7 @@ ZZ
 xtrace(OP f, ZZ x)
 {
   int i, d;
-  ZZ u = 0, v = 1;
+  ZZ u=to_ZZ("0") , v = to_ZZ("1");
 
   d = deg(o2v(f));
   // printpol(o2v(f));
@@ -199,7 +204,7 @@ xtrace(OP f, ZZ x)
   }
   // printf("u=%llu\n",u%O);
 
-  return u % O;
+  return u % P;
 }
 
 //多項式の次数(degのOP型)
@@ -217,19 +222,22 @@ int odeg(OP f)
   return j;
 }
 
-OP minus(OP f)
+OP minu(OP f)
 {
   unsigned int i, j;
+  vec e;
 
-  j = deg(o2v(f));
+  j = deg(e=o2v(f));
   for (i = 0; i < j + 1; i++)
   {
-    if (f.t[i].a > 0)
-      f.t[i].a = P - f.t[i].a;
+    if (e.x[i] > 0)
+      e.x[i] = P - e.x[i];
   }
+  f=v2o(e);
 
   return f;
 }
+
 
 //リーディグタームを抽出(default)
 oterm LT(OP f)
@@ -254,7 +262,7 @@ oterm LT(OP f)
 // OP型を正規化する
 OP conv(OP f)
 {
-  vec v = {0};
+  vec v;
   OP g = {0};
 
   v = o2v(f);
@@ -267,7 +275,7 @@ OP conv(OP f)
 //多項式の足し算
 OP oadd(OP f, OP g)
 {
-  vec a = {0}, b = {0}, c = {0};
+  vec a , b , c ;
   int i, j, k, l = 0;
   OP h = {0}, f2 = {0}, g2 = {0};
 
@@ -352,7 +360,7 @@ OP omul(OP f, OP g)
   int i, count = 0, k, l;
   oterm t = {0};
   OP h = {0}, e = {0}, r = {0};
-  vec c = {0};
+  vec c ;
 
   k = odeg(f);
   l = odeg(g);
@@ -381,7 +389,7 @@ OP omul(OP f, OP g)
 
 OP osub(OP f, OP g)
 {
-  vec a = {0}, b = {0}, d = {0};
+  vec a, b , d;
   int i, k, l, m;
   OP ans = {0};
 
@@ -408,7 +416,7 @@ OP osub(OP f, OP g)
       d.x[i] = (P + (a.x[i] - b.x[i])) % P;
     }
 
-    printf("%llu - %llu = %llu\n", a.x[i], b.x[i], d.x[i]);
+    cout << a.x[i] << " - " << b.x[i] << " = " << d.x[i] << endl;
   }
   // exit(1);
   ans = v2o(d);
@@ -606,13 +614,14 @@ OP coeff(OP f)
 OP cdiv(ZZ a, OP f)
 {
   vec v;
-  int i, l, k;
+  int i, l;
+  ZZ k;
 
   v = o2v(f);
   l = odeg(f);
   k = inv(a, P);
   printpol(o2v(f));
-  printf(" ==kokko %llu\n", a);
+  //printf(" ==kokko %llu\n", a);
   // a=equ(a,LT(f).a);
   for (i = 0; i < l + 1; i++)
     v.x[i] = (k * v.x[i]) % P;
@@ -742,7 +751,7 @@ OP odiv(OP f, OP g)
 OP scr(ZZ d, OP f)
 {
   int i, n;
-  vec v = {0};
+  vec v ;
 
   n = deg(o2v(f));
   v = o2v(f);
@@ -770,7 +779,7 @@ OP monique(OP f)
 //　構造体ごとモニックにする
 EX monic(EX X)
 {
-  int e1;
+  ZZ e1;
   e1 = inv(LT(X.d).a, P);
   X.d = scr(e1, X.d);
   X.h = scr(e1, X.h);
@@ -781,9 +790,9 @@ EX monic(EX X)
 }
 
 // ある多項式の倍数になっているか
-int isideal(OP f, OP g)
+ZZ isideal(OP f, OP g)
 {
-  int a, b, c;
+  ZZ a, b, c;
   OP h;
 
   a = inv(LT(f).a, P);
@@ -793,7 +802,7 @@ int isideal(OP f, OP g)
   if (oequ(f, g) == 0)
     return b * a % P;
 
-  return -1;
+  return to_ZZ("-1");
 }
 
 //拡張ユークリッドアルゴリズム
@@ -831,7 +840,7 @@ EX xgcd(OP f, OP g)
   printf(" f===============\n");
   printpol(o2v(g));
   printf(" s===============\n");
-  // exit(1);
+   //exit(1);
   if (LT(g).a == 0)
   {
     printf("g ==0\n");
@@ -884,6 +893,7 @@ EX xgcd(OP f, OP g)
     if (LT(g).a == 0)
       break;
     i++;
+//exit(1);
   }
   // f=g;
   // g=h[i];
@@ -965,6 +975,7 @@ int chkdiv(Div d, OP f)
   }
   else
   {
+    printf("dame\n");
     printpoln(o2v(d.u));
     printpoln(o2v(d.v));
     // exit(1);
@@ -979,7 +990,7 @@ Div reduce(Div D3, OP f)
   OP ur, vr;
 
   ur = osub(f, odiv(omul(D3.v, D3.v), D3.u));
-  vr = omod(minus(D3.v), ur);
+  vr = omod(minu(D3.v), ur);
   D.u = ur;
   D.v = vr;
 
@@ -1005,10 +1016,9 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   d1 = V.d;
   printpol(o2v(V.d));
   printf("  d1\n");
-
   printpol(o2v(V.h));
   printf("  Uh\n");
-  // exit(1);
+  //exit(1);
   V = xgcd(oadd(vv1, vv2), V.d);
   V = monic(V);
   c2 = V.u;
@@ -1023,7 +1033,7 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 
   printpol(o2v(V.h));
   printf("  Uh\n");
-  // exit(1);
+   //exit(1);
 
   s1 = omul(c1, e1);
   printpol(o2v(s1));
@@ -1072,7 +1082,7 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
     printpoln(o2v(ud));
     printpoln(o2v(ff));
     // exit(1);
-    vd = omod(minus(v), ud);
+    vd = omod(minu(v), ud);
     D1.u = monique(ud);
     D1.v = vd;
 
@@ -1286,13 +1296,14 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
 // ランダムな因子の生成
 Div gendiv(OP f)
 {
-  PO a = {0}, b = {0}, e = {0};
+  int count=0;
+  PO a , b , e ;
   OP d1 = {0}, d2 = {0}, c = {0}, d = {0};
   //  ZZ  x, y, i, j, k,
-  unsigned count;
+
   Div D = {0};
-  vec v1 = {0}, v2 = {0}, z1 = {0}, z2 = {0}, ff = {0};
-  count = 0;
+  vec v1 , v2, z1, z2, ff;
+
 
   ff = o2v(f);
   v1.x[1] = 1;
@@ -1304,6 +1315,9 @@ Div gendiv(OP f)
   }
   do
   {
+    count++;
+    if(count>10000)
+    break;
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
 
@@ -1315,15 +1329,15 @@ Div gendiv(OP f)
     v2.x[0] = b.x;
     d = v2o(v2);
 
-    z1.x[1] = rand() % P;
-    z1.x[0] = rand() % P;
+    z1.x[1] = (ZZ)rand() % P;
+    z1.x[0] = (ZZ)rand() % P;
 
     d2 = v2o(z1);
     d1 = omul(c, d);
 
     D.u = d1;
     D.v = d2;
-  } while (chkdiv(D, f) == -1); //(LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
+  } while (LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
   printf("debug mode\n");
   printpol(o2v(d1));
   printf(" ==u\n");
@@ -1365,7 +1379,7 @@ Div cdbl(Div D, OP f)
   OP a, b, uu, vv;
   int count = 0;
 
-  V = xgcd(D.u, scr(2, D.v));
+  V = xgcd(D.u, scr(to_ZZ("2"), D.v));
   munford(V);
 
   a = odiv(omul(D.u, D.u), omul(V.d, V.d));
@@ -1378,7 +1392,7 @@ Div cdbl(Div D, OP f)
     if (count > 100)
       break;
     uu = odiv(osub(f, omul(b, b)), a);
-    vv = omod(minus(b), uu);
+    vv = omod(minu(b), uu);
     a = uu;
     b = vv;
   }
@@ -1398,12 +1412,12 @@ Div cdbl(Div D, OP f)
 }
 
 Div tbl[1024] = {0};
-ZZ tmp[1024] = {0};
+ZZ tmp[1024];
 // 演算テーブルを作る（繰り返し2乗法）
 void mktbl(Div D, OP f)
 {
   int i;
-
+printf("begin\n");
   tbl[0] = D;
   if (chkdiv(D, f) == -1)
     exit(1);
@@ -1416,14 +1430,17 @@ void mktbl(Div D, OP f)
       exit(1);
     }
   }
+  printf("end\n");
 }
 
 // 因子のスカラー倍
 Div jac(ZZ n, OP f)
 {
-  int i, j = 0, tmp[1024] = {0}, k;
+  int i, j = 0, tmp[1024] = {0};
+  ZZ k;
   Div L = {0}, D, G;
 
+printf("in jac\n");
   k = n;
   i = 0;
   while (k > 0)
@@ -1473,7 +1490,7 @@ Div jac(ZZ n, OP f)
     }
     if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
     {
-      printf("infinity devide! %llu\n", n);
+      cout << "infinity devide!" <<  n << endl;
       exit(1);
     }
   }
@@ -1533,12 +1550,7 @@ q=10000000000000000051;
   ZZ J = 99999999982871020671452277000281660080
   //#? 7054215880371151972602291562049
   
-  @b = [1597, 1041, 5503, 6101, 1887]
-  @u = [1571353025997967, 12198441063534328]
-  @v = [32227723250469108, 67133247565452990]
-  @u0 = [70887725815800572, 94321182398888258]
-  @v0 = [42016761890161508, 3182371156137467]
-
+ 
   #find by Lange
   //# f=xx^5+153834295433461683634059*xx^3+1503542947764347319629935*xx^2+1930714025804554453580068*xx+790992824799875905266969
   ZZ p3 = 1932005208863265003490787
@@ -1578,83 +1590,121 @@ ZZ P=5000000000000000008503491
   ZZ vg0 = [0, 138905579055173741542118]
   ZZ ug1 = [1738366273424896804842766, 3184841659043138633535652]
   ZZ vg1 = [2931056213155642836850986, 402980510097415333052905]
-*/
 
 }
-
+*/
 
 // 例
 int main()
 {
   unsigned int i, count = 0;
-  ZZ aaa[O] = {0};
 
-  // ZZ f[K + 1] = {1, 7, 6, 2, 8, 2};
-  /*
-    ZZ  u2[K + 1] = {0, 0, 0, 1, 21, 16};
-    ZZ  u1[K + 1] = {0, 0, 0, 1, 19, 20};
-    ZZ  v2[K + 1] = {0, 0, 0, 0, 21, 21};
-    ZZ  v1[K + 1] = {0, 0, 0, 0, 12, 8};
-  */
-  ZZ f[K + 1] = {1, 0, 2, 30, 5, 1};
-  /*
-    //ZZ  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
-  //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
-  ZZ  u2[K+1]={0,0,0,1,1571353025997967 , 12198441063534328};
-  ZZ  v2[K+1]={0,0,0,0,32227723250469108 , 68133247565452990};
-  ZZ  u1[K+1]={0,0,0,1, 70887725815800572 , 94321182398888258};
-  ZZ  v1[K+1]={0,0,0,0, 42016761890161508 , 3182371156137467 };
 
-  ZZ u2[K + 1] = {0, 0, 0, 1, 26, 20};
-  ZZ v2[K + 1] = {0, 0, 0, 0, 29, 26};
-  ZZ u1[K + 1] = {0, 0, 0, 1, 9, 27};
-  ZZ v1[K + 1] = {0, 0, 0, 0, 29, 16};
+  ZZ f[K+1] = {to_ZZ("1"),to_ZZ("3141592653589793238"), to_ZZ("4626433832795028841"), to_ZZ("9716939937510582097"), to_ZZ("4944592307816406286"), to_ZZ("2089986280348253421")};
+  //#@u1_=[13131182302866750318,6953593084278582387]
+  //#@v1_=[@q,0] #infinity
+  ZZ u1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("8940387226809150403"), to_ZZ("3838225076702837943")};
+  ZZ v1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("8035450087728851271"), to_ZZ("1893861348804881148")};
+  // ff=x^5+314159265358979338*x^4+4626433832795028841*x^3+9716939937510582097*x^2+4944592307816406286*x+2089986280348253421
+ ZZ J = to_ZZ("99999999982871020671452277000281660080");
+/*
+  ZZ uh[K+1] = {0,0,0,1,10027301878627002813, 9681764174062850433};
+  //#616419646419685014=a*3542790122851877922+b
+  //#0=a*6484511755775124891+b
+  //#616419646419685014=a*7058278367076753082
+  ZZ vh[K+1] = {0,0,0,0,9406915506559133975, 920961725690419616};
+  ZZ u2[K+1] = {0,0,0,1,15109848135481867673, 5563304430399854240};
+  //#2935061693073737419=a*5239897978117534135+b
+  //#3524464046627319761=a*9869950157364333538+b
+  //#589402353553582342=a*4630052179246799403
+  ZZ v2[K+1] = {0,0,0,0,7250939689363649434, 6461431514924022130};
 */
-  ZZ u2[K + 1] = {0, 0, 0, 1, 30, 3};
-  ZZ v2[K + 1] = {0, 0, 0, 0, 12, 8};
-  ZZ u1[K + 1] = {0, 0, 0, 1, 0, 12};
-  ZZ v1[K + 1] = {0, 0, 0, 0, 10, 4};
-
-  //  ZZ  f[K + 1] = {1, 0, 3, 7, 1, 2};
-  /*
-    ZZ  u2[K + 1] = {0, 0, 0, 1, 7, 10};
-    ZZ  u1[K + 1] = {0, 0, 0, 1, 0, 10};
-    ZZ  v2[K + 1] = {0, 0, 0, 0, 1, 9};
-    ZZ  v1[K + 1] = {0, 0, 0, 0, 7, 9};
+/*
+   char f[K + 1] = {1, 7, 6, 2, 8, 2};
+  
+    char  u2[K + 1] = {0, 0, 0, 1, 21, 16};
+    char  u1[K + 1] = {0, 0, 0, 1, 19, 20};
+    char  v2[K + 1] = {0, 0, 0, 0, 21, 21};
+    char  v1[K + 1] = {0, 0, 0, 0, 12, 8};
   */
-  OP ff, k, uu1, uu2, vv1, vv2, s, l, u3, v3, u, ll, t, m, o, d, c;
-  ZZ tst1[K + 1] = {0, 0, 0, 0, 8, 7};
-  ZZ tst2[K + 1] = {0, 0, 0, 0, 0, 10};
-  unsigned tmp[2][3] = {0};
+  //char f[K + 1] = {1, 0, 2, 30, 5, 1};
+/*  
+  ZZ  f[K+1]= {to_ZZ("1"), to_ZZ("1597") , to_ZZ("1041") ,to_ZZ("5503") , to_ZZ("6101") , to_ZZ("1887") };
+  //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
+  ZZ  u2[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("1571353025997967")  , to_ZZ("12198441063534328")};
+  ZZ  v2[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("32227723250469108") , to_ZZ("68133247565452990")};
+  ZZ  u1[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("70887725815800572") , to_ZZ("94321182398888258")};
+  ZZ  v1[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("42016761890161508") , to_ZZ("3182371156137467") };
+
+  unsigned long long u2[K + 1] = {0, 0, 0, 1, 26, 20};
+  unsigned long long v2[K + 1] = {0, 0, 0, 0, 29, 26};
+  unsigned long long u1[K + 1] = {0, 0, 0, 1, 9, 27};
+  unsigned long long v1[K + 1] = {0, 0, 0, 0, 29, 16};
+
+  unsigned long long u2[K + 1] = {0, 0, 0, 1, 30, 3};
+  unsigned long long v2[K + 1] = {0, 0, 0, 0, 12, 8};
+  unsigned long long u1[K + 1] = {0, 0, 0, 1, 0, 12};
+  unsigned long long v1[K + 1] = {0, 0, 0, 0, 10, 4};
+*/
+  //  unsigned long long  f[K + 1] = {1, 0, 3, 7, 1, 2};
+  /*
+    unsigned long long  u2[K + 1] = {0, 0, 0, 1, 7, 10};
+    unsigned long long  u1[K + 1] = {0, 0, 0, 1, 0, 10};
+    unsigned long long  v2[K + 1] = {0, 0, 0, 0, 1, 9};
+    unsigned long long  v1[K + 1] = {0, 0, 0, 0, 7, 9};
+  */
+  OP ff, k, uu1, uu2, vv1, vv2, s,o, d, c,m;
+//  unsigned long long tst1[K + 1] = {0, 0, 0, 0, 8, 7};
+//  unsigned long long tst2[K + 1] = {0, 0, 0, 0, 0, 10};
+ // unsigned tmp[2][3] = {0};
   EX V;
   oterm a;
   OP b = {0};
-  // ZZ  q1 = to_ZZ ("1208925819614629174708801");
+  // unsigned long long  q1 = to_unsigned long long ("1208925819614629174708801");
   int a1 = 1331;
-  // J1 =to_ZZ ("1461501637326815988079848163961117521046955445901");
+  // J1 =to_unsigned long long ("1461501637326815988079848163961117521046955445901");
   // e y2 = x5+a, a ∈ Fp
 
-  // ZZ  q2 = to_ZZ ("1208925819614629174709941");
+  // unsigned long long  q2 = to_unsigned long long ("1208925819614629174709941");
   int a2 = 2;
-  // J2 = to_ZZ ("1461501637331762771847359428275278989652932675771");
+  // J2 = to_unsigned long long ("1461501637331762771847359428275278989652932675771");
 
-  vec vx = {0}, xv = {0};
+  vec vx , xv ;
   Div G0, G1, X;
   ff = setpol(f, K + 1);
+  printpoln(o2v(ff));
+  //exit(1);
 
   uu1 = setpol(u1, K + 1);
-  uu2 = setpol(u2, K + 1);
+  //uu2 = setpol(u2, K + 1);
   vv1 = setpol(v1, K + 1);
-  vv2 = setpol(v2, K + 1);
-  o = setpol(tst1, K + 1);
-  m = setpol(tst2, K + 1);
+  //vv2 = setpol(v2, K + 1);
+  //o = setpol(tst1, K + 1);
+  //m = setpol(tst2, K + 1);
+
+/*  
+X=cadd(ff,uu1,uu2,vv1,vv2);
+printf("%d\n",chkdiv(X,ff));
+X.u=uu1;
+X.v=vv1;
+//exit(1);
+V=xgcd(uu1,uu2);
+V=monic(V);
+munford(V);
+*/
+//exit(1);
+  X.u=uu1;
+  X.v=vv1;
 
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
   srand(clock());
-  X = gendiv(ff);
+   //X = gendiv(ff);
+   printf("%d\n",chkdiv(X,ff));
+   //exit(1);
+
   mktbl(X, ff);
 
-  X = jac(1413, ff);
+  X = jac(J+1, ff);
   if (chkdiv(X, ff) == -1)
   {
     printf("bakayo\n");
@@ -1706,9 +1756,9 @@ int main()
       exit(1);
     }
   */
-
+/*
   PO xx;
-  ZZ rr = 0;
+  unsigned long long rr = 0;
   count = 0;
   int xount = 0;
 
@@ -1771,6 +1821,7 @@ int main()
   }
   printf("%u %u\n", count, xount);
   // exit(1);
+*/
 
   return 0;
 }
