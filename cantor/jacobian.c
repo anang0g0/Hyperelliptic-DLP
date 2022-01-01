@@ -41,7 +41,7 @@ vec o2v(OP f)
 //ベクトル型からOP型への変換
 OP v2o(vec a)
 {
-  int i, j = 0;
+  int i;
   OP f = {0};
 
   //#pragma omp parallel for
@@ -126,7 +126,7 @@ void printpol(vec a)
   n = deg(a);
 
   // printf ("baka\n");
-  assert(("baka\n", n >= 0));
+  assert((n >= 0));
 
   for (i = n; i > -1; i--)
   {
@@ -152,7 +152,7 @@ void printpoln(vec a)
   n = deg(a);
 
   // printf ("baka\n");
-  assert(("baka\n", n >= 0));
+  assert((n >= 0));
 
   for (i = n; i > -1; i--)
   {
@@ -205,7 +205,7 @@ xtrace(OP f, unsigned long long x)
 //多項式の次数(degのOP型)
 int odeg(OP f)
 {
-  int i, j = 0, k;
+  int i, j = 0;
 
   // k=terms(f);
   for (i = 0; i < 512; i++)
@@ -234,10 +234,10 @@ OP minus(OP f)
 //リーディグタームを抽出(default)
 oterm LT(OP f)
 {
-  int i, k;
+  int i;
   oterm t = {0};
 
-  k = deg(o2v(f));
+//  k = deg(o2v(f));
   for (i = 0; i < DEG; i++)
   {
     // printf("a=%llu %llu\n",f.t[i].a,f.t[i].n);
@@ -269,7 +269,7 @@ OP oadd(OP f, OP g)
 {
   vec a = {0}, b = {0}, c = {0};
   int i, j, k, l = 0;
-  OP h = {0}, f2 = {0}, g2 = {0};
+  OP h = {0};
 
   // for(i=0;i<257;i++)
   //  printf("%llu %llu %llu %llu %llu\n",i,f.t[i].a,f.t[i].n,g.t[i].a,g.t[i].n);
@@ -322,14 +322,13 @@ OP oterml(OP f, oterm t)
 {
 
   // assert (op_verify (f));
-  int i, k, j;
+  int i, k;
   OP h = {0};
-  vec test;
-  unsigned long long n;
+  
 
   // f=conv(f);
   k = odeg(f);
-  j = 0;
+  
   for (i = 0; i < k + 1; i++)
   {
     h.t[i].n = f.t[i].n + t.n;
@@ -349,10 +348,10 @@ OP omul(OP f, OP g)
   printf("qqqqqqqqqqqqqqqqqq\n");
   // assert (op_verify (f));
   // assert (op_verify (g));
-  int i, count = 0, k, l;
+  int i, k, l;
   oterm t = {0};
-  OP h = {0}, e = {0}, r = {0};
-  vec c = {0};
+  OP h = {0}, e = {0};
+  
 
   k = odeg(f);
   l = odeg(g);
@@ -434,7 +433,7 @@ OP confer(OP f, int a)
 int oequ(OP f, OP g)
 {
   vec v, x;
-  int i, flg = 0;
+  int i;
 
   v = o2v(f);
   x = o2v(g);
@@ -450,7 +449,7 @@ int oequ(OP f, OP g)
 // nを法とする逆数
 unsigned long long inv(unsigned long long a, unsigned long long n)
 {
-  unsigned long long d, x, s, q, r, t, gcd;
+  unsigned long long d, x, s, q, r, t;
   d = n;
   x = 0;
   s = 1;
@@ -464,7 +463,7 @@ unsigned long long inv(unsigned long long a, unsigned long long n)
     x = s;
     s = t;
   }
-  gcd = d;
+  //gcd = d;
 
   return ((x + n) % (n / d));
 }
@@ -518,11 +517,10 @@ oterm LTdiv(OP f, oterm t)
 //多項式の剰余を取る
 OP omod(OP f, OP g)
 {
-  int i = 0, j, n, k;
-  OP h = {0}, o = {0}, e = {0};
-  oterm a, b = {0}, c = {0};
+  OP h = {0};
+  oterm  b = {0}, c = {0};
 
-  n = LT(g).n;
+  //n = LT(g).n;
   if (LT(f).a == 0)
   {
     return h;
@@ -539,9 +537,9 @@ OP omod(OP f, OP g)
     return f;
   }
 
-  k = LT(g).n;
+  //k = LT(g).n;
   b = LT(g);
-  OP ll;
+
 
   // assert(("double baka\n", b.a > 0 && b.n > 0));
   while (LT(g).a != 0)
@@ -589,8 +587,8 @@ int terms(OP f)
 //モニック多項式にする
 OP coeff(OP f)
 {
-  int i, j, k;
-  vec a, b;
+  int i, k;
+  
   oterm t;
 
   t = LT(f);
@@ -631,9 +629,9 @@ OP odiv(OP f, OP g)
   g = conv(g);
   // assert (op_verify (f));
   // assert (op_verify (g));
-  int i = 0, j, n, k;
-  OP h = {0}, e = {0}, tt = {0}, o = {0};
-  oterm a, b = {0}, c = {0};
+  int i = 0, k;
+  OP h = {0}, e = {0}, tt = {0};
+  oterm  b = {0}, c = {0};
 
   printpol(o2v(f));
   printf("@@@@@@f\n");
@@ -706,7 +704,7 @@ OP odiv(OP f, OP g)
       // c.a=1;
       break;
     }
-    int u;
+    
     if ((oequ(f, g)) == 0)
     {
       printpol(o2v(tt));
@@ -783,8 +781,7 @@ EX monic(EX X)
 // ある多項式の倍数になっているか
 int isideal(OP f, OP g)
 {
-  int a, b, c;
-  OP h;
+  int a, b;
 
   a = inv(LT(f).a, P);
   f = scr(a, f);
@@ -799,10 +796,9 @@ int isideal(OP f, OP g)
 //拡張ユークリッドアルゴリズム
 EX xgcd(OP f, OP g)
 {
-  OP h[10] = {0}, ww[10] = {0}, *v, *u, T = {0};
-  oterm a, b;
-  int i = 0, j, flg = 0, k;
-  EX e = {0}, ee = {0};
+  OP h[10] = {0}, ww[10] = {0}, *v, *u;
+  int i = 0, k;
+  EX e = {0};
   /*
   if(odeg(f)<odeg(g)){
   T=f;
@@ -923,9 +919,9 @@ EX xgcd(OP f, OP g)
 // uu2を法とするuu1の逆元
 OP qinv(OP uu1, OP uu2)
 {
-  EX tt, V;
+  EX tt;
   OP v;
-  int e;
+  
 
   // return cdiv(LT(g).a,g);
   tt = xgcd(uu1, uu2);
@@ -989,9 +985,8 @@ Div reduce(Div D3, OP f)
 Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
   EX V;
-  Div D3, D, null = {0};
-  vec vx;
-  OP e1, e2, d1, s1, s2, s3, c1, c2, d, u;
+  Div D3;
+  OP e1, e2, s1, s2, s3, c1, c2, d, u,d1;
 
   V = xgcd(uu1, uu2);
   V = monic(V);
@@ -1008,7 +1003,7 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
   printpol(o2v(V.h));
   printf("  Uh\n");
   // exit(1);
-  V = xgcd(oadd(vv1, vv2), V.d);
+  V = xgcd(oadd(vv1, vv2), d1);
   V = monic(V);
   c2 = V.u;
   printpol(o2v(V.u));
@@ -1124,7 +1119,6 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 // bit count
 int bit(unsigned long long b, int i)
 {
-  int k = 1;
 
   if (((b & (1 << i)) >> i) % 2 == 1)
   {
@@ -1287,13 +1281,13 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
 // ランダムな因子の生成
 Div gendiv(OP f)
 {
-  PO a = {0}, b = {0}, e = {0};
+  PO a = {0}, b = {0};
   OP d1 = {0}, d2 = {0}, c = {0}, d = {0};
   //  unsigned long long  x, y, i, j, k,
-  unsigned count;
+
   Div D = {0};
-  vec v1 = {0}, v2 = {0}, z1 = {0}, z2 = {0}, ff = {0};
-  count = 0;
+  vec v1 = {0}, v2 = {0}, z1 = {0}, ff = {0};
+
 
   ff = o2v(f);
   v1.x[1] = 1;
@@ -1398,8 +1392,8 @@ Div cdbl(Div D, OP f)
   return D2;
 }
 
-Div tbl[1024] = {0};
-unsigned long long tmp[1024] = {0};
+Div tbl[640] = {0};
+
 // 演算テーブルを作る（繰り返し2乗法）
 void mktbl(Div D, OP f)
 {
@@ -1422,9 +1416,11 @@ void mktbl(Div D, OP f)
 // 因子のスカラー倍
 Div jac(unsigned long long n, OP f)
 {
-  int i, j = 0, tmp[1024] = {0}, k;
+  int i, j = 0, tmp[640]= {0}, k;
   Div L = {0}, D, G;
 
+G=gendiv(f);
+//mktbl(G,f,tbl);
   k = n;
   i = 0;
   while (k > 0)
@@ -1487,7 +1483,7 @@ Div jac(unsigned long long n, OP f)
 int main()
 {
   unsigned int i, count = 0;
-  unsigned long long aaa[O] = {0};
+
 
   // unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
   /*
@@ -1522,7 +1518,7 @@ int main()
     unsigned long long  v2[K + 1] = {0, 0, 0, 0, 1, 9};
     unsigned long long  v1[K + 1] = {0, 0, 0, 0, 7, 9};
   */
-  OP ff, k, uu1, uu2, vv1, vv2, s, l, u3, v3, u, ll, t, m, o, d, c;
+  OP ff, k, uu1, uu2, vv1, vv2, s,o, d, c,m;
   unsigned long long tst1[K + 1] = {0, 0, 0, 0, 8, 7};
   unsigned long long tst2[K + 1] = {0, 0, 0, 0, 0, 10};
   unsigned tmp[2][3] = {0};
@@ -1606,7 +1602,7 @@ int main()
       exit(1);
     }
   */
-
+/*
   PO xx;
   unsigned long long rr = 0;
   count = 0;
@@ -1671,6 +1667,7 @@ int main()
   }
   printf("%u %u\n", count, xount);
   // exit(1);
+*/
 
   return 0;
 }

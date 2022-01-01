@@ -155,7 +155,7 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
     {
       aa.x = x;
       aa.y = y;
-      exit(1);
+      //exit(1);
       return aa;
     }
   }
