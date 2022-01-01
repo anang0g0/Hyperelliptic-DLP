@@ -1277,7 +1277,7 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
 
   while (1)
   {
-    x = (ZZ)rand() % p;
+    x = xor128(); // % p;
     // y = rand() % p;
     f = (pow_mod(x, to_ZZ("5"), p) + (f4 * pow_mod(x, to_ZZ("4"), p)) % p + (f3 * pow_mod(x, to_ZZ("3"), p)) % p + (f2 * pow_mod(x, to_ZZ("2"), p)) % p + f1 * x + f0) % p;
     y = root(f, p);
@@ -1315,9 +1315,9 @@ Div gendiv(OP f)
   }
   do
   {
-    count++;
-    if(count>10000)
-    break;
+    //count++;
+    //if(count>10000)
+    //break;
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
 
