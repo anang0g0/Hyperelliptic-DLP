@@ -8,6 +8,7 @@ NTL_CLIENT
 #define N 100
 #define E 128
 
+NTL_CLIENT
 
 //monomial
 typedef struct{
