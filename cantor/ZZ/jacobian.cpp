@@ -10,7 +10,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-//#define P 31
+//#define P 37
 //#define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 NTL_CLIENT
@@ -242,6 +242,18 @@ OP minu(OP f)
 }
 
 
+OP init_pol(OP f){
+  int i=0;
+  vec v=o2v(f);
+
+   memset(v.x,0,sizeof(v.x));
+
+  f=v2o(v);
+
+return f;
+}
+
+
 //リーディグタームを抽出(default)
 oterm LT(OP f)
 {
@@ -367,7 +379,7 @@ OP omul(OP f, OP g)
 
   k = odeg(f);
   l = odeg(g);
-  if (LT(f).a == to_ZZ("0") || LT(g).a == to_ZZ("0"))
+  if (LT(f).a == 0 || LT(g).a == 0)
     return h;
 
   if (l > k)
@@ -381,7 +393,7 @@ OP omul(OP f, OP g)
     e = oterml(f, t);
     h = oadd(h, e);
   }
-  if (LT(h).a == to_ZZ("0"))
+  if (LT(h).a == 0)
   {
     printf("wh==0\n");
     exit(1);
@@ -1234,32 +1246,23 @@ ZZ root(ZZ a, ZZ p)
     if (p % 8 == 5)
     {
       c = pow_mod(a, (p + 3) / 8, p);
-      if ((c * c) % p != a)
+      if ((c * c) % p != a){
         printf("baka2\n");
-        return to_ZZ("-1");
-    }
-    if (c * c % p == a)
+        c = 2 * a * pow_mod(4 * a, (p - 5) / 8, p);
+        if(c*c % P == a){
+        printf("good\n");
+        return c;
+        }
+        //return to_ZZ("-1");
+      }else if (c * c % p == a)
     {
       printf("good\n");
       cout << c << endl;
       return c;
     }
   }
-  if (p % 8 == 5)
-  {
-    c = 2 * a * pow_mod(4 * a, (p - 5) / 8, p);
-    if (c * c % p != a)
-    {
-      printf("dangerous\n");
-      return to_ZZ("-1");
-    }
-    if (c * c % p == a)
-    {
-      printf("good\n");
-      cout << c << endl;
-      return c;
-    }
-    if (p % 8 == 1){
+  }
+    if (p % 8 == 1 || p%4==1){
       c = tonelli_shanks(a, p);
       if(c*c%p != a){
         printf("fail!\n");
@@ -1268,11 +1271,11 @@ ZZ root(ZZ a, ZZ p)
       return c;
       }
     }
-    return to_ZZ("0");
+  //  return to_ZZ("0");
+  printf("get back\n");
+  exit(1);
   }
 
-  return to_ZZ("-1");
-}
 
 // 曲線に代入した値を計算する
 PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
@@ -1680,7 +1683,7 @@ int main()
 {
   unsigned int i, count = 0;
 
-//ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("1184"), to_ZZ("1846"), to_ZZ("956"),  to_ZZ("560")};
+// ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("1184"), to_ZZ("1846"), to_ZZ("956"),  to_ZZ("560")};
 
 /*
   ZZ f[K+1] = {to_ZZ("1"),to_ZZ("3141592653589793238"), to_ZZ("4626433832795028841"), to_ZZ("9716939937510582097"), to_ZZ("4944592307816406286"), to_ZZ("2089986280348253421")};
@@ -1770,9 +1773,10 @@ int main()
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
   srand(clock());
    X = gendiv(ff);
-   printf("%d\n",chkdiv(X,ff));
-   //exit(1);
-
+   if(chkdiv(X,ff)==-1){
+    printf("buggy may\n");
+    exit(1);
+   }
 I=to_ZZ("1413");
   mktbl(X, ff);
 //while(I<P*P)
@@ -1781,9 +1785,10 @@ I=to_ZZ("1413");
   if (chkdiv(X, ff) == -1)
   {
     printf("bakayo\n");
-    // break;
+     exit(1);
+     //break;
   }
-  //I++;
+  I++;
 }
 
 
