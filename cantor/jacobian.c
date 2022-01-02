@@ -18,7 +18,7 @@
 // 本格的なおおきな素体上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
 
-unsigned long long PP = 100000000000000003LLU; // Harley's example
+//unsigned long long PP = 100000000000000003LLU; // Harley's example
 
 unsigned long long c[K + 1] = {0};
 
@@ -80,6 +80,17 @@ int deg(vec a)
   }
 
   return n;
+}
+
+OP init_pol(OP f){
+  int i=0;
+  vec v=o2v(f);
+
+   memset(v.x,0,sizeof(v.x));
+
+  f=v2o(v);
+
+return f;
 }
 
 //配列からベクトル表現の多項式へ変換する
@@ -1220,7 +1231,7 @@ unsigned long long root(unsigned long long a, unsigned long long p)
     {
       printf("good\n");
       printf("%llu\n", (unsigned long long)c);
-      return c;
+      return (unsigned long long)c;
     }
   }
   if (p % 8 == 5)
@@ -1283,11 +1294,13 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
   //  return -1;
 }
 
+
 OP diviser(PO o, PO m)
 {
-  unsigned long long  t1[2][3], cc[2];
-  vec c1 = {0},c2;
-  int i, j, k,a,b;
+  unsigned long long t1[2][3], cc[2];
+  vec c1 ,c2;
+  int i, j, k;
+  unsigned long long a,b;
   OP f;
 
   t1[0][0] = o.x;//o.t[1].a;
@@ -1311,7 +1324,7 @@ OP diviser(PO o, PO m)
 
   cc[0] = inv(t1[0][0], P);
   printf("%llu\n", cc[0]);
-    int z;
+  unsigned long long z;
   z = t1[1][0];
   printf("z=%d\n",z);
   
@@ -1344,7 +1357,7 @@ printf("c0=%d\n",cc[0]);
  
   c1.x[0] = b;
   c1.x[1] = a;
-  printf("%d %d\n", c1.x[0], c1.x[1]);
+  //cout << c1.x[0] << " , " <<  c1.x[1] << endl;
   // exit(1);
   f=v2o(c1);
   printpoln(o2v(f));
@@ -1354,76 +1367,34 @@ printf("c0=%d\n",cc[0]);
 }
 
 
-OP genv(PO a,PO b){
-unsigned f,l,m,n;
-vec v;
-OP g;
-
-l=(a.x-b.x);
-printf("x=%d %d %d\n",l,a.x,b.x);
-if(l<0)
-  l+=P;
-m=(a.y-b.y);
-printf("y=%d %d %d\n",m,a.y,b.y);
-if(m<0)
-  m+=P;
-n=inv(l,P);
-l=(m*n)%P;
-printf("a=%d %d %d\n",l,m,n);
-exit(1);
-f=(a.x*l-a.y)%P;
-exit(1);
-if(f<0)
-  f+=P;
-v.x[0]=l;
-v.x[1]=f;
-g=v2o(v);
-
-return g;
-}
-
 
 // ランダムな因子の生成
 Div gendiv(OP f)
 {
-  PO a = {0}, b = {0};
-  OP d1 = {0}, d2 = {0}, c = {0}, d = {0};
-  //  unsigned long long  x, y, i, j, k,
+  int count=0;
+  PO a , b , e ;
+  OP d1 = {0}, d2 = {0}, c = {0}, d = {0},vv1={0},vv2={0},uu1,v;
+  //  ZZ  x, y, i, j, k,
 
   Div D = {0};
-  vec v1 = {0}, v2 = {0}, z1 = {0}, ff = {0};
+  vec v1 , v2, z1, z2, ff,vx;
+  EX V;
 
-
-  ff = o2v(f);
-  v1.x[1] = 1;
-  v2.x[1] = 1;
-  if (deg(v1) == 0 || deg(v2) == 0)
-  {
-    printf("ee!?\n");
-    exit(1);
-  }
-  v1.x[0]=P-2;
-  a.x=2;
-  a.y=1;
-  v2.x[0]=P-8;
-  b.x=8;
-  b.y=3;
-  c=v2o(v1);
-  d=v2o(v2);
-  d1=omul(c,d);
-  printpoln(o2v(d1));
-  d2=diviser(a,b);
-  printpoln(o2v(d2));
-  D.u=d1;
-  D.v=d2;
-  printf("%d\n",chkdiv(D,f));
-  //exit(1);
-    a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-    b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-/*
+vx=o2v(f);
+///srand(clock());
+v1.x[1]=1;
+v2.x[1]=1;
+do{
+    a = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
+    b = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
+    //cout << "P= " << P << endl;
+    //cout << "P-x= " << P-a.x << endl;
+    //cout << "x= " << a.x << endl;
     v1.x[0] = P-a.x;
     printpol(v1);
     printf("ppppppppppppp\n");
+    init_pol(c);
+    init_pol(d);
     c = v2o(v1);
 
     v2.x[0] = P-b.x;
@@ -1440,54 +1411,20 @@ Div gendiv(OP f)
     D.v = d2;
     if(chkdiv(D,f)!=-1)
     {
-      printf("baka_gen\n");
-      exit(1);
+      printf("line\n");
+      return D;
     }
   //exit(1);
-  */
-  do
-  {
-    a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
-    b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+}while(chkdiv(D,f)== -1);
 
-    v1.x[0] = P-a.x;
-    printpol(v1);
-    printf("ppppppppppppp\n");
-    c = v2o(v1);
-
-    v2.x[0] = P-b.x;
-    d = v2o(v2);
-    d2=diviser(a,b);
-    printpoln(o2v(d2));
-    //exit(1);
-
-    //d2 = v2o(z1);
-    d1 = omul(c, d);
-
-    D.u = d1;
-    D.v = d2;
-/*
-    if(chkdiv(D,f)==-1)
-    {
-      printf("baka_gen\n");
-      exit(1);
-    }
-    */
-    } while (chkdiv(D, f) == -1); //(LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
-  printf("debug mode\n");
-  printpol(o2v(d1));
-  printf(" ==u\n");
-  printpol(o2v(d2));
-  printf(" ==v\n");
-  // exit(1);
-
-  if (chkdiv(D, f) == -1)
+if (chkdiv(D, f) == -1)
   {
     printf("so buggy!\n");
     exit(1);
   }
   return D;
 }
+
 
 // test function
 EX munford(EX V)
@@ -1519,13 +1456,13 @@ Div cdbl(Div D, OP f)
   a = odiv(omul(D.u, D.u), omul(V.d, V.d));
   b = odiv(oadd(omul(V.u, omul(D.u, D.v)), omul(V.v, oadd(omul(D.v, D.v), f))), V.d);
 
-  while (deg(o2v(a)) > 2 || odeg(b) > odeg(a))
+  while (deg(o2v(a)) > 2) // || odeg(b) > odeg(a))
   {
     count++;
     printf("count=%d\n", count);
-    if (count > 100)
+    if (count > 10)
       break;
-    uu = odiv(osub(f, omul(b, b)), a);
+    uu = odiv(osub(omul(b, b),f), a);
     vv = omod(minus(b), uu);
     a = uu;
     b = vv;
@@ -1555,7 +1492,7 @@ void mktbl(Div D, OP f)
   tbl[0] = D;
   if (chkdiv(D, f) == -1)
     exit(1);
-  for (i = 0; i < 512; i++)
+  for (i = 0; i < 256; i++)
   {
     tbl[i + 1] = cdbl(tbl[i], f);
     if (chkdiv(tbl[i + 1], f) == -1)
@@ -1637,6 +1574,8 @@ int main()
 {
   unsigned int i, count = 0;
 
+ // unsigned  f[K+1] = {1, 0,1184, 1846, 956, 560};
+
 
    unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
   
@@ -1717,12 +1656,18 @@ int main()
 
 X=cadd(ff,uu1,uu2,vv1,vv2);
 printf("%d\n",chkdiv(X,ff));
+printpoln(o2v(X.u));
+printpoln(o2v(X.v));
 //exit(1);
+/*
+printf("%d\n",chkdiv(G0,ff));
+/exit(1);
 X.u=uu1;
 X.v=vv1;
 V=xgcd(uu1,uu2);
 V=monic(V);
 munford(V);
+exit(1);
 
 PO ah,bh;
 OP h,g;
@@ -1737,131 +1682,20 @@ bh.y=4;
 //exit(1);
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
 i=1;
-
+*/
 X = gendiv(ff);
 mktbl(X, ff);
 
-//for(i=1;i<P*P;i++)
+for(i=1;i<P*P;i++)
 {
 
-  X = jac(1413, ff);
+  X = jac(i, ff);
   if (chkdiv(X, ff) == -1)
   {
     printf("baka\n");
      exit(1);
   }
 }
-exit(1);
-  /*
-    // V=xgcd(uu1,uu2);
-    G0 = cadd(ff, uu1, uu2, vv1, vv2);
-    printf("%d\n", chkdiv(G0, ff));
-    // exit(1);
-    srand(clock());
-    G1.u = uu1;
-    G1.v = vv1;
-    X.u = uu2;
-    X.v = vv2;
-    G0 = gendiv(ff);
-
-    while (1)
-    {
-        G0 = cdbl(G0, ff);
-      if (chkdiv(G0, ff) == -1)
-      {
-        break;
-      }
-      else
-      {
-        printf("イイっ！この因子すげえいいっ！\n");
-      }
-    }
-    exit(1);
-
-    if (chkdiv(G1, ff) == -1 || chkdiv(X, ff) == -1)
-    {
-      printf("erro!\n");
-      exit(1);
-    }
-    G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
-    if (chkdiv(G0, ff) == -1)
-    {
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      printf("bug\n");
-      exit(1);
-    }
-  */
-/*
-  PO xx;
-  unsigned long long rr = 0;
-  count = 0;
-  int xount = 0;
-
-  G1 = gendiv(ff);
-  X = gendiv(ff);
-  uu1 = G1.u;
-  vv1 = G1.v;
-  srand(clock());
-  while (1)
-  {
-    G1 = gendiv(ff);
-    X = gendiv(ff);
-    G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
-
-    if (chkdiv(G0, ff) == -1)
-    {
-      printf("baka\n");
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      count++;
-      exit(1);
-      V = xgcd(X.u, G1.u);
-      if (LT(V.d).n > 0)
-      {
-        printf("gcd!\n");
-
-        // exit(1);
-      }
-    }
-    else if (oequ(G1.u, uu1) == 0)
-    {
-      printf("order #J= %d\n", xount);
-      exit(1);
-    }
-    else if (chkdiv(G1, ff) != -1)
-    {
-      printf("ウホッ！いい因子。\n");
-      xount++;
-      // exit(1);
-    }
-    else
-    {
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printf("why?\n");
-      // count++;
-      exit(1);
-    }
-    if (count > 100)
-      break;
-    printf("%u xount=%u\n", count, xount);
-  }
-  printf("%u %u\n", count, xount);
-  // exit(1);
-*/
 
   return 0;
 }
