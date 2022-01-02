@@ -9,7 +9,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 37
+#define P 31
 #define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 
@@ -474,7 +474,7 @@ equ(unsigned long long a, unsigned long long b)
 {
   unsigned long long i = inv(a, P);
 
-  return i * b;
+  return (i * b) % P;
 }
 
 //多項式を単行式で割る
@@ -827,7 +827,7 @@ EX xgcd(OP f, OP g)
   printf(" f===============\n");
   printpol(o2v(g));
   printf(" s===============\n");
-  // exit(1);
+   //exit(1);
   if (LT(g).a == 0)
   {
     printf("g ==0\n");
@@ -880,6 +880,7 @@ EX xgcd(OP f, OP g)
     if (LT(g).a == 0)
       break;
     i++;
+  //exit(1);
   }
   // f=g;
   // g=h[i];
@@ -1268,6 +1269,10 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
     f = (pow_mod(x, 5, P) + (f4 * pow_mod(x, 4, P)) % P + (f3 * pow_mod(x, 3, P)) % P + (f2 * pow_mod(x, 2, P)) % p + f1 * x + f0) % p;
     y = root(f, P);
     g = (y * y) % p;
+    printf("%d %d\n", f , g); 
+    printf("%d %d %d\n", x , y, f0); 
+    //exit(1);
+
     if (f == g)
     {
       aa.x = x;
@@ -1277,6 +1282,106 @@ PO tr1e(unsigned long long f4, unsigned long long f3, unsigned long long f2, uns
   }
   //  return -1;
 }
+
+OP diviser(PO o, PO m)
+{
+  unsigned long long  t1[2][3], cc[2];
+  vec c1 = {0},c2;
+  int i, j, k,a,b;
+  OP f;
+
+  t1[0][0] = o.x;//o.t[1].a;
+  t1[1][0] = m.x; //t[0].a;
+  t1[0][1] = 1; //t[1].a;
+  t1[1][1] = 1; //t[0].a;
+  t1[0][2] = o.y;
+  t1[1][2] = m.y;
+
+
+  if (t1[0][0] == 0)
+  {
+    for (i = 0; i < 2; i++)
+      t1[0][i] = (t1[0][i] + t1[1][i]) % P;
+  }
+  if (t1[1][1] == 0)
+  {
+    for (i = 0; i < 2; i++)
+      t1[1][i] = (t1[1][i] + t1[0][i]) % P;
+  }
+
+  cc[0] = inv(t1[0][0], P);
+  printf("%llu\n", cc[0]);
+    int z;
+  z = t1[1][0];
+  printf("z=%d\n",z);
+  
+cc[0]=(cc[0]*z)%P;
+printf("c0=%d\n",cc[0]);
+//exit(1);
+
+  for (i = 0; i < 2; i++)
+  {
+    for (j = 0; j < 3; j++)
+      printf("%llu,", t1[i][j]);
+    printf("\n");
+  }
+  printf("\n");
+
+  for (j = 0; j < 3; j++)
+  {
+    t1[1][j] =((t1[0][j] * cc[0])%P - t1[1][j] ) % P;
+    printf("%llu,", t1[1][j]);
+  }
+  printf("\n");
+  b=(t1[1][2]*inv(t1[1][1],P)%P);
+  printf("b=%d\n",b);
+  for(i=0;i<3;i++)
+  a=(t1[0][2]-(t1[0][1]*b)%P);
+  if(a<0)
+  a+=P;
+  a=(inv(t1[0][0],P)*a)%P;
+  printf("a=%d\n",a);
+ 
+  c1.x[0] = b;
+  c1.x[1] = a;
+  printf("%d %d\n", c1.x[0], c1.x[1]);
+  // exit(1);
+  f=v2o(c1);
+  printpoln(o2v(f));
+  //exit(1);
+
+  return f;
+}
+
+
+OP genv(PO a,PO b){
+unsigned f,l,m,n;
+vec v;
+OP g;
+
+l=(a.x-b.x);
+printf("x=%d %d %d\n",l,a.x,b.x);
+if(l<0)
+  l+=P;
+m=(a.y-b.y);
+printf("y=%d %d %d\n",m,a.y,b.y);
+if(m<0)
+  m+=P;
+n=inv(l,P);
+l=(m*n)%P;
+printf("a=%d %d %d\n",l,m,n);
+exit(1);
+f=(a.x*l-a.y)%P;
+exit(1);
+if(f<0)
+  f+=P;
+v.x[0]=l;
+v.x[1]=f;
+g=v2o(v);
+
+return g;
+}
+
 
 // ランダムな因子の生成
 Div gendiv(OP f)
@@ -1297,28 +1402,78 @@ Div gendiv(OP f)
     printf("ee!?\n");
     exit(1);
   }
+  v1.x[0]=P-2;
+  a.x=2;
+  a.y=1;
+  v2.x[0]=P-8;
+  b.x=8;
+  b.y=3;
+  c=v2o(v1);
+  d=v2o(v2);
+  d1=omul(c,d);
+  printpoln(o2v(d1));
+  d2=diviser(a,b);
+  printpoln(o2v(d2));
+  D.u=d1;
+  D.v=d2;
+  printf("%d\n",chkdiv(D,f));
+  //exit(1);
+    a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+    b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
+/*
+    v1.x[0] = P-a.x;
+    printpol(v1);
+    printf("ppppppppppppp\n");
+    c = v2o(v1);
+
+    v2.x[0] = P-b.x;
+    d = v2o(v2);
+    d2=diviser(a,b);
+    printpoln(o2v(d2));
+    //exit(1);
+
+    //d2 = v2o(z1);
+    d1 = omul(c, d);
+    printpoln(o2v(d1));
+    //exit(1);
+    D.u = d1;
+    D.v = d2;
+    if(chkdiv(D,f)!=-1)
+    {
+      printf("baka_gen\n");
+      exit(1);
+    }
+  //exit(1);
+  */
   do
   {
     a = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
     b = tr1e(ff.x[4], ff.x[3], ff.x[2], ff.x[1], ff.x[0], P); // cofficient of function
 
-    v1.x[0] = a.x;
+    v1.x[0] = P-a.x;
     printpol(v1);
     printf("ppppppppppppp\n");
     c = v2o(v1);
 
-    v2.x[0] = b.x;
+    v2.x[0] = P-b.x;
     d = v2o(v2);
+    d2=diviser(a,b);
+    printpoln(o2v(d2));
+    //exit(1);
 
-    z1.x[1] = rand() % P;
-    z1.x[0] = rand() % P;
-
-    d2 = v2o(z1);
+    //d2 = v2o(z1);
     d1 = omul(c, d);
 
     D.u = d1;
     D.v = d2;
-  } while (chkdiv(D, f) == -1); //(LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
+/*
+    if(chkdiv(D,f)==-1)
+    {
+      printf("baka_gen\n");
+      exit(1);
+    }
+    */
+    } while (chkdiv(D, f) == -1); //(LT((omod(osub(omul(d2, d2), (f)), d1))).a != 0);
   printf("debug mode\n");
   printpol(o2v(d1));
   printf(" ==u\n");
@@ -1326,8 +1481,6 @@ Div gendiv(OP f)
   printf(" ==v\n");
   // exit(1);
 
-  D.u = d1;
-  D.v = d2;
   if (chkdiv(D, f) == -1)
   {
     printf("so buggy!\n");
@@ -1402,7 +1555,7 @@ void mktbl(Div D, OP f)
   tbl[0] = D;
   if (chkdiv(D, f) == -1)
     exit(1);
-  for (i = 0; i < 256; i++)
+  for (i = 0; i < 512; i++)
   {
     tbl[i + 1] = cdbl(tbl[i], f);
     if (chkdiv(tbl[i + 1], f) == -1)
@@ -1419,7 +1572,7 @@ Div jac(unsigned long long n, OP f)
   int i, j = 0, tmp[640]= {0}, k;
   Div L = {0}, D, G;
 
-G=gendiv(f);
+  G=gendiv(f);
 //mktbl(G,f,tbl);
   k = n;
   i = 0;
@@ -1485,14 +1638,14 @@ int main()
   unsigned int i, count = 0;
 
 
-  // unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
-  /*
+   unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
+  
     unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
     unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
     unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
     unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
-  */
-  unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
+  
+  //unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
   /*
     //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
   //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
@@ -1505,12 +1658,12 @@ int main()
   unsigned long long v2[K + 1] = {0, 0, 0, 0, 29, 26};
   unsigned long long u1[K + 1] = {0, 0, 0, 1, 9, 27};
   unsigned long long v1[K + 1] = {0, 0, 0, 0, 29, 16};
-*/
+
   unsigned long long u2[K + 1] = {0, 0, 0, 1, 30, 3};
   unsigned long long v2[K + 1] = {0, 0, 0, 0, 12, 8};
   unsigned long long u1[K + 1] = {0, 0, 0, 1, 0, 12};
   unsigned long long v1[K + 1] = {0, 0, 0, 0, 10, 4};
-
+*/
   //  unsigned long long  f[K + 1] = {1, 0, 3, 7, 1, 2};
   /*
     unsigned long long  u2[K + 1] = {0, 0, 0, 1, 7, 10};
@@ -1536,7 +1689,24 @@ int main()
 
   vec vx = {0}, xv = {0};
   Div G0, G1, X;
+  PO a11,b11;
+  unsigned x,y;
+
   ff = setpol(f, K + 1);
+  
+  srand(clock());
+
+  gendiv(ff);
+//  exit(1);
+  
+  vx=o2v(ff);
+  a11=tr1e(vx.x[4],vx.x[3],vx.x[2],vx.x[1],vx.x[0],P);
+  b11=tr1e(vx.x[4],vx.x[3],vx.x[2],vx.x[1],vx.x[0],P);
+  x=a11.x;
+  y=a11.y;
+  printf("f=%u\n",(x*x*x*x*x+vx.x[4]*x*x*x*x+vx.x[3]*x*x*x+vx.x[2]*x*x+vx.x[1]*x+vx.x[0])%P);
+  printf("g=%u\n",(y*y)%P);
+  //exit(1);
 
   uu1 = setpol(u1, K + 1);
   uu2 = setpol(u2, K + 1);
@@ -1545,19 +1715,43 @@ int main()
   o = setpol(tst1, K + 1);
   m = setpol(tst2, K + 1);
 
+X=cadd(ff,uu1,uu2,vv1,vv2);
+printf("%d\n",chkdiv(X,ff));
+//exit(1);
+X.u=uu1;
+X.v=vv1;
+V=xgcd(uu1,uu2);
+V=monic(V);
+munford(V);
+
+PO ah,bh;
+OP h,g;
+
+
+ah.x=2;
+bh.x=10;
+ah.y=1;
+bh.y=4;
+//printf("%d\n",equ(8,21));
+//exit(1);
+//exit(1);
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
-  srand(clock());
-  X = gendiv(ff);
-  mktbl(X, ff);
+i=1;
+
+X = gendiv(ff);
+mktbl(X, ff);
+
+//for(i=1;i<P*P;i++)
+{
 
   X = jac(1413, ff);
   if (chkdiv(X, ff) == -1)
   {
-    printf("bakayo\n");
-    // break;
+    printf("baka\n");
+     exit(1);
   }
-  exit(1);
-
+}
+exit(1);
   /*
     // V=xgcd(uu1,uu2);
     G0 = cadd(ff, uu1, uu2, vv1, vv2);
