@@ -9,7 +9,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 31
+#define P 2003
 #define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 
@@ -643,6 +643,7 @@ OP odiv(OP f, OP g)
   int i = 0, k;
   OP h = {0}, e = {0}, tt = {0};
   oterm  b = {0}, c = {0};
+  vec vx={0};
 
   printpol(o2v(f));
   printf("@@@@@@f\n");
@@ -665,7 +666,9 @@ OP odiv(OP f, OP g)
 
   if (b.a > 0 && b.n == 0)
   {
-    e = cdiv(b.a, f);
+    //vx.x[0] = (inv(LT(g).a,P)*LT(f).a)%P;
+    //e=o2v(vx);
+    e=cdiv(b.a, f);
     printpol(o2v(e));
     printf(" cdiv\n");
     // exit(1);
@@ -1382,38 +1385,62 @@ Div gendiv(OP f)
 
 vx=o2v(f);
 ///srand(clock());
+memset(v1.x,0,sizeof(v1.x));
+memset(v2.x,0,sizeof(v2.x));
 v1.x[1]=1;
 v2.x[1]=1;
-do{
+do
+{
+  do{
     a = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
     b = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
-    //cout << "P= " << P << endl;
-    //cout << "P-x= " << P-a.x << endl;
-    //cout << "x= " << a.x << endl;
+    count++;
+    if(count>100){
+      printf("try over 100\n");
+    exit(1);
+    }
+  }while(a.y > P || b.y > P);
+
+    printf("P= %d\n", P );
+    printf("P-x= %d\n", P-a.x);
+    printf("ax= %d\n", a.x);
+    printf("ay= %d\n", a.y);
+    printf("bx= %d\n", a.x);
+    printf("by= %d\n", b.y);
+
     v1.x[0] = P-a.x;
     printpol(v1);
     printf("ppppppppppppp\n");
-    init_pol(c);
-    init_pol(d);
+    //init_pol(c);
+    //init_pol(d);
     c = v2o(v1);
+    printpol(o2v(c));
+    printf("--------------c\n");
 
     v2.x[0] = P-b.x;
     d = v2o(v2);
+    printpol(o2v(d));
+    printf("--------------d\n");
+
     d2=diviser(a,b);
-    printpoln(o2v(d2));
+    printpol(o2v(d2));
+    printf("============d2\n");
     //exit(1);
 
     //d2 = v2o(z1);
     d1 = omul(c, d);
-    printpoln(o2v(d1));
+    printpol(o2v(d1));
+    printf("==============d1\n");
     //exit(1);
     D.u = d1;
     D.v = d2;
     if(chkdiv(D,f)!=-1)
     {
-      printf("line\n");
-      return D;
+      printf("buggy\n");
+      //exit(1);
+      //return D;
     }
+
   //exit(1);
 }while(chkdiv(D,f)== -1);
 
@@ -1574,16 +1601,16 @@ int main()
 {
   unsigned int i, count = 0;
 
- // unsigned  f[K+1] = {1, 0,1184, 1846, 956, 560};
+  unsigned long long f[K+1] = {1, 0,1184, 1846, 956, 560};
 
 
-   unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
-  
+  // unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
+  /*
     unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
     unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
     unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
     unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
-  
+  */
   //unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
   /*
     //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
@@ -1637,7 +1664,7 @@ int main()
 
   gendiv(ff);
 //  exit(1);
-  
+  /*
   vx=o2v(ff);
   a11=tr1e(vx.x[4],vx.x[3],vx.x[2],vx.x[1],vx.x[0],P);
   b11=tr1e(vx.x[4],vx.x[3],vx.x[2],vx.x[1],vx.x[0],P);
@@ -1659,7 +1686,8 @@ printf("%d\n",chkdiv(X,ff));
 printpoln(o2v(X.u));
 printpoln(o2v(X.v));
 //exit(1);
-/*
+
+
 printf("%d\n",chkdiv(G0,ff));
 /exit(1);
 X.u=uu1;
@@ -1684,6 +1712,11 @@ bh.y=4;
 i=1;
 */
 X = gendiv(ff);
+//exit(1);
+if(chkdiv(X,ff)==-1){
+  printf("end of baka\n");
+  exit(1);
+}
 mktbl(X, ff);
 
 for(i=1;i<P*P;i++)
