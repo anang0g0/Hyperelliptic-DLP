@@ -10,7 +10,7 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-//#define P 37
+//#define P 31
 //#define J 1412  // https://eprint.iacr.org/2011/306.pdf  example.4
 
 NTL_CLIENT
@@ -22,9 +22,11 @@ NTL_CLIENT
 // 本格的なおおきな素体上の曲線については、
 // このプログラムを元にNTLの古いバージョンを使って作る予定。
 
-ZZ PP = to_ZZ("100000000000000003"); // Harley's example
-ZZ P=to_ZZ("10000000000000000051");
+//ZZ PP = to_ZZ("100000000000000003");
+//ZZ P=to_ZZ("10000000000000000051"); // Harley's example
 //ZZ P =to_ZZ("5000000000000000008503491");
+//  ZZ P =to_ZZ("1208925819614629174708801");
+ZZ P=to_ZZ("37");
 
 ZZ c[K + 1];
 
@@ -365,7 +367,7 @@ OP omul(OP f, OP g)
 
   k = odeg(f);
   l = odeg(g);
-  if (LT(f).a == 0 || LT(g).a == 0)
+  if (LT(f).a == to_ZZ("0") || LT(g).a == to_ZZ("0"))
     return h;
 
   if (l > k)
@@ -379,7 +381,7 @@ OP omul(OP f, OP g)
     e = oterml(f, t);
     h = oadd(h, e);
   }
-  if (LT(h).a == 0)
+  if (LT(h).a == to_ZZ("0"))
   {
     printf("wh==0\n");
     exit(1);
@@ -970,13 +972,13 @@ int chkdiv(Div d, OP f)
   t = omod(osub(omul(d.v, d.v), (f)), d.u);
   printpol(o2v(t));
   printf(" 00000000000 t\n");
-  if (LT(t).a == 0)
+  if (LT(t).a == to_ZZ("0"))
   {
     return 1;
   }
   else
   {
-    printf("dame\n");
+    printf("dame1\n");
     printpoln(o2v(d.u));
     printpoln(o2v(d.v));
     // exit(1);
@@ -1280,11 +1282,16 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
 
   while (1)
   {
-    x = xor128(); // % p;
+    //while(x==0)
+    {
+    x = (ZZ)xor128()%p; // % p;
+    }
     //y = xor128(); // % p;
     f = (pow_mod(x, to_ZZ("5"), p) + (f4 * pow_mod(x, to_ZZ("4"), p)) % p + (f3 * pow_mod(x, to_ZZ("3"), p)) % p + (f2 * pow_mod(x, to_ZZ("2"), p)) % p + f1 * x + f0) % p;
     y = root(f, p);
     g = (y * y) % p;
+    cout << "f= " << f << " g= " << g << endl;
+    cout << "x= " << x << " y= " << y << endl;
     if (f == g)
     {
       aa.x = x;
@@ -1359,7 +1366,7 @@ printf("c0=%d\n",cc[0]);
  
   c1.x[0] = b;
   c1.x[1] = a;
-  printf("%d %d\n", c1.x[0], c1.x[1]);
+  cout << c1.x[0] << " , " <<  c1.x[1] << endl;
   // exit(1);
   f=v2o(c1);
   printpoln(o2v(f));
@@ -1384,12 +1391,14 @@ Div gendiv(OP f)
 
 vx=o2v(f);
 ///srand(clock());
-v1.x[1]=1;
-v2.x[1]=1;
-while(1){
+v1.x[1]=to_ZZ("1");
+v2.x[1]=to_ZZ("1");
+do{
     a = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
     b = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
-
+    cout << "P= " << P << endl;
+    cout << "P-x= " << P-a.x << endl;
+    cout << "x= " << a.x << endl;
     v1.x[0] = P-a.x;
     printpol(v1);
     printf("ppppppppppppp\n");
@@ -1411,14 +1420,15 @@ while(1){
     {
       printf("line\n");
       return D;
-    }else if (chkdiv(D, f) == -1)
+    }
+  //exit(1);
+}while(chkdiv(D,f)== -1);
+
+if (chkdiv(D, f) == -1)
   {
     printf("so buggy!\n");
     exit(1);
   }
-
-  //exit(1);
-}
   return D;
 }
 
@@ -1488,7 +1498,7 @@ printf("begin\n");
   tbl[0] = D;
   if (chkdiv(D, f) == -1)
     exit(1);
-  for (i = 0; i < 256; i++)
+  for (i = 0; i < 512; i++)
   {
     tbl[i + 1] = cdbl(tbl[i], f);
     if (chkdiv(tbl[i + 1], f) == -1)
@@ -1545,7 +1555,7 @@ printf("in jac\n");
     L = cadd(f, tbl[tmp[i]].u, L.u, tbl[tmp[i]].v, L.v);
     if (chkdiv(L, f) == -1)
     {
-      printf("dame %d\n", i);
+      printf("dame2 %d\n", i);
       /*
       printpoln(o2v(tbl[tmp[i]].u));
       printpoln(o2v(tbl[tmp[i]].v));
@@ -1556,9 +1566,9 @@ printf("in jac\n");
     */
       exit(1);
     }
-    if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
+    if (oequ(D.u, L.u) == 0 && oequ(D.v,L.v)==0)
     {
-      cout << "infinity devide!" <<  n << endl;
+      cout << "infinity devide! : " <<  n << endl;
       exit(1);
     }
   }
@@ -1670,15 +1680,15 @@ int main()
 {
   unsigned int i, count = 0;
 
-
+/*
   ZZ f[K+1] = {to_ZZ("1"),to_ZZ("3141592653589793238"), to_ZZ("4626433832795028841"), to_ZZ("9716939937510582097"), to_ZZ("4944592307816406286"), to_ZZ("2089986280348253421")};
   //#@u1_=[13131182302866750318,6953593084278582387]
   //#@v1_=[@q,0] #infinity
   ZZ u1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("8940387226809150403"), to_ZZ("3838225076702837943")};
   ZZ v1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("8035450087728851271"), to_ZZ("1893861348804881148")};
   // ff=x^5+314159265358979338*x^4+4626433832795028841*x^3+9716939937510582097*x^2+4944592307816406286*x+2089986280348253421
- ZZ J = to_ZZ("99999999982871020671452277000281660080");
- 
+ ZZ J = to_ZZ("99999999982871020671452277000281660081");
+ */
 /*
   ZZ uh[K+1] = {0,0,0,1,10027301878627002813, 9681764174062850433};
   //#616419646419685014=a*3542790122851877922+b
@@ -1705,22 +1715,16 @@ int main()
   ZZ v1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("2931056213155642836850986"), to_ZZ("402980510097415333052905")};
 */
 
-/*
-   char f[K + 1] = {1, 7, 6, 2, 8, 2};
-  
+
+ //  ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("7"), to_ZZ("6"), to_ZZ("2"), to_ZZ("8"), to_ZZ("2")};
+/*  
     char  u2[K + 1] = {0, 0, 0, 1, 21, 16};
     char  u1[K + 1] = {0, 0, 0, 1, 19, 20};
     char  v2[K + 1] = {0, 0, 0, 0, 21, 21};
     char  v1[K + 1] = {0, 0, 0, 0, 12, 8};
   */
-  //char f[K + 1] = {1, 0, 2, 30, 5, 1};
+  ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("0"), to_ZZ("2"), to_ZZ("30"), to_ZZ("5"), to_ZZ("1")};
 /*  
-  ZZ  f[K+1]= {to_ZZ("1"), to_ZZ("1597") , to_ZZ("1041") ,to_ZZ("5503") , to_ZZ("6101") , to_ZZ("1887") };
-  //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
-  ZZ  u2[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("1571353025997967")  , to_ZZ("12198441063534328")};
-  ZZ  v2[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("32227723250469108") , to_ZZ("68133247565452990")};
-  ZZ  u1[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("70887725815800572") , to_ZZ("94321182398888258")};
-  ZZ  v1[K+1]={to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("42016761890161508") , to_ZZ("3182371156137467") };
 
   unsigned long long u2[K + 1] = {0, 0, 0, 1, 26, 20};
   unsigned long long v2[K + 1] = {0, 0, 0, 0, 29, 26};
@@ -1747,38 +1751,38 @@ int main()
   Div D;
   oterm a;
   OP b = {0};
-  // unsigned long long  q1 = to_unsigned long long ("1208925819614629174708801");
-  int a1 = 1331;
-  // J1 =to_unsigned long long ("1461501637326815988079848163961117521046955445901");
-  // e y2 = x5+a, a ∈ Fp
 
-  // unsigned long long  q2 = to_unsigned long long ("1208925819614629174709941");
-  int a2 = 2;
-  // J2 = to_unsigned long long ("1461501637331762771847359428275278989652932675771");
 
   vec vx , xv ,v11,v22;
   Div G0, G1, X;
   PO a11,b11;
-  ZZ x,y;
+  ZZ x,y,I;
 
   ff = setpol(f, K + 1);
   printpoln(o2v(ff));
-  //exit(1);
-  
+  //uu1=setpol(u1,K+1);
+  //vv1=setpol(v1,K+1);
+ //exit(1);
+//X.u=uu1;
+//X.v=vv1;  
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
   srand(clock());
    X = gendiv(ff);
    printf("%d\n",chkdiv(X,ff));
    //exit(1);
 
+I=to_ZZ("1");
   mktbl(X, ff);
-
-  X = jac(J+1, ff);
+//while(I<P*P)
+{
+  X = jac(to_ZZ("1413"), ff);
   if (chkdiv(X, ff) == -1)
   {
     printf("bakayo\n");
     // break;
   }
+  I++;
+}
 
 
   return 0;
