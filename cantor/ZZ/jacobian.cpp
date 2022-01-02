@@ -1369,28 +1369,6 @@ printf("c0=%d\n",cc[0]);
 }
 
 
-OP genv(PO a,PO b){
-ZZ f,l,m,n;
-vec v;
-OP g;
-
-l=(a.x-b.x)%P;
-if(l<0)
-  l+=P;
-m=(a.y-b.y)%P;
-if(m<0)
-  m+=P;
-n=inv(l,P);
-l=(m*n)%P;
-f=(a.x*l-a.y)%P;
-if(f<0)
-  f+=P;
-v.x[0]=l;
-v.x[1]=f;
-g=v2o(v);
-
-return g;
-}
 
 // ランダムな因子の生成
 Div gendiv(OP f)
@@ -1786,74 +1764,7 @@ int main()
   ff = setpol(f, K + 1);
   printpoln(o2v(ff));
   //exit(1);
-  ZZ A=root(f[5],P);
-  cout << A << endl;
-  //exit(1);
-  vx=o2v(ff);
-  a11=tr1e(vx.x[4],vx.x[3],vx.x[2],vx.x[1],vx.x[0],P);
-  x=a11.x;
-  y=a11.y;
-  cout << "f= " << (x*x*x*x*x+vx.x[4]*x*x*x*x+vx.x[3]*x*x*x+vx.x[2]*x*x+vx.x[1]*x+vx.x[0])%P << endl;
-  cout << " g= " << (y*y)%P << endl;
-  cout << "x= " << x << "y= " << y << endl;
-  //exit(1);
-srand(clock());
-/*
-v11.x[1]=1;
-v22.x[1]=1;
-while(1){
-    a11 = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
-    b11 = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
-
-    v11.x[0] = P-a11.x;
-    printpol(v11);
-    printf("ppppppppppppp\n");
-    c = v2o(v11);
-
-    v22.x[0] = P-b11.x;
-    d = v2o(v22);
-    d2=diviser(a11,b11);
-    printpoln(o2v(d2));
-    //exit(1);
-
-    //d2 = v2o(z1);
-    d1 = omul(c, d);
-    printpoln(o2v(d1));
-    //exit(1);
-    D.u = d1;
-    D.v = d2;
-    if(chkdiv(D,ff)!=-1)
-    {
-      printf("line\n");
-      exit(1);
-    }
-  exit(1);
-}
-*/
-  uu1 = setpol(u1, K + 1);
-  //uu2 = setpol(u2, K + 1);
-  vv1 = setpol(v1, K + 1);
-  //vv2 = setpol(v2, K + 1);
-  //o = setpol(tst1, K + 1);
-  //m = setpol(tst2, K + 1);
-
-/*  
-X=cadd(ff,uu1,uu2,vv1,vv2);
-printf("%d\n",chkdiv(X,ff));
-X.u=uu1;
-X.v=vv1;
-//exit(1);
-V=xgcd(uu1,uu2);
-V=monic(V);
-munford(V);
-*/
-//exit(1);
-  X.u=uu1;
-  X.v=vv1;
-if(LT(omod(osub(ff,omul(vv1,vv1)),uu1)).a==0)
-printf("seikou\n");
-//exit(1);
-
+  
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
   srand(clock());
    X = gendiv(ff);
@@ -1868,118 +1779,7 @@ printf("seikou\n");
     printf("bakayo\n");
     // break;
   }
-  exit(1);
 
-  /*
-    // V=xgcd(uu1,uu2);
-    G0 = cadd(ff, uu1, uu2, vv1, vv2);
-    printf("%d\n", chkdiv(G0, ff));
-    // exit(1);
-    srand(clock());
-    G1.u = uu1;
-    G1.v = vv1;
-    X.u = uu2;
-    X.v = vv2;
-    G0 = gendiv(ff);
-
-    while (1)
-    {
-        G0 = cdbl(G0, ff);
-      if (chkdiv(G0, ff) == -1)
-      {
-        break;
-      }
-      else
-      {
-        printf("イイっ！この因子すげえいいっ！\n");
-      }
-    }
-    exit(1);
-
-    if (chkdiv(G1, ff) == -1 || chkdiv(X, ff) == -1)
-    {
-      printf("erro!\n");
-      exit(1);
-    }
-    G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
-    if (chkdiv(G0, ff) == -1)
-    {
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      printf("bug\n");
-      exit(1);
-    }
-  */
-/*
-  PO xx;
-  unsigned long long rr = 0;
-  count = 0;
-  int xount = 0;
-
-  G1 = gendiv(ff);
-  X = gendiv(ff);
-  uu1 = G1.u;
-  vv1 = G1.v;
-  srand(clock());
-  while (1)
-  {
-    G1 = gendiv(ff);
-    X = gendiv(ff);
-    G0 = cadd(ff, G1.u, X.u, G1.v, X.v);
-
-    if (chkdiv(G0, ff) == -1)
-    {
-      printf("baka\n");
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      count++;
-      exit(1);
-      V = xgcd(X.u, G1.u);
-      if (LT(V.d).n > 0)
-      {
-        printf("gcd!\n");
-
-        // exit(1);
-      }
-    }
-    else if (oequ(G1.u, uu1) == 0)
-    {
-      printf("order #J= %d\n", xount);
-      exit(1);
-    }
-    else if (chkdiv(G1, ff) != -1)
-    {
-      printf("ウホッ！いい因子。\n");
-      xount++;
-      // exit(1);
-    }
-    else
-    {
-      printpoln(o2v(G0.u));
-      printpoln(o2v(G0.v));
-      printpoln(o2v(G1.u));
-      printpoln(o2v(G1.v));
-      printpoln(o2v(X.u));
-      printpoln(o2v(X.v));
-      printf("why?\n");
-      // count++;
-      exit(1);
-    }
-    if (count > 100)
-      break;
-    printf("%u xount=%u\n", count, xount);
-  }
-  printf("%u %u\n", count, xount);
-  // exit(1);
-*/
 
   return 0;
 }
