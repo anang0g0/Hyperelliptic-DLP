@@ -15,8 +15,8 @@
 
 NTL_CLIENT
 
-//ZZ P=to_ZZ("37");
 
+//ZZ P=to_ZZ("2003");
 // 20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
 // 院卒失業中(小飼弾と同い年)
 // 本格的なおおきな素体上の曲線については、
@@ -1680,6 +1680,8 @@ int main()
 {
   unsigned int i, count = 0;
 
+//ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("1184"), to_ZZ("1846"), to_ZZ("956"),  to_ZZ("560")};
+
 /*
   ZZ f[K+1] = {to_ZZ("1"),to_ZZ("3141592653589793238"), to_ZZ("4626433832795028841"), to_ZZ("9716939937510582097"), to_ZZ("4944592307816406286"), to_ZZ("2089986280348253421")};
   //#@u1_=[13131182302866750318,6953593084278582387]
@@ -1771,17 +1773,17 @@ int main()
    printf("%d\n",chkdiv(X,ff));
    //exit(1);
 
-I=to_ZZ("1");
+I=to_ZZ("1413");
   mktbl(X, ff);
 //while(I<P*P)
 {
-  X = jac(to_ZZ("1413"), ff);
+  X = jac(I, ff);
   if (chkdiv(X, ff) == -1)
   {
     printf("bakayo\n");
     // break;
   }
-  I++;
+  //I++;
 }
 
 
