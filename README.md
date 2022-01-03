@@ -2,6 +2,10 @@
 
 # 20220103
 
+https://eprint.iacr.org/2002/181.pdf
+
+https://www.researchgate.net/publication/267120817_Fast_Cryptography_in_Genus_2
+
 なんか256ビットくらいの超楕円曲線でも計算できてるみたいなので一応完成ということに。
 次何やろうかな。
 
