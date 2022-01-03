@@ -1792,8 +1792,9 @@ int main()
     // exit(1);
     //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
     i = 1;
-
+    while(1){
     X = gendiv(ff);
+    }
     mktbl(X, ff);
 
     //for (i = 1; i < P * P; i++)
