@@ -24,8 +24,11 @@ NTL_CLIENT
 // ZZ PP = to_ZZ("100000000000000003");
  ZZ P=to_ZZ("10000000000000000051"); // Harley's example
 // ZZ P =to_ZZ("5000000000000000008503491");
-//   ZZ P =to_ZZ("1208925819614629174708801");
-//ZZ P = to_ZZ("37");
+// ZZ P =to_ZZ("1208925819614629174708801");
+// ZZ P = to_ZZ("37");
+//ZZ P = to_ZZ("340282366920938463463374607431768211283");
+//ZZ P=to_ZZ("2003");
+
 
 ZZ c[K + 1];
 
@@ -472,21 +475,21 @@ ZZ inv(ZZ a, ZZ n)
 {
   ZZ d, x, s, q, r, t, gcd;
   d = n;
-  x = 0;
-  s = 1;
+  x = to_ZZ("0");
+  s = to_ZZ("1");
   while (a != 0)
   {
     q = d / a;
     r = d % a;
     d = a;
     a = r;
-    t = (x - q * s);
+    t = (x - q * s)%n;
     x = s;
     s = t;
   }
   gcd = d;
 
-  return ((x + n) % (n / d));
+  return ((x + n) % (n / d))%n;
 }
 
 // aに何をかけたらbになるか
@@ -1304,9 +1307,10 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
   //  return -1;
 }
 
+
 OP diviser(PO o, PO m)
 {
-  ZZ t1[2][3], cc[2];
+  ZZ t1[2][3]={to_ZZ("0")}, cc[2]={to_ZZ("0")};
   vec c1, c2;
   int i, j, k;
   ZZ a, b;
@@ -1330,38 +1334,40 @@ OP diviser(PO o, PO m)
       t1[1][i] = (t1[1][i] + t1[0][i]) % P;
   }
 
-  cc[0] = inv(t1[0][0], P);
-  printf("%llu\n", cc[0]);
+  cc[0] = inv(t1[0][0], P)%P;
+  cout << cc[0] << endl;
+  if(cc[0]>P)
+  exit(1);
   ZZ z;
-  z = t1[1][0];
-  printf("z=%d\n", z);
+  z = t1[1][0]%P;
+  cout << "z=" << z << endl;
 
   cc[0] = (cc[0] * z) % P;
-  printf("c0=%d\n", cc[0]);
+  cout << "c0=" << cc[0] << endl;
   // exit(1);
 
   for (i = 0; i < 2; i++)
   {
     for (j = 0; j < 3; j++)
-      printf("%llu,", t1[i][j]);
+      cout << t1[i][j] << endl;
     printf("\n");
   }
   printf("\n");
 
   for (j = 0; j < 3; j++)
   {
-    t1[1][j] = ((t1[0][j] * cc[0]) % P - t1[1][j]) % P;
-    printf("%llu,", t1[1][j]);
+    t1[1][j] = (P+((t1[0][j] * cc[0]) % P - t1[1][j])) % P;
+    cout << "," << t1[1][j] << endl;
   }
   printf("\n");
   b = (t1[1][2] * inv(t1[1][1], P) % P);
-  printf("b=%d\n", b);
+  cout << "b="<<  b << endl;
   for (i = 0; i < 3; i++)
     a = (t1[0][2] - (t1[0][1] * b) % P);
   if (a < 0)
     a += P;
   a = (inv(t1[0][0], P) * a) % P;
-  printf("a=%d\n", a);
+  cout << "a=" << a << endl;
 
   c1.x[0] = b;
   c1.x[1] = a;
@@ -1390,14 +1396,17 @@ Div gendiv(OP f)
   /// srand(clock());
   v1.x[1] = to_ZZ("1");
   v2.x[1] = to_ZZ("1");
-  do
+//  while(1)
   {
+    do{
     a = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
     b = tr1e(vx.x[4], vx.x[3], vx.x[2], vx.x[1], vx.x[0], P); // cofficient of function
+    }while((a.x == b.x) || (a.x ==0 || b.x ==0));
     cout << "P= " << P << endl;
     cout << "P-x= " << P - a.x << endl;
     cout << "x= " << a.x << endl;
     v1.x[0] = P - a.x;
+    
     printpol(v1);
     printf("ppppppppppppp\n");
     c = v2o(v1);
@@ -1418,9 +1427,12 @@ Div gendiv(OP f)
     {
       printf("line\n");
       return D;
+    }else{
+      printf("just say buggy\n");
+    exit(1);
     }
-    // exit(1);
-  } while (chkdiv(D, f) == -1);
+    // 
+  } //while (chkdiv(D, f) == -1);
 
   if (chkdiv(D, f) == -1)
   {
@@ -1495,7 +1507,10 @@ void mktbl(Div D, OP f)
   printf("begin\n");
   tbl[0] = D;
   if (chkdiv(D, f) == -1)
+  {
+    printf("what?\n");
     exit(1);
+  }
   for (i = 0; i < 512; i++)
   {
     tbl[i + 1] = cdbl(tbl[i], f);
@@ -1507,6 +1522,33 @@ void mktbl(Div D, OP f)
   }
   printf("end\n");
 }
+
+int flg=0;
+Div jac2(ZZ n,OP f,Div D){
+Div L;
+
+//D=gendiv(f);
+
+if(flg==0 && n%2==1){
+  L=D;
+  n=(n>>1);
+  D=cdbl(D,f);
+  flg=1;
+}
+
+if(n%2==1){
+  D=cadd(f,D.u,L.u,D.v,L.v);
+  L=D;
+  D=cdbl(D,f);
+  n=(n>>1);
+  }else{
+  D=cdbl(D,f);
+  n=(n>>1);
+}
+
+}
+
+
 
 // 因子のスカラー倍
 Div jac(ZZ n, OP f)
@@ -1541,7 +1583,7 @@ Div jac(ZZ n, OP f)
   // printf("j=%d\n",j);
   for (i = 1; i < j; i++)
   {
-    G = L;
+    //G = L;
     if (chkdiv(tbl[tmp[i]], f) == -1)
     {
       printf("before\n");
@@ -1564,7 +1606,7 @@ Div jac(ZZ n, OP f)
     */
       exit(1);
     }
-    if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
+    if (oequ(D.u, L.u) == 0) // && oequ(D.v, L.v) == 0)
     {
       cout << "infinity devide! : " << n << endl;
       exit(1);
@@ -1677,7 +1719,10 @@ int main()
   unsigned int i, count = 0;
 
   // ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("1184"), to_ZZ("1846"), to_ZZ("956"),  to_ZZ("560")};
-
+/*
+  ZZ J = to_ZZ("115792089237316195429342203801033554170931615651881657307308068079702089951781");
+  ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("0"), to_ZZ("318258242717201709453901384328569236653"), to_ZZ("75380722035796344355219475510170298006"), to_ZZ("129416082603460579272847694630998099237"), to_ZZ("143864072772599444046778416709082679388")};
+*/
   
     ZZ f[K+1] = {to_ZZ("1"),to_ZZ("3141592653589793238"), to_ZZ("4626433832795028841"), to_ZZ("9716939937510582097"), to_ZZ("4944592307816406286"), to_ZZ("2089986280348253421")};
     //#@u1_=[13131182302866750318,6953593084278582387]
@@ -1703,15 +1748,15 @@ int main()
   //  #fg=x^5+2682810822839355644900736*x^3+226591355295993102902116*x^2+2547674715952929717899918*x+4797309959708489673059350
   //  @P = 5 * 10 ** 24 + 8503491
   /*
-   ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("2682810822839355644900736"), to_ZZ("226591355295993102902116"), to_ZZ("2547674715952929717899918"), to_ZZ("4797309959708489673059350")};
-   ZZ Jga = to_ZZ("24999999999994130438600999402209463966197516075699");
-   ZZ Jgb = to_ZZ("25000000000005869731468829402229428962794965968171");
-    //#50724386855111482309402*2779199501981512279739817%P
-    //#2055622596816515886446193*1553122609714208136553134%P
-    //#1520505942073936921231867
-    ZZ u1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("1738366273424896804842766"), to_ZZ("3184841659043138633535652")};
-    ZZ v1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("2931056213155642836850986"), to_ZZ("402980510097415333052905")};
-  */
+     ZZ f[K+1] = {to_ZZ("1"),to_ZZ("0"), to_ZZ("2682810822839355644900736"), to_ZZ("226591355295993102902116"), to_ZZ("2547674715952929717899918"), to_ZZ("4797309959708489673059350")};
+     ZZ Jga = to_ZZ("24999999999994130438600999402209463966197516075699");
+     ZZ Jgb = to_ZZ("25000000000005869731468829402229428962794965968171");
+      //#50724386855111482309402*2779199501981512279739817%P
+      //#2055622596816515886446193*1553122609714208136553134%P
+      //#1520505942073936921231867
+      ZZ u1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("1"),to_ZZ("1738366273424896804842766"), to_ZZ("3184841659043138633535652")};
+      ZZ v1[K+1] = {to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("0"),to_ZZ("2931056213155642836850986"), to_ZZ("402980510097415333052905")};
+    */
 
   //  ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("7"), to_ZZ("6"), to_ZZ("2"), to_ZZ("8"), to_ZZ("2")};
   /*
@@ -1720,7 +1765,7 @@ int main()
       char  v2[K + 1] = {0, 0, 0, 0, 21, 21};
       char  v1[K + 1] = {0, 0, 0, 0, 12, 8};
     */
-  //ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("0"), to_ZZ("2"), to_ZZ("30"), to_ZZ("5"), to_ZZ("1")};
+  // ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("0"), to_ZZ("2"), to_ZZ("30"), to_ZZ("5"), to_ZZ("1")};
   /*
 
     unsigned long long u2[K + 1] = {0, 0, 0, 1, 26, 20};
@@ -1756,24 +1801,31 @@ int main()
 
   ff = setpol(f, K + 1);
   printpoln(o2v(ff));
- 
+
   // uu1=setpol(u1,K+1);
   // vv1=setpol(v1,K+1);
   // exit(1);
   // X.u=uu1;
   // X.v=vv1;
   //　ランダムな因子をヤコビ多様体の位数倍して無限遠点になれば正しい
- 
+
   srand(clock());
+  //while(1)
+  {
   X = gendiv(ff);
   if (chkdiv(X, ff) == -1)
   {
     printf("buggy may\n");
     exit(1);
+  }else{
+    printpoln(o2v(X.u));
+    printpoln(o2v(X.v));
+    printf("good\n");
   }
- 
-  I = to_ZZ("1413");
- 
+  }
+//exit(1);
+  I = to_ZZ("1");
+
   mktbl(X, ff);
   // while(I<P*P)
   {
