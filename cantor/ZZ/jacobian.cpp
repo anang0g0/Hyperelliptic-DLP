@@ -17,7 +17,6 @@ NTL_CLIENT
 
 // ZZ P=to_ZZ("2003");
 //  20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
-//  院卒失業中(小飼弾と同い年)
 //  このプログラムを元にNTLの古いバージョンを使っています。
 
 
