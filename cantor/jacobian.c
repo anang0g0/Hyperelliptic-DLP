@@ -10,8 +10,13 @@
 
 #define O 6859 // 1331 //2197,4913,6859
 #define K 5
-#define P 2003
-#define J 1412 // https://eprint.iacr.org/2011/306.pdf  example.4
+#define P 40577
+#define J 1657567138
+//#define P 10433 
+//#define J 110699362 
+//#define P 20201
+//#define J 414268018 
+//#define J 1412 // https://eprint.iacr.org/2011/306.pdf  example.4
 #define DAT 5
 
 // 20211231 GPL HyperElliptic Curve DLP (･∀･) ﾔｺﾋﾞﾔｰﾝ!!
@@ -1692,16 +1697,19 @@ int main()
 {
     unsigned int i, count = 0;
 
-    unsigned long long f[K + 1] = {1, 0, 1184, 1846, 956, 560};
+//unsigned long long 
+unsigned long long f[K+1]={1,0,0,0,3,0};
 
-    // unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
+    //unsigned long long f[K + 1] = {1, 0, 1184, 1846, 956, 560};
+
+     //unsigned long long f[K + 1] = {1, 7, 6, 2, 8, 2};
     /*
       unsigned long long  u2[K + 1] = {0, 0, 0, 1, 21, 16};
       unsigned long long  u1[K + 1] = {0, 0, 0, 1, 19, 20};
       unsigned long long  v2[K + 1] = {0, 0, 0, 0, 21, 21};
       unsigned long long  v1[K + 1] = {0, 0, 0, 0, 12, 8};
     */
-    // unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
+    //unsigned long long f[K + 1] = {1, 0, 2, 30, 5, 1};
     /*
       //unsigned long long  f[K+1]= {1, 1597 , 1041 ,5503 , 6101 , 1887 };
     //f1 = x + 28555025517563816 and f2 = x + 74658844563359755 ;
@@ -1799,7 +1807,7 @@ int main()
     //for (i = 1; i < P * P; i++)
     {
         printf("iiiiiiiiiiiiiiiiiiiiiii=%d\n", i);
-        X = jac(i, ff);
+        X = jac(J+1, ff);
         if (chkdiv(X, ff) == -1)
         {
             printf("baka\n");
