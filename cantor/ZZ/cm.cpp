@@ -771,6 +771,23 @@ ZZ inv(ZZ a, ZZ n)
   return ((x + n) % (n / d));
 }
 
+
+// bit count
+int bit(ZZ b, int i)
+{
+  int k = 1;
+
+  if (((b & (1 << i)) >> i) % 2 == 1)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+
 //jj=aa^bb mod oo
 ZZ exp(ZZ aa, ZZ bb, ZZ oo)
 {
@@ -1752,20 +1769,6 @@ ZZ PC(ZZ a, ZZ p)
   }
 }
 
-void bit(ZZ m)
-{
-  ZZ mm;
-  int count;
-
-  mm = m;
-  count = 0;
-  while (mm > 0)
-  {
-    mm = (mm >> 1);
-    count = count + 1;
-  }
-  printf("%d", count);
-}
 
 void w()
 {
