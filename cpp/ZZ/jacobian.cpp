@@ -46,7 +46,7 @@ vec o2v(OP f)
 OP v2o(vec a)
 {
   int i;
-  OP f = {0};
+  OP f = {};
 
   //#pragma omp parallel for
   for (i = 0; i < DEG; i++)
@@ -251,7 +251,7 @@ OP init_pol(OP f)
 oterm LT(OP f)
 {
   int i;
-  oterm t = {0};
+  oterm t = {};
 
 
   for (i = 0; i < DEG; i++)
@@ -271,7 +271,7 @@ oterm LT(OP f)
 OP conv(OP f)
 {
   vec v;
-  OP g = {0};
+  OP g = {};
 
   v = o2v(f);
   g = v2o(v);
@@ -285,7 +285,7 @@ OP oadd(OP f, OP g)
 {
   vec a, b, c;
   int i, j, k, l = 0;
-  OP h = {0}, f2 = {0}, g2 = {0};
+  OP h = {}, f2 = {}, g2 = {};
 
   // for(i=0;i<257;i++)
   //  printf("%llu %llu %llu %llu %llu\n",i,f.t[i].a,f.t[i].n,g.t[i].a,g.t[i].n);
@@ -339,7 +339,7 @@ OP oterml(OP f, oterm t)
 
   // assert (op_verify (f));
   int i, k;
-  OP h = {0};
+  OP h = {};
   vec test;
   ZZ n;
 
@@ -366,8 +366,8 @@ OP omul(OP f, OP g)
   // assert (op_verify (f));
   // assert (op_verify (g));
   int i,  k, l;
-  oterm t = {0};
-  OP h = {0}, e = {0}, r = {0};
+  oterm t = {};
+  OP h = {}, e = {}, r = {};
   vec c;
 
   k = odeg(f);
@@ -399,7 +399,7 @@ OP osub(OP f, OP g)
 {
   vec a, b, d;
   int i, k, l, m;
-  OP ans = {0};
+  OP ans = {};
 
   a = o2v(f);
   b = o2v(g);
@@ -496,7 +496,7 @@ ZZ equ(ZZ a, ZZ b)
 //多項式を単行式で割る
 oterm LTdiv(OP f, oterm t)
 {
-  oterm tt = {0}, s = {
+  oterm tt = {}, s = {
                       0};
 
   tt = LT(f);
@@ -533,8 +533,8 @@ oterm LTdiv(OP f, oterm t)
 //多項式の剰余を取る
 OP omod(OP f, OP g)
 {
-  OP h = {0}, o = {0}, e = {0};
-  oterm a, b = {0}, c = {0};
+  OP h = {}, o = {}, e = {};
+  oterm a, b = {}, c = {};
 
 
   if (LT(f).a == 0)
@@ -558,7 +558,7 @@ OP omod(OP f, OP g)
   OP ll;
 
   // assert(("double baka\n", b.a > 0 && b.n > 0));
-  while (LT(g).a != 0)
+  while (1)
   {
     c = LTdiv(f, b);
     h = oterml(g, c);
@@ -572,13 +572,8 @@ OP omod(OP f, OP g)
     printpol(o2v(f));
     printf(" =====f_after_omod\n");
     // exit(1);
-    if (LT(f).a == 0)
-    {
-      //      printf("blake1\n");
-      break;
-    }
 
-    if (c.a == 0 || b.a == 0)
+    if (c.a == 0 || LT(f).a==0)
       break;
   }
   printpol(o2v(f));
@@ -647,8 +642,8 @@ OP odiv(OP f, OP g)
   // assert (op_verify (f));
   // assert (op_verify (g));
   int i = 0, k;
-  OP h = {0}, e = {0}, tt = {0}, o = {0};
-  oterm a, b = {0}, c = {0};
+  OP h = {}, e = {}, tt = {}, o = {};
+  oterm a, b = {}, c = {};
 
   printpol(o2v(f));
   printf("@@@@@@f\n");
@@ -683,7 +678,7 @@ OP odiv(OP f, OP g)
     printf("baka in odiv\n");
     exit(1);
   }
-  OP null = {0};
+  OP null = {};
   if (odeg((f)) < odeg((g)))
   {
     return null;
@@ -691,7 +686,7 @@ OP odiv(OP f, OP g)
 
   i = 0;
   k = 0;
-  while (LT(g).a != 0)
+  while (1)
   {
     c = LTdiv(f, b);
     c.a = c.a % P;
@@ -705,7 +700,7 @@ OP odiv(OP f, OP g)
     cout << c.a << endl;
     printf(" ccccccccccccccccc\n");
     printpol(o2v(g));
-    printf(" ===before g in_odiv\n");
+    printf(" ===before_g in_odiv\n");
     printpol(o2v(f));
     printf(" ===before f in_odiv\n");
     h = oterml(g, c);
@@ -716,29 +711,29 @@ OP odiv(OP f, OP g)
     printf(" ===g in_odiv\n");
     printpol(o2v(f));
     printf(" ===f in_odiv\n");
+    /*
     if (LT(f).a == 0)
     {
       printf("blake2\n");
       // c.a=1;
-      break;
+      //break;
     }
-    
+    */
     if ((oequ(f, g)) == 0)
     {
       printpol(o2v(tt));
       printf("\n");
       c.a = 1;
       //break;
-      //  exit(1);
+      //exit(1);
     }
-  
+
     if (c.a == 0)
       break;
- 
   }
 
   // tt は逆順に入ってるので入れ替える
-  OP ret = {0};
+  OP ret = {};
 
   int tt_terms = terms(tt);
   for (i = 0; i < tt_terms; i++)
@@ -816,10 +811,10 @@ ZZ isideal(OP f, OP g)
 //拡張ユークリッドアルゴリズム
 EX xgcd(OP f, OP g)
 {
-  OP h[10] = {0}, ww[10] = {0}, v[256]={0}, u[256]={0}, T = {0};
+  OP h[10] = {}, ww[10] = {}, v[256]={}, u[256]={}, T = {};
   oterm a, b;
   int i = 0,  k;
-  EX e = {0}, ee = {0};
+  EX e = {}, ee = {};
 
 
   u[0].t[0].a = 1;
@@ -887,9 +882,8 @@ EX xgcd(OP f, OP g)
     {
       printpol(o2v(g));
       printf("ggggggggggggg\n");
-    }
-    if (LT(g).a == 0)
       break;
+    }
     i++;
     // exit(1);
   }
@@ -997,7 +991,7 @@ Div reduce(Div D3, OP f)
 Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 {
   EX V;
-  Div D3, D, null = {0};
+  Div D3, D, null = {};
   vec vx;
   OP e1, e2, d1, s1, s2, s3, c1, c2, d, u;
 
@@ -1291,7 +1285,7 @@ PO tr1e(ZZ f4, ZZ f3, ZZ f2, ZZ f1, ZZ f0, ZZ p)
 
 OP diviser(PO o, PO m)
 {
-  ZZ t1[2][3] = {to_ZZ("0")}, cc[2] = {to_ZZ("0")};
+  ZZ t1[2][3] = {}, cc[2] = {};
   vec c1, c2;
   int i, j;
   ZZ a, b;
@@ -1366,10 +1360,10 @@ Div gendiv(OP f)
 {
 
   PO a, b, e;
-  OP d1 = {0}, d2 = {0}, c = {0}, d = {0}, vv1 = {0}, vv2 = {0}, uu1, v;
+  OP d1 = {}, d2 = {}, c = {}, d = {}, vv1 = {}, vv2 = {}, uu1, v;
   //  ZZ  x, y, i, j, k,
 
-  Div D = {0};
+  Div D = {};
   vec v1, v2, z1, z2, ff, vx;
   EX V;
 
@@ -1482,7 +1476,7 @@ Div cdbl(Div D, OP f)
   return D2;
 }
 
-Div tbl[1024] = {0};
+Div tbl[1024] = {};
 ZZ tmp[1024];
 // 演算テーブルを作る（繰り返し2乗法）
 void mktbl(Div D, OP f)
@@ -1541,9 +1535,9 @@ return D;
 // 因子のスカラー倍
 Div jac(ZZ n, OP f)
 {
-  int i, j = 0, tmp[1024] = {0};
+  int i, j = 0, tmp[1024] = {};
   ZZ k;
-  Div L = {0}, D, G;
+  Div L = {}, D, G;
 
   printf("in jac\n");
   k = n;
@@ -1596,6 +1590,8 @@ Div jac(ZZ n, OP f)
     }
     if (oequ(D.u, L.u) == 0 && oequ(D.v, L.v) == 0)
     {
+      //printpoln(o2v(D.u));
+      //printpoln(o2v(D.v));
       cout << "infinity devide! : " << n << endl;
       exit(1);
     }
@@ -1631,7 +1627,7 @@ int main()
   EX V;
   Div D;
   oterm a;
-  OP b = {0};
+  OP b = {};
 
   vec vx, xv, v11, v22;
   Div G0, G1, X;

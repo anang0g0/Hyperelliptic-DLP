@@ -53,7 +53,9 @@ typedef struct {
     unsigned int d : 2;
   };
 
+/*
   union {
     struct BF f;
     unsigned int u;
   } dd;
+*/
