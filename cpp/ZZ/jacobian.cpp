@@ -45,7 +45,7 @@ vec o2v(OP f)
 //ベクトル型からOP型への変換
 OP v2o(vec a)
 {
-  int i, j = 0;
+  int i;
   OP f = {0};
 
   //#pragma omp parallel for
@@ -67,7 +67,7 @@ void op_print_raw(const OP f)
   for (int i = 0; i < DEG; i++)
   {
     if (f.t[i].a > 0)
-      printf("[%d] %llux^%llu\n", i, f.t[i].a, f.t[i].n);
+      cout << "[" << i << "] " << f.t[i].a << "x^" << f.t[i].n << endl;
   }
 }
 
@@ -130,7 +130,7 @@ void printpol(vec a)
   n = deg(a);
 
   // printf ("baka\n");
-  assert(("baka\n", n >= 0));
+  assert(( n >= 0));
 
   for (i = n; i > -1; i--)
   {
@@ -156,7 +156,7 @@ void printpoln(vec a)
   n = deg(a);
 
   // printf ("baka\n");
-  assert(("baka\n", n >= 0));
+  assert(( n >= 0));
 
   for (i = n; i > -1; i--)
   {
@@ -208,7 +208,7 @@ ZZ xtrace(OP f, ZZ x)
 //多項式の次数(degのOP型)
 int odeg(OP f)
 {
-  int i, j = 0, k;
+  int i, j = 0;
 
   // k=terms(f);
   for (i = 0; i < 512; i++)
@@ -238,7 +238,6 @@ OP minu(OP f)
 
 OP init_pol(OP f)
 {
-  int i = 0;
   vec v = o2v(f);
 
   memset(v.x, 0, sizeof(v.x));
@@ -251,10 +250,10 @@ OP init_pol(OP f)
 //リーディグタームを抽出(default)
 oterm LT(OP f)
 {
-  int i, k;
+  int i;
   oterm t = {0};
 
-  k = deg(o2v(f));
+
   for (i = 0; i < DEG; i++)
   {
     // printf("a=%llu %llu\n",f.t[i].a,f.t[i].n);
@@ -339,14 +338,14 @@ OP oterml(OP f, oterm t)
 {
 
   // assert (op_verify (f));
-  int i, k, j;
+  int i, k;
   OP h = {0};
   vec test;
   ZZ n;
 
   // f=conv(f);
   k = odeg(f);
-  j = 0;
+ 
   for (i = 0; i < k + 1; i++)
   {
     h.t[i].n = f.t[i].n + t.n;
@@ -366,7 +365,7 @@ OP omul(OP f, OP g)
   printf("qqqqqqqqqqqqqqqqqq\n");
   // assert (op_verify (f));
   // assert (op_verify (g));
-  int i, count = 0, k, l;
+  int i,  k, l;
   oterm t = {0};
   OP h = {0}, e = {0}, r = {0};
   vec c;
@@ -451,7 +450,7 @@ OP confer(OP f, int a)
 int oequ(OP f, OP g)
 {
   vec v, x;
-  int i, flg = 0;
+  int i;
 
   v = o2v(f);
   x = o2v(g);
@@ -534,11 +533,10 @@ oterm LTdiv(OP f, oterm t)
 //多項式の剰余を取る
 OP omod(OP f, OP g)
 {
-  int i = 0, j, n, k;
   OP h = {0}, o = {0}, e = {0};
   oterm a, b = {0}, c = {0};
 
-  n = LT(g).n;
+
   if (LT(f).a == 0)
   {
     return h;
@@ -555,7 +553,7 @@ OP omod(OP f, OP g)
     return f;
   }
 
-  k = LT(g).n;
+
   b = LT(g);
   OP ll;
 
@@ -605,7 +603,7 @@ int terms(OP f)
 //モニック多項式にする
 OP coeff(OP f)
 {
-  int i, j, k;
+  int i,  k;
   vec a, b;
   oterm t;
 
@@ -648,7 +646,7 @@ OP odiv(OP f, OP g)
   g = conv(g);
   // assert (op_verify (f));
   // assert (op_verify (g));
-  int i = 0, j, n, k;
+  int i = 0, k;
   OP h = {0}, e = {0}, tt = {0}, o = {0};
   oterm a, b = {0}, c = {0};
 
@@ -703,7 +701,8 @@ OP odiv(OP f, OP g)
       tt.t[k] = c;
       k++;
     }
-    printf("%llu", c.a);
+
+    cout << c.a << endl;
     printf(" ccccccccccccccccc\n");
     printpol(o2v(g));
     printf(" ===before g in_odiv\n");
@@ -723,18 +722,19 @@ OP odiv(OP f, OP g)
       // c.a=1;
       break;
     }
-    int u;
+    
     if ((oequ(f, g)) == 0)
     {
       printpol(o2v(tt));
       printf("\n");
       c.a = 1;
-      // break;
+      //break;
       //  exit(1);
     }
-
+  
     if (c.a == 0)
       break;
+ 
   }
 
   // tt は逆順に入ってるので入れ替える
@@ -765,7 +765,7 @@ OP scr(ZZ d, OP f)
   v = o2v(f);
   for (i = 0; i < n + 1; i++)
   {
-    printf("v[%d]=%llu\n", i, v.x[i]);
+    cout << "v[" << i << "]=" << v.x[i] << endl;
     v.x[i] = (v.x[i] * d) % P;
   }
   f = v2o(v);
@@ -778,7 +778,7 @@ OP monique(OP f)
 {
   ZZ e1;
   e1 = inv(LT(f).a, P);
-  printf("e=%llu\n", e1);
+  cout << "e=" << e1 << endl;
   f = scr(e1, f);
 
   return f;
@@ -816,21 +816,11 @@ ZZ isideal(OP f, OP g)
 //拡張ユークリッドアルゴリズム
 EX xgcd(OP f, OP g)
 {
-  OP h[10] = {0}, ww[10] = {0}, *v, *u, T = {0};
+  OP h[10] = {0}, ww[10] = {0}, v[256]={0}, u[256]={0}, T = {0};
   oterm a, b;
-  int i = 0, j, flg = 0, k;
+  int i = 0,  k;
   EX e = {0}, ee = {0};
-  /*
-  if(odeg(f)<odeg(g)){
-  T=f;
-  f=g;
-  g=T;
-  }
-  */
-  v = (OP *)malloc(sizeof(OP) * (DEG));
-  u = (OP *)malloc(sizeof(OP) * (DEG));
-  memset(v, 0, sizeof(OP) * DEG);
-  memset(u, 0, sizeof(OP) * DEG);
+
 
   u[0].t[0].a = 1;
   u[0].t[0].n = 0;
@@ -929,8 +919,6 @@ EX xgcd(OP f, OP g)
   e.v = v[i];
   e.h = ww[i];
 
-  free(v);
-  free(u);
 
   printf("end of fnc\n");
   // exit(1);
@@ -943,7 +931,7 @@ OP qinv(OP uu1, OP uu2)
 {
   EX tt, V;
   OP v;
-  int e;
+
 
   // return cdiv(LT(g).a,g);
   tt = xgcd(uu1, uu2);
@@ -966,7 +954,7 @@ OP qinv(OP uu1, OP uu2)
     return v;
   }
   printf("can't\n");
-  // exit(1);
+   exit(1);
 }
 
 // 因子の条件をチェック
@@ -1143,7 +1131,7 @@ Div cadd(OP ff, OP uu1, OP uu2, OP vv1, OP vv2)
 // bit count
 int bit(ZZ b, int i)
 {
-  int k = 1;
+ 
 
   if (((b & (1 << i)) >> i) % 2 == 1)
   {
@@ -1305,7 +1293,7 @@ OP diviser(PO o, PO m)
 {
   ZZ t1[2][3] = {to_ZZ("0")}, cc[2] = {to_ZZ("0")};
   vec c1, c2;
-  int i, j, k;
+  int i, j;
   ZZ a, b;
   OP f;
 
@@ -1376,7 +1364,7 @@ OP diviser(PO o, PO m)
 // ランダムな因子の生成
 Div gendiv(OP f)
 {
-  int count = 0;
+
   PO a, b, e;
   OP d1 = {0}, d2 = {0}, c = {0}, d = {0}, vv1 = {0}, vv2 = {0}, uu1, v;
   //  ZZ  x, y, i, j, k,
@@ -1546,6 +1534,8 @@ Div jac2(ZZ n, OP f, Div D)
     D = cdbl(D, f);
     n = (n >> 1);
   }
+
+return D;
 }
 
 // 因子のスカラー倍
@@ -1618,8 +1608,6 @@ Div jac(ZZ n, OP f)
 // 例
 int main()
 {
-  unsigned int i, count = 0;
-
 
 //  ZZ bb=to_ZZ("1419857");
 //  ZZ f[K + 1] = {to_ZZ("1"), to_ZZ("0"), to_ZZ("0"), to_ZZ("0"), to_ZZ("0"), bb};
